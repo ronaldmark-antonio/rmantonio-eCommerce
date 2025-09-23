@@ -11,6 +11,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 
 import RegisterPage from './pages/RegisterPage.vue';
+import LoginPage from './pages/LoginPage.vue'
 
 const router = createRouter({
     history: createWebHistory(),
@@ -19,6 +20,11 @@ const router = createRouter({
         path: "/register",
         name: "Register",
         component: RegisterPage
+    },
+    {
+        path: "/login",
+        name: "Login",
+        component: LoginPage
     },
     ]
 })
