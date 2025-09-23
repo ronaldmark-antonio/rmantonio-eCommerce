@@ -27,27 +27,10 @@ const isLoggedIn = computed(() => !!user.email);
 
       <div class="collapse navbar-collapse" id="navbarNav">
         <div class="navbar-nav ms-auto align-items-lg-center gap-3">
-          <router-link to="/products" class="nav-link fw-semibold text-dark" active-class="active">
-            Products
-          </router-link>
-
-          <template v-if="isLoggedIn">
-            <span class="nav-link disabled fst-italic">
-              Welcome, <span class="text-primary">{{ user.email }}</span>
-            </span>
-            <router-link to="/logout" class="btn btn-outline-danger btn-sm">
-              Log Out
-            </router-link>
-          </template>
-
-          <template v-else>
-            <router-link to="/login" class="nav-link fw-semibold text-primary" active-class="active">
-              Login
-            </router-link>
-            <router-link to="/register" class="btn btn-primary btn-sm px-3">
-              Register
-            </router-link>
-          </template>
+          <router-link :to="{ name: 'Products' }" class="nav-link fw-bold text-primary">Products</router-link>
+           <router-link :to="{ name: 'Register' }" class="nav-link fw-bold text-primary" v-if="!user.email" >Register</router-link>
+          <router-link :to="{ name: 'Login' }" class="nav-link fw-bold text-primary" v-if="!user.email">Login</router-link>
+           <router-link :to="{ name: 'Logout' }" class="nav-link" v-else>Logout</router-link>
         </div>
       </div>
     </div>

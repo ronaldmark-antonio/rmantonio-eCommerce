@@ -12,6 +12,8 @@ import RegisterPage from './pages/RegisterPage.vue';
 import LoginPage from './pages/LoginPage.vue'
 import ProductsPage from './pages/ProductsPage.vue'
 import ProductDetails from './pages/ProductDetails.vue';
+import LogoutPage from './pages/LogoutPage.vue';
+
 
 import { createRouter, createWebHistory } from 'vue-router';
 
@@ -36,6 +38,11 @@ const router = createRouter({
     {   
         path: "/products/:productId",
         component: ProductDetails
+    },
+    {
+        path: '/logout',
+        name: 'Logout',
+        component: LogoutPage
     },
     ]
 })
