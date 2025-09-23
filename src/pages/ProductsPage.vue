@@ -1,56 +1,56 @@
 <script>
+import productsData from '../data/productsData.js';
+import api from '../api.js';
+import { ref, reactive, onMounted, onBeforeMount, watch } from 'vue';
+import ProductComponent from '../components/ProductComponent.vue';
 
-  import api from '../api.js';
-  import { ref, reactive, onMounted, onBeforeMount, watch } from 'vue';
+import UserView from '../components/UserView.vue';
+import AdminView from '../components/AdminView.vue';
+import { useGlobalStore } from '../stores/global.js';
 
-  import ProductsComponent from '../components/ProductsComponent.vue';
-  import UserView from '../components/UserView.vue';
-  import { useGlobalStore } from '../stores/global.js';
+export default {
+ components: {
+    ProductComponent,
+    UserView,
+    AdminView
+  },
+  setup() {
 
-  export default {
-    components: {
-      ProductsComponent,
-      UserView
-    },
-      
-      setup(){
+  const { user } = useGlobalStore();
+  const products = reactive({data:[]})
 
-      const { user } = useGlobalStore();
-      const courses = reactive({data:[]})
+  onMounted(()=>console.log(products));
 
-          onMounted(()=>console.log(courses));
-
-      watch([user], async () => {
-        if (!user.isLoading) {
-          try {
-            if (user.isAdmin) {
-              let response = await api.get('/courses/all');
-              console.log("Admin courses:", response.data);
-              courses.data = response.data;
-            } else {
-              let response = await api.get('/courses');
-              console.log("User courses:", response.data);
-              courses.data = response.data;
-            }
-          } catch (err) {
-            console.error("Error fetching courses:", err);
+  watch([user], async () => {
+      if (!user.isLoading) {
+        try {
+          if (user.isAdmin) {
+              let response = await api.get('/products/all');
+              console.log("Admin products:", response.data);
+              products.data = response.data;
+          } else {
+              let response = await api.get('/products/active');
+              console.log("User products:", response.data);
+              products.data = response.data;
           }
+        } catch (err) {
+            console.error("Error fetching products:", err);
         }
-      }, { immediate: true });
-
-          return {
-            courses,
-        user,
-           
-          }
       }
-  }
+    }, { immediate: true });
+
+        return {
+          products,
+          user
+        }
+    }
+}
 </script>
 
 <template>
   <div class="container">
     <p v-if="user.isLoading">Loading...</p>
-    <AdminView v-if="user.isAdmin && !user.isLoading" :coursesData="courses.data" />
-    <UserView v-if="!user.isAdmin && !user.isLoading" :coursesData="courses.data" />
+    <AdminView v-if="user.isAdmin && !user.isLoading" :productsData="products.data" />
+    <UserView v-if="!user.isAdmin && !user.isLoading" :productsData="products.data" />
   </div>
 </template>

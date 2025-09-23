@@ -5,13 +5,15 @@ import 'notyf/notyf.min.css'
 import './assets/main.css'
 
 import { createApp } from 'vue'
-import { createRouter, createWebHistory } from 'vue-router';
 import { createPinia } from 'pinia'
-
 import App from './App.vue'
 
 import RegisterPage from './pages/RegisterPage.vue';
 import LoginPage from './pages/LoginPage.vue'
+import ProductsPage from './pages/ProductsPage.vue'
+import ProductDetails from './pages/ProductDetails.vue';
+
+import { createRouter, createWebHistory } from 'vue-router';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -25,6 +27,15 @@ const router = createRouter({
         path: "/login",
         name: "Login",
         component: LoginPage
+    },
+    {
+        path: "/products",
+        name: "Products",
+        component: ProductsPage
+    },
+    {   
+        path: "/products/:productId",
+        component: ProductDetails
     },
     ]
 })
