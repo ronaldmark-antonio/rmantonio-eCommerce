@@ -1,29 +1,23 @@
-# FusionTechPro
+<h3>Capstone 3 Demo App Overview:</h3>
+<h3>Application Name: FusionTechPro</h3>
 
-This template should help get you started developing with Vue 3 in Vite.
+<h3>Team Members:</h3>
+<ul>
+	<li>Student-1 Jerry Señas</li>
+	<li>Student-2 Ronald Mark Antonio</li>
+</ul>
 
-## Recommended IDE Setup
+<h3>User Credentials:</h3>
+<ul>
+	<li>Admin User</li>
+	<p>email: admin@mail.com<br>password: admin123</p>
+	<li>Regular User</li>
+	<p>email: regular@mail.com<br>password: sample123</p>
+</ul>
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+<h3>Features by Student-1</h3>
+<h3>Register Page</h3> 
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+<h3>Features by Student-2</h3>
+<h3>Login Page</h3>
+<h3>Products Catalog</h3>
