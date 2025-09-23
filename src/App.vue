@@ -1,18 +1,22 @@
 <script>
-  import { onBeforeMount } from 'vue';
-  import { useGlobalStore } from './stores/global';
+import NavbarComponent from './components/NavbarComponent.vue';
+import { onBeforeMount } from 'vue';
+import { useGlobalStore } from './stores/global';
 
-  export default {
-    setup() {
-      const { getUserDetails } = useGlobalStore();
+export default {
+   components: {
+    NavbarComponent
+  },
+  setup() {
+    const { getUserDetails } = useGlobalStore();
 
-      onBeforeMount(() => getUserDetails(localStorage.getItem("token")));
-    }
+    onBeforeMount(() => getUserDetails(localStorage.getItem("token")));
   }
-
+}
 </script>
 
 <template>
+  <NavbarComponent />
   <router-view />
 </template>
 

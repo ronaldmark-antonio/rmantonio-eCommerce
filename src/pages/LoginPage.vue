@@ -2,7 +2,7 @@
 import { watch, ref, onBeforeMount } from 'vue';
 import { Notyf } from 'notyf'; 
 import { useGlobalStore } from '../stores/global';
-import { useRouter } from 'vue-router';
+import { useRouter, RouterLink } from 'vue-router';
 import axios from 'axios';
 import api from "../api.js";
 
@@ -47,7 +47,7 @@ async function handleSubmit(e){
 			email.value = "";
 			password.value = "";
 
-			router.push({ path: '/courses' });
+			router.push({ path: '/products' });
 
 		}
 	}
@@ -56,7 +56,7 @@ async function handleSubmit(e){
 		console.log(err);
               
 		if(err.response.status === 404 || err.response.status === 401 || err.response.status === 400){
-			notyf.error(err.response.data.message);
+			notyf.error(err.response.data.error);
 		} else {
 			notyf.error("Login Failed. Please contact administrator.");
 		}
@@ -65,7 +65,7 @@ async function handleSubmit(e){
 
 onBeforeMount(()=> {
     if(user.email){
-        router.push({path: "/courses"})
+        router.push({path: "/products"})
     }
 })
 
@@ -73,24 +73,25 @@ onBeforeMount(()=> {
 
 <template>
 	<div class="container-fluid">
-	    <h1 class="my-5 pt-3 text-primary text-center">Login Page</h1> 
+	    <h1 class="my-5 pt-3 text-center">Login</h1> 
 	    <div class="row d-flex justify-content-center">
 	        <div class="col-md-5 border border rounded-3 mx-auto p-5">
 	            <form v-on:submit="handleSubmit">
 	                <div class="mb-3">
 	                    <label for="emailInput" class="form-label">Email Address</label>
-	                    <input type="email" class="form-control" id="emailInput" v-model="email" />
+	                    <input type="email" class="form-control" placeholder ="Enter your email address" id="emailInput" v-model="email" />
 	                </div>
 	                <div class="mb-3">
 	                    <label for="passwordInput" class="form-label">Password</label>
-	                    <input type="password" class="form-control" id="passwordInput" v-model="password" />
+	                    <input type="password" class="form-control" placeholder ="Enter your password" id="passwordInput" v-model="password" />
 	                </div>
 	                <div class="d-grid mt-5">
-	                	<button type="submit" class="btn btn-primary btn-block"  v-if="isEnabled">Login</button>
-                		<button type="submit" class="btn btn-danger btn-block" disabled v-else>Login</button>
+	                	<button type="submit" class="btn btn-primary btn-block"  v-if="isEnabled">Submit</button>
+                		<button type="submit" class="btn btn-danger btn-block" disabled v-else>Submit</button>
 	                </div>
 	            </form>
 	        </div>
 	    </div>
     </div>
+    <h5 class="text-center p-3">Don't have an account yet? <RouterLink to="/register">Click here</RouterLink> to register.</h5>
 </template>

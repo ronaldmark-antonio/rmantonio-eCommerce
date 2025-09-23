@@ -5,17 +5,16 @@
         </div>
     </div>
     <div class="row g-4">
-
-      		<CourseComponent v-for="course in coursesData" :courseData="course" />
-		</div>
+      	<ProductComponent v-for="product in productsData" :productData="product" />
+	</div>
 </template>
 
 <script setup>
-import CourseComponent from '../components/CourseComponent.vue';
+import ProductComponent from '../components/ProductComponent.vue';
 import { defineProps } from 'vue';
 
 const props = defineProps({
-    coursesData: Array
+    productsData: Array
 });
 
 </script>
