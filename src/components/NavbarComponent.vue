@@ -36,7 +36,7 @@ const email = ref("")
            <router-link :to="{ name: 'Orders' }" class="nav-link fw-bold text-primary" v-if="user.email" >Orders</router-link>
            <router-link :to="{ name: 'Profile' }" class="nav-link fw-bold text-primary" v-if="user.email" >Profile</router-link>
            <router-link :to="{ name: 'Register' }" class="nav-link fw-bold text-primary" v-if="!user.email" >Register</router-link>
-          <router-link :to="{ name: 'Login' }" class="nav-link fw-bold text-primary" v-if="!user.email">Login</router-link>
+            <router-link :to="{ name: 'Login' }" class="nav-link fw-bold text-primary" v-if="!user.email">Login</router-link>
            <router-link :to="{ name: 'Logout' }" class="nav-link fw-bold text-primary" v-else>Logout</router-link>
         </div>
       </div>
