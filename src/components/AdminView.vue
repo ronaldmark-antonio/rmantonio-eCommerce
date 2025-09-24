@@ -12,7 +12,7 @@ const props = defineProps({
 const router = useRouter();
 const notyf = new Notyf();
 
-function goToEdit(id) {
+function updateProduct(id) {
   router.push(`/products/edit/${id}`);
 };
 
@@ -77,12 +77,12 @@ async function activateProduct(product) {
         <span v-else class="badge bg-danger">Unavailable</span>
       </td>
       <td>
-        <button class="btn btn-sm btn-primary w-100" @click="goToEdit(product._id)">
-          Edit
+        <button class="btn btn-sm btn-primary w-100" @click="updateProduct(product._id)">
+          Update
         </button>
       </td>
       <td>
-        <button class="btn btn-sm btn-danger w-100" v-if="product.isActive" @click="archiveProduct(product)">Archive</button>
+        <button class="btn btn-sm btn-danger w-100" v-if="product.isActive" @click="archiveProduct(product)">Disable</button>
         <button class="btn btn-sm btn-success w-100" v-else @click="activateProduct(product)">Activate</button>
       </td>
     </tr>

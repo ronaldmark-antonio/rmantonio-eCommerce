@@ -13,7 +13,7 @@ import RegisterPage from './pages/RegisterPage.vue';
 import LoginPage from './pages/LoginPage.vue'
 import ProductsPage from './pages/ProductsPage.vue'
 import ProductDetails from './pages/ProductDetails.vue';
-import EditProduct from './pages/EditProduct.vue';
+import UpdateProduct from './pages/UpdateProduct.vue';
 import LogoutPage from './pages/LogoutPage.vue';
 import CartPage from './pages/CartPage.vue';
 import OrdersPage from './pages/OrdersPage.vue';
@@ -51,7 +51,7 @@ const router = createRouter({
     },
     {   
         path: "/products/edit/:productId",
-        component: EditProduct
+        component: UpdateProduct
     },
     {
         path: '/logout',
