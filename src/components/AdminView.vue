@@ -1,45 +1,3 @@
-<template>
-  <h1 class="text-center text-primary mt-5">Admin Dashboard</h1>
-  <table class="table table-striped border">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Price</th>
-        <th>Availability</th>
-        <th colspan="2">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="product in productsData" :key="product._id">
-        <td>{{ product._id }}</td>
-        <td>{{ product.name }}</td>
-        <td>{{ product.description }}</td>
-        <td>{{ product.price }}</td>
-        <td>
-          <span v-if="product.isActive" class="text-success">Available</span>
-          <span v-else class="text-danger">Unavailable</span>
-        </td>
-        <td>
-          <button class="btn btn-primary" @click="goToEdit(product._id)">
-            Edit
-          </button>
-        </td>
-        <td>
-          <button
-            class="btn btn-danger"
-            :disabled="!product.isActive"
-            @click="archiveproduct(product)"
-          >
-            {{ product.isActive ? "Archive" : "Archived" }}
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</template>
-
 <script setup>
 import { defineProps } from "vue";
 import { useRouter } from "vue-router";
@@ -53,7 +11,6 @@ const props = defineProps({
 const router = useRouter();
 const notyf = new Notyf();
 
-// Navigate to edit page
 const goToEdit = (id) => {
   router.push(`/products/${id}/edit`);
 };
@@ -101,5 +58,53 @@ const archiveproduct = async (product) => {
     notyf.error("Server error: Could not archive product");
   }
 };
-
 </script>
+
+<template>
+  <h1 class="text-center mt-5">Admin Dashboard</h1>
+  <div class="row">
+    <div class="col text-center my-3">
+      <RouterLink class="btn btn-primary mx-2" to="/addProduct">Add Product</RouterLink>
+      <RouterLink class="btn btn-success mx-2" to="/?">Orders</RouterLink>
+    </div>
+  </div>
+
+  <table class="table table-striped table-bordered table-hover align-middle text-center">
+  <thead class="table-primary">
+    <tr>
+      <th style="width: 200px;">Name</th>
+      <th>Description</th>
+      <th style="width: 120px;">Price</th>
+      <th style="width: 130px;">Availability</th>
+      <th colspan="2" style="width: 200px;">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr v-for="product in productsData" :key="product._id">
+      <td class="text-start">{{ product.name }}</td>
+      <td class="text-start">{{ product.description }}</td>
+      <td>&#8369;{{ product.price.toLocaleString() }}</td>
+      <td>
+        <span v-if="product.isActive" class="badge bg-success">Available</span>
+        <span v-else class="badge bg-danger">Unavailable</span>
+      </td>
+      <td>
+        <button class="btn btn-sm btn-primary w-100" @click="goToEdit(product._id)">
+          Edit
+        </button>
+      </td>
+      <td>
+        <button
+          class="btn btn-sm btn-danger w-100"
+          :disabled="!product.isActive"
+          @click="archiveproduct(product)"
+        >
+          {{ product.isActive ? "Archive" : "Archived" }}
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+</template>
+

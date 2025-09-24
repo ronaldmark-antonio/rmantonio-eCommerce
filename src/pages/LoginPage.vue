@@ -6,14 +6,19 @@ import { useRouter, RouterLink } from 'vue-router';
 import axios from 'axios';
 import api from "../api";
 
-const router = useRouter()
 const {getUserDetails, user} = useGlobalStore();
+const notyf = new Notyf();
+const router = useRouter()
+
+onBeforeMount(() => {
+  if (user.token) {
+    router.replace('/products');
+  }
+});
 
 const email = ref("");
 const password = ref("");
 const isEnabled = ref(false);
-
-const notyf = new Notyf();
 
 watch([email,password], (currentValue, oldValue) => {
 
@@ -62,13 +67,6 @@ async function handleSubmit(e){
 		}
 	}
 }
-
-onBeforeMount(()=> {
-    if(user.email){
-        router.push({path: "/products"})
-    }
-})
-
 </script>
 
 <template>
@@ -79,19 +77,37 @@ onBeforeMount(()=> {
 	            <form v-on:submit="handleSubmit">
 	                <div class="mb-3">
 	                    <label for="emailInput" class="form-label">Email Address</label>
-	                    <input type="email" class="form-control" placeholder ="Enter your email address" id="emailInput" v-model="email" />
+	                    <input 
+	                    	type="email" 
+	                    	class="form-control" 
+	                    	placeholder ="Enter your email address" 
+	                    	id="emailInput" 
+	                    	v-model="email" />
 	                </div>
 	                <div class="mb-3">
 	                    <label for="passwordInput" class="form-label">Password</label>
-	                    <input type="password" class="form-control" placeholder ="Enter your password" id="passwordInput" v-model="password" />
+	                    <input 
+		                    type="password" 
+		                    class="form-control" 
+		                    placeholder ="Enter your password" 
+		                    id="passwordInput" 
+		                    v-model="password" />
 	                </div>
 	                <div class="d-grid mt-5">
-	                	<button type="submit" class="btn btn-primary btn-block"  v-if="isEnabled">Submit</button>
-                		<button type="submit" class="btn btn-danger btn-block" disabled v-else>Submit</button>
+	                	<button 
+		                	type="submit" 
+		                	class="btn btn-primary btn-block"  
+		                	v-if="isEnabled">Submit</button>
+                		
+                		<button 
+	                		type="submit" 
+	                		class="btn btn-danger btn-block" 
+	                		disabled v-else>Submit</button>
 	                </div>
 	            </form>
 	        </div>
 	    </div>
     </div>
-    <h5 class="text-center p-3">Don't have an account yet? <RouterLink to="/register">Click here</RouterLink> to register.</h5>
+    <h5 class="text-center p-3">Don't have an account yet? 
+    	<RouterLink to="/register">Click here</RouterLink> to register.</h5>
 </template>

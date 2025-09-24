@@ -16,8 +16,14 @@
 </ul>
 
 <h3>Features by Student-1</h3>
-<h3>Register Page</h3> 
+<ul>
+	<li><h3>Register Page</h3></li>
+	<li><h3>Admin Dashboard page: Update Product Information, Deactivate/reactivate product</h3></li>
+</ul>
 
 <h3>Features by Student-2</h3>
-<h3>Login Page</h3>
-<h3>Products Catalog</h3>
+<ul>
+	<li><h3>Login Page</h3></li>
+	<li><h3>Products Catalog</h3></li>
+	<li><h3>Admin Dashboard page: Create Product, Retrieve all products</h3></li>
+</ul>

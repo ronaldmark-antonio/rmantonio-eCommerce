@@ -16,6 +16,7 @@ import LogoutPage from './pages/LogoutPage.vue';
 import CartPage from './pages/CartPage.vue';
 import OrdersPage from './pages/OrdersPage.vue';
 import ProfilePage from './pages/ProfilePage.vue';
+import AddProduct from './pages/AddProduct.vue';
 
 
 import { createRouter, createWebHistory } from 'vue-router';
@@ -61,7 +62,12 @@ const router = createRouter({
         path: '/profile',
         name: 'Profile',
         component: ProfilePage
-    }
+    },
+    {   
+        path: '/addProduct',
+        name: 'Add Product',
+        component: AddProduct
+    },
     ]
 })
 

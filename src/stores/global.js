@@ -30,8 +30,8 @@ export const useGlobalStore = defineStore('global',() => {
         console.log(data);
 
 		user.token = token;
-        user.email = data.email;
-        user.isAdmin = data.isAdmin;
+        user.email = data.user.email;
+        user.isAdmin = data.user.isAdmin;
         
     }
 

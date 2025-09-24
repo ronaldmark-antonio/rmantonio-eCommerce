@@ -59,12 +59,14 @@ onBeforeMount(async () => {
                 			class="form-control text-center"
                 			id="quantity"
                 			v-model="quantity"
-                			min="1"
+                			min="1" 
                 			/>
                 			<button class="btn btn-primary" type="button" @click="quantity++">+</button>
                 		</div>
 
-                		<router-link to="/login" class="btn btn-outline-primary mt-4" type="button" v-if="!user.email">Login to Enroll
+                		<router-link to="/login" class="btn btn-outline-primary mt-4" type="button" v-if="!user.email">Login to Add to cart
+                </router-link>
+                <router-link to="/?" class="btn btn-primary mt-4" type="button" v-else>Add to Cart
                 </router-link>
                 	</div>
             </div>
