@@ -43,14 +43,6 @@ const notyf = new Notyf();
 export default {
   props: {
     productData: Object
-  },
-  setup() {
-    const { user } = useGlobalStore();
-    console.log(user);
-
-    return {
-      user
-    };
   }
 };
 </script>

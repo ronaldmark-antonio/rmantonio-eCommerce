@@ -31,8 +31,8 @@ watch([firstName, lastName, email, mobileNum, password, confirmPass],
     } else {
       submitEnabled.value = false
     }
-
-})
+}
+);
 
 async function handleSubmit(e) {
   e.preventDefault()
@@ -78,9 +78,6 @@ async function handleSubmit(e) {
     }
   }
 }
-
-
-
 </script>
 
 <template>
@@ -88,7 +85,7 @@ async function handleSubmit(e) {
     <h1 class="my-5 text-center">Register</h1>
     <div class="row d-flex justify-content-center">
       <div class="col-md-6 border rounded-3 mx-auto p-5">
-        <form v-on:submit="handleSubmit">
+        <form @submit.prevent="handleSubmit">
           <div class="mb-3">
             <label for="fName" class="form-label">First Name</label>
             <input 

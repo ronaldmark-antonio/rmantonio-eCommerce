@@ -1,7 +1,6 @@
 <script>
-import productsData from '../data/productsData.js';
 import api from '../api.js';
-import { ref, reactive, onMounted, onBeforeMount, watch } from 'vue';
+import { reactive, watch } from 'vue';
 import ProductComponent from '../components/ProductComponent.vue';
 
 import UserView from '../components/UserView.vue';
@@ -19,18 +18,14 @@ export default {
   const { user } = useGlobalStore();
   const products = reactive({data:[]})
 
-  onMounted(()=>console.log(products));
-
   watch([user], async () => {
       if (!user.isLoading) {
         try {
           if (user.isAdmin) {
               let response = await api.get('/products/all');
-              console.log("Admin products:", response.data);
               products.data = response.data;
           } else {
               let response = await api.get('/products/active');
-              console.log("User products:", response.data);
               products.data = response.data;
           }
         } catch (err) {
