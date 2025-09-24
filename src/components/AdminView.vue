@@ -31,6 +31,20 @@ async function archiveProduct(product) {
     }
   };
 
+async function activateProduct(product) {
+  try {
+    let res = await api.patch(`/products/${product._id}/activate`)
+    if (res.status === 200) {
+      product.isActive = true;
+      notyf.success("Product set as active.");
+    } else {
+      notyf.error("Server error in marking product as active.")
+    }
+  } catch (error) {
+    console.error("Product activation error", error);
+    notyf.error("Server error: Could not activate product.");
+  }
+}
 
 </script>
 
@@ -68,13 +82,8 @@ async function archiveProduct(product) {
         </button>
       </td>
       <td>
-        <button
-          class="btn btn-sm btn-danger w-100"
-          :disabled="!product.isActive"
-          @click="archiveProduct(product)"
-        >
-          {{ product.isActive ? "Archive" : "Archived" }}
-        </button>
+        <button class="btn btn-sm btn-danger w-100" v-if="product.isActive" @click="archiveProduct(product)">Archive</button>
+        <button class="btn btn-sm btn-success w-100" v-else @click="activateProduct(product)">Activate</button>
       </td>
     </tr>
   </tbody>

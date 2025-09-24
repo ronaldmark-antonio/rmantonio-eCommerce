@@ -13,7 +13,6 @@
   const name = ref("");
   const description = ref("");
   const price = ref(0);
-  const activateProduct = ref(false);
   const updateEnabled = ref(false);
 
   watch([name, description, price], (currValue, oldValue) => {
@@ -34,14 +33,6 @@
 
       if (res.status === 200) {
         notyf.success("Product updated successfully!");
-        if (activateProduct) {
-          let activateRes = await api.patch(`/products/${route.params.productId}/activate`)
-          if (activateRes.status === 200) {
-            notyf.success("Product set as active.");
-          } else {
-            notyf.error("Server error in marking product as active.")
-          }
-        }
 
         name.value = ""
         description.value = ""
@@ -109,14 +100,6 @@
                   required
                 />
               </div>
-
-              <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" v-model="activateProduct" id="activateProduct">
-                <label class="form-check-label" for="activateProduct">
-                  Set product as active
-                </label>
-              </div>
-
               <button type="submit" class="btn btn-success" v-if="updateEnabled">Update</button>
               <button type="submit" class="btn btn-danger" v-else disabled>Update</button>
             </form>
