@@ -1,9 +1,13 @@
 <script setup>
-import { computed } from "vue";
-import { useGlobalStore } from "../stores/global";
+import {onBeforeMount, ref, watch} from "vue";
+import { useGlobalStore } from "../stores/global.js";
 
 const { user } = useGlobalStore();
-const isLoggedIn = computed(() => !!user.email);
+
+console.log(user.email);
+
+const email = ref("")
+
 </script>
 
 <template>
@@ -28,9 +32,12 @@ const isLoggedIn = computed(() => !!user.email);
       <div class="collapse navbar-collapse" id="navbarNav">
         <div class="navbar-nav ms-auto align-items-lg-center gap-3">
           <router-link :to="{ name: 'Products' }" class="nav-link fw-bold text-primary">Products</router-link>
+           <router-link :to="{ name: 'Cart' }" class="nav-link fw-bold text-primary" v-if="user.email" >Cart</router-link>
+           <router-link :to="{ name: 'Orders' }" class="nav-link fw-bold text-primary" v-if="user.email" >Orders</router-link>
+           <router-link :to="{ name: 'Profile' }" class="nav-link fw-bold text-primary" v-if="user.email" >Profile</router-link>
            <router-link :to="{ name: 'Register' }" class="nav-link fw-bold text-primary" v-if="!user.email" >Register</router-link>
           <router-link :to="{ name: 'Login' }" class="nav-link fw-bold text-primary" v-if="!user.email">Login</router-link>
-           <router-link :to="{ name: 'Logout' }" class="nav-link" v-else>Logout</router-link>
+           <router-link :to="{ name: 'Logout' }" class="nav-link fw-bold text-primary" v-else>Logout</router-link>
         </div>
       </div>
     </div>

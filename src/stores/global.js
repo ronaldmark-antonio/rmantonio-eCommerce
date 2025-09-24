@@ -27,6 +27,8 @@ export const useGlobalStore = defineStore('global',() => {
             }
         });
 
+        console.log(data);
+
 		user.token = token;
         user.email = data.email;
         user.isAdmin = data.isAdmin;

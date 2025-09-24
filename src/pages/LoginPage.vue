@@ -4,7 +4,7 @@ import { Notyf } from 'notyf';
 import { useGlobalStore } from '../stores/global';
 import { useRouter, RouterLink } from 'vue-router';
 import axios from 'axios';
-import api from "../api.js";
+import api from "../api";
 
 const router = useRouter()
 const {getUserDetails, user} = useGlobalStore();

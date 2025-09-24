@@ -13,6 +13,9 @@ import LoginPage from './pages/LoginPage.vue'
 import ProductsPage from './pages/ProductsPage.vue'
 import ProductDetails from './pages/ProductDetails.vue';
 import LogoutPage from './pages/LogoutPage.vue';
+import CartPage from './pages/CartPage.vue';
+import OrdersPage from './pages/OrdersPage.vue';
+import ProfilePage from './pages/ProfilePage.vue';
 
 
 import { createRouter, createWebHistory } from 'vue-router';
@@ -44,6 +47,21 @@ const router = createRouter({
         name: 'Logout',
         component: LogoutPage
     },
+    {
+        path: '/cart',
+        name: 'Cart',
+        component: CartPage
+    },
+    {
+        path: '/orders',
+        name: 'Orders',
+        component: OrdersPage
+    },
+    {
+        path: '/profile',
+        name: 'Profile',
+        component: ProfilePage
+    }
     ]
 })
 

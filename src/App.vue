@@ -1,7 +1,7 @@
 <script>
 import NavbarComponent from './components/NavbarComponent.vue';
-import { onBeforeMount } from 'vue';
 import { useGlobalStore } from './stores/global';
+import { onBeforeMount } from 'vue';
 
 export default {
    components: {
@@ -21,5 +21,4 @@ export default {
 </template>
 
 <style scoped>
-
 </style>
