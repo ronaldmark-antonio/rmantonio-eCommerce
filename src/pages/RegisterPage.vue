@@ -23,8 +23,7 @@
     }
   })
 
-  async function handleSubmit(e) {
-    e.preventDefault()
+  async function handleSubmit() {
     if (password.value !== confirmPass.value) {
       notyf.error("Passwords do not match.");
       submitEnabled.value = false;
@@ -70,7 +69,7 @@
     <h1 class="my-5 text-center">Register</h1>
     <div class="row d-flex justify-content-center">
       <div class="col-md-6 border rounded-3 mx-auto p-5">
-        <form v-on:submit="handleSubmit">
+        <form @submit.prevent="handleSubmit">
           <div class="mb-3">
             <label for="fName" class="form-label">First Name</label>
             <input type="text" class="form-control" id="fName" placeholder="Enter your first name..." v-model="firstName" required />

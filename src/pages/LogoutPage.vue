@@ -17,3 +17,6 @@ onBeforeMount(()=>{
 })
 
 </script>
+
+<template>
+</template>

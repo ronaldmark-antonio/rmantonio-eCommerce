@@ -1,5 +1,40 @@
+<script setup>
+  import { defineProps } from "vue";
+  import { useRouter } from "vue-router";
+  import { Notyf } from "notyf";
+  import "notyf/notyf.min.css";
+  import api from "../api";
+
+  const props = defineProps({
+    productsData: Array,
+  });
+
+  const router = useRouter();
+  const notyf = new Notyf();
+
+  function goToEdit(id) {
+    router.push(`/products/edit/${id}`);
+  };
+
+  async function archiveProduct(product) {
+    try {
+      let res = await api.patch(`/products/${product._id}/archive`)
+      if (res.status === 200) {
+        product.isActive = false;
+        notyf.success("Product archived.");
+      } else {
+        notyf.error("Failed to archive product");
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+      notyf.error("Server error: Could not archive product");
+    }
+  };
+
+</script>
+
 <template>
-  <h1 class="text-center text-primary mt-5">Admin Dashboard</h1>
+  <h1 class="text-center text-primary my-5">Admin Dashboard</h1>
   <table class="table table-striped border">
     <thead>
       <tr>
@@ -30,7 +65,7 @@
           <button
             class="btn btn-danger"
             :disabled="!product.isActive"
-            @click="archiveproduct(product)"
+            @click="archiveProduct(product)"
           >
             {{ product.isActive ? "Archive" : "Archived" }}
           </button>
@@ -39,67 +74,3 @@
     </tbody>
   </table>
 </template>
-
-<script setup>
-import { defineProps } from "vue";
-import { useRouter } from "vue-router";
-import { Notyf } from "notyf";
-import "notyf/notyf.min.css";
-
-const props = defineProps({
-  productsData: Array,
-});
-
-const router = useRouter();
-const notyf = new Notyf();
-
-// Navigate to edit page
-const goToEdit = (id) => {
-  router.push(`/products/${id}/edit`);
-};
-
-// Archive product using DELETE method
-const archiveproduct = async (product) => {
-  const token = localStorage.getItem("token");
-  if (!token) return notyf.error("You must be logged in as admin");
-
-  try {
-    const response = await fetch(`http://localhost:4000/products/${product._id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-    });
-
-    let data;
-    const contentType = response.headers.get("content-type");
-
-    if (contentType?.includes("application/json")) {
-      data = await response.json();
-    } else {
-      const text = await response.text();
-      data = { message: text };
-    }
-
-    if (response.status === 200) {
-      if (data.success) {
-        notyf.success(data.message || "product Archived Successfully");
-        // Update local product object to reflect change
-        product.isActive = false;
-      } else if (data.message === "product already archived") {
-        notyf.warning(data.message);
-      }
-    } else if (response.status === 404) {
-      notyf.error(data.message || "product not found");
-    } else {
-      notyf.error(data.message || "Failed to archive product");
-    }
-
-  } catch (error) {
-    console.error("Fetch error:", error);
-    notyf.error("Server error: Could not archive product");
-  }
-};
-
-</script>

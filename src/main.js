@@ -12,11 +12,11 @@ import RegisterPage from './pages/RegisterPage.vue';
 import LoginPage from './pages/LoginPage.vue'
 import ProductsPage from './pages/ProductsPage.vue'
 import ProductDetails from './pages/ProductDetails.vue';
+import EditProduct from './pages/EditProduct.vue';
 import LogoutPage from './pages/LogoutPage.vue';
 import CartPage from './pages/CartPage.vue';
 import OrdersPage from './pages/OrdersPage.vue';
 import ProfilePage from './pages/ProfilePage.vue';
-
 
 import { createRouter, createWebHistory } from 'vue-router';
 
@@ -41,6 +41,10 @@ const router = createRouter({
     {   
         path: "/products/:productId",
         component: ProductDetails
+    },
+    {   
+        path: "/products/edit/:productId",
+        component: EditProduct
     },
     {
         path: '/logout',
