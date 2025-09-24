@@ -1,7 +1,6 @@
 <script>
-import productsData from '../data/productsData.js';
 import api from '../api.js';
-import { ref, reactive, onMounted, onBeforeMount, watch } from 'vue';
+import { reactive, watch } from 'vue';
 import ProductComponent from '../components/ProductComponent.vue';
 
 import UserView from '../components/UserView.vue';

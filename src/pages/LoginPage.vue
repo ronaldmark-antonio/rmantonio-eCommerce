@@ -25,17 +25,12 @@ watch([email,password], (currentValue, oldValue) => {
 
 });
  
-async function handleSubmit(e){
-	e.preventDefault();
-
+async function handleSubmit(){
 	try {
-
 		let res = await api.post('/users/login', {
 			email: email.value,
 			password: password.value
 		})
-
-		console.log(res);
 
 		if(res.data){
 
@@ -47,14 +42,12 @@ async function handleSubmit(e){
 			email.value = "";
 			password.value = "";
 
-			router.push({ path: '/products' });
+			router.push({ path: '/' });
 
 		}
 	}
 
-	catch(err){
-		console.log(err);
-              
+	catch(err){              
 		if(err.response.status === 404 || err.response.status === 401 || err.response.status === 400){
 			notyf.error(err.response.data.error);
 		} else {
@@ -76,7 +69,7 @@ onBeforeMount(()=> {
 	    <h1 class="my-5 pt-3 text-center">Login</h1> 
 	    <div class="row d-flex justify-content-center">
 	        <div class="col-md-5 border border rounded-3 mx-auto p-5">
-	            <form v-on:submit="handleSubmit">
+	            <form @submit.prevent="handleSubmit">
 	                <div class="mb-3">
 	                    <label for="emailInput" class="form-label">Email Address</label>
 	                    <input type="email" class="form-control" placeholder ="Enter your email address" id="emailInput" v-model="email" />
