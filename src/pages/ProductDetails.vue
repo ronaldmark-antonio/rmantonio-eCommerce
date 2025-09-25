@@ -20,6 +20,31 @@ onBeforeMount(async () => {
 
     product.data = data;
 });
+
+async function addToCart() {
+
+  const subtotal  = product.data.price * quantity.value;
+  
+  const payload = {
+    productId: product.data._id,
+    quantity: quantity.value,
+    subtotal : subtotal 
+  };
+
+  try {
+    const res = await api.post('/cart/add-to-cart', payload, {
+      headers: {
+        Authorization: `Bearer ${user.token}`
+      }
+    });
+
+    notyf.success("Added to Cart.");
+  
+  } catch (error) {
+    console.error("Fetch error:", error);
+    notyf.error("Server error: Failed to Add to Cart.");
+  }
+}
 </script>
 
 <template>
@@ -64,10 +89,8 @@ onBeforeMount(async () => {
                 			<button class="btn btn-primary" type="button" @click="quantity++">+</button>
                 		</div>
 
-                		<router-link to="/login" class="btn btn-outline-primary mt-4" type="button" v-if="!user.email">Login to Add to cart
-                </router-link>
-                <router-link to="/?" class="btn btn-primary mt-4" type="button" v-else>Add to Cart
-                </router-link>
+                		<router-link to="/login" class="btn btn-outline-success mt-4" type="button" v-if="!user.email">Login to Add to cart</router-link>
+                        <button class="btn btn-sm btn-success my-3" v-else @click="addToCart">Add to Cart</button>
                 	</div>
             </div>
         </div>

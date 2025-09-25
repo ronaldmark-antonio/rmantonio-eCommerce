@@ -64,7 +64,7 @@
           <td class="text-start">{{ product.name }}</td>
           <td class="text-start">&#8369;{{ product.price.toLocaleString() }}</td>
           <td>{{ product.quantity }}</td>
-          <td>&#8369;{{ product.subtotal }}</td>
+          <td>&#8369;{{ product.subtotal.toLocaleString() }}</td>
           <td>
             <button class="btn btn-sm btn-danger w-100" @click="removeProduct(product._id)">
               Remove
@@ -73,13 +73,11 @@
         </tr>
         <tr>
           <td colspan="3"><button class="btn btn-sm btn-success" @click="checkoutAll">Checkout</button></td>
-          <td colspan="2">?</td>
+          <td colspan="2"><p>?</p></td>
         </tr>
       </tbody>
     </table>
-     <button class="btn btn-sm btn-danger" @click="clearCart">Clear Cart</button>
-  </div>
-  <div v-else>
-    Were you planning to shop on company time? Get back to work admin!
+
+     <button  v-if="productData.length !== 0" class="btn btn-sm btn-danger" @click="clearCart">Clear Cart</button>
   </div>
 </template>
