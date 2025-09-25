@@ -29,24 +29,24 @@ const email = ref("")
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav ms-auto align-items-lg-center gap-3">
           <router-link :to="{ name: 'Products' }" 
-            class="nav-link fw-bold text-primary">Products</router-link>
+            class="nav-link fw-semibold text-success">Products</router-link>
            <router-link :to="{ name: 'Cart' }" 
-            class="nav-link fw-bold text-primary"
+            class="nav-link fw-semibold text-success"
             v-if="user.email" >Cart</router-link>
            <router-link :to="{ name: 'Orders' }" 
-            class="nav-link fw-bold text-primary" 
+            class="nav-link fw-semibold text-success" 
             v-if="user.email" >Orders</router-link>
            <router-link :to="{ name: 'Profile' }" 
-            class="nav-link fw-bold text-primary" 
+            class="nav-link fw-semibold text-success" 
             v-if="user.email" >Profile</router-link>
            <router-link :to="{ name: 'Register' }" 
-            class="nav-link fw-bold text-primary" 
+            class="nav-link fw-semibold text-success" 
             v-if="!user.email" >Register</router-link>
           <router-link :to="{ name: 'Login' }" 
-            class="nav-link fw-bold text-primary" 
+            class="nav-link fw-semibold text-success" 
             v-if="!user.email">Login</router-link>
            <router-link :to="{ name: 'Logout' }" 
-            class="nav-link fw-bold text-primary" 
+            class="nav-link fw-semibold text-success" 
             v-else>Logout</router-link>
         </div>
       </div>

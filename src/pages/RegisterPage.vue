@@ -183,7 +183,7 @@ async function handleSubmit(e) {
                 </div>
         </form>
         <h6 class="text-center p-3 mb-1">Already have an account? 
-      <RouterLink to="/login">Click here</RouterLink> to log in.</h6>
+      <RouterLink to="/login" class="text-success">Click here</RouterLink> to log in.</h6>
       </div>
     </div>
   </div>

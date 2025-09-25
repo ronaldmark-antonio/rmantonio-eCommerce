@@ -107,7 +107,7 @@ async function handleSubmit(){
                 </div>
             </form>
             <h6 class="text-center mt-3">Don't have an account yet? 
-    <RouterLink to="/register">Click here</RouterLink> to register.</h6>
+    <RouterLink to="/register" class="text-success">Click here</RouterLink> to register.</h6>
         </div>
     </div>
 </div>
