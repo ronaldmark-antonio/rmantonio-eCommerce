@@ -32,7 +32,7 @@ const email = ref("")
             class="nav-link fw-semibold text-success">Products</router-link>
            <router-link :to="{ name: 'Cart' }" 
             class="nav-link fw-semibold text-success"
-            v-if="user.email" >Cart</router-link>
+            v-if="user.email && user.isAdmin === false" >Cart</router-link>
            <router-link :to="{ name: 'Orders' }" 
             class="nav-link fw-semibold text-success" 
             v-if="user.email" >Orders</router-link>

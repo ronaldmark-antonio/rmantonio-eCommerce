@@ -95,7 +95,7 @@ async function handleSubmit(e) {
                           type="text" 
                           class="form-control" 
                           id="fName" 
-                          placeholder="Enter your first name..." 
+                          placeholder="Enter your first name" 
                           v-model="firstName" 
               required />
                     </div>
@@ -109,7 +109,7 @@ async function handleSubmit(e) {
                           type="text" 
                           class="form-control" 
                           id="lName" 
-                          placeholder="Enter your last name..." 
+                          placeholder="Enter your last name" 
                           v-model="lastName" 
                           required/>
                     </div>
@@ -123,7 +123,7 @@ async function handleSubmit(e) {
                           type="text" 
                           class="form-control" 
                           id="mobile" 
-                          placeholder="Enter your mobile number..." 
+                          placeholder="Enter your mobile number" 
                           v-model="mobileNum" 
                           required />
                     </div>
@@ -137,7 +137,7 @@ async function handleSubmit(e) {
                           type="email" 
                           class="form-control" 
                           id="emailInput"
-                          placeholder="Enter your email..." 
+                          placeholder="Enter your email address" 
                           v-model="email" 
                           required/>
                     </div>
@@ -151,7 +151,7 @@ async function handleSubmit(e) {
                           type="password" 
                           class="form-control" 
                           id="passwordInput" 
-                          placeholder="Enter your password..." 
+                          placeholder="Enter your password" 
                           v-model="password" 
                           required />
                     </div>
@@ -165,7 +165,7 @@ async function handleSubmit(e) {
                           type="password" 
                           class="form-control" 
                           id="cpasswordInput"  
-                          placeholder="Confirm your password..." 
+                          placeholder="Confirm your password" 
                           v-model="confirmPass" 
                           required />
                     </div>
