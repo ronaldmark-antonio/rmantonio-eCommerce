@@ -1,44 +1,85 @@
-<script>
-import api from '../api.js';
-import { reactive, watch } from 'vue';
-import CartComponent from '../components/CartComponent.vue';
-import CartView from '../components/CartView.vue';
-import { useGlobalStore } from '../stores/global.js';
+<script setup>
+  import { onBeforeMount, reactive, ref } from 'vue';
+  import { useGlobalStore } from '../stores/global';
+  import api from '@/api';
 
-export default {
- components: {
-    CartComponent,
-    CartView
-  },
-  setup() {
 
   const { user } = useGlobalStore();
-  const cart = reactive({data:[]})
+  const cart = reactive({
+    userId: "",
+    cartItems: [],
+    totalPrice: 0
+  });
+  const productData = ref([]);
 
-  watch([user], async () => {
-      if (!user.isLoading) {
-        try {
-          if (user.email) {
-              let response = await api.get('/cart/get-cart');
-              cart.data = response.data;
+  async function loadProducts(cartItems) {
+    const results = await Promise.all(
+        cartItems.map(async (product) => {
+          let res = await api.get(`/products/${product.productId}`);
+          return {
+            _id: product.productId,
+            name: res.data.name,
+            price: res.data.price,
+            quantity: product.quantity,
+            subtotal: product.subtotal,
           }
-        } catch (err) {
-            console.error("Error fetching cart:", err);
-        }
-      }
-    }, { immediate: true });
+        })
+      );
 
-        return {
-          cart,
-          user
-        }
+    productData.value = results;
+    console.log(productData.value);
+  }
+
+  onBeforeMount(async () => {
+    if (!user.isAdmin) {
+      try {
+        let res = await api.get("/cart/get-cart");
+        cart.userId = res.data.cart.userId;
+        cart.cartItems = res.data.cart.cartItems;
+        cart.totalPrice = res.data.cart.totalPrice;
+
+        loadProducts(cart.cartItems)
+      } catch (err) {
+        console.error(err);
+      }
     }
-}
+  });
 </script>
 
 <template>
-  <div class="container">
-    <p v-if="user.isLoading">Loading...</p>
-    <CartView v-if="!user.isAdmin && !user.isLoading" :cartData="cart.data" />
+  <div v-if="!user.isAdmin" class="container my-5">
+    <h1 class="text-center mb-4">Your Shopping Cart</h1>
+    <table class="table table-bordered">
+      <thead class="table-primary">
+        <tr>
+          <th style="width: 200px;">Name</th>
+          <th style="width: 200px;">Price</th>
+          <th style="width: 50px;">Quantity</th>
+          <th style="width: 130px;">Subtotal</th>
+          <th style="width: 130px;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="product in productData" :key="product._id">
+          <td class="text-start">{{ product.name }}</td>
+          <td class="text-start">&#8369;{{ product.price.toLocaleString() }}</td>
+          <td>{{ product.quantity }}</td>
+          <td>&#8369;{{ product.subtotal }}</td>
+          <td>
+            <button class="btn btn-sm btn-danger w-100" @click="removeProduct(product._id)">
+              Remove
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3"><button class="btn btn-sm btn-success" @click="checkoutAll">Checkout</button></td>
+          <td colspan="2">?</td>
+        </tr>
+      </tbody>
+    </table>
+     <button class="btn btn-sm btn-danger" @click="clearCart">Clear Cart</button>
+  </div>
+  <div v-else>
+    Were you planning to shop on company time? Get back to work admin!
   </div>
 </template>
