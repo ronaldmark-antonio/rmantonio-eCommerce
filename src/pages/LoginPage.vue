@@ -64,43 +64,52 @@ async function handleSubmit(){
 
 <template>
 	<div class="container-fluid">
-	    <h1 class="my-5 pt-3 text-center">Login</h1> 
-	    <div class="row d-flex justify-content-center">
-	        <div class="col-md-5 border border rounded-3 mx-auto p-5">
-	            <form @submit.prevent="handleSubmit">
-	                <div class="mb-3">
-	                    <label for="emailInput" class="form-label">Email Address</label>
-	                    <input 
-	                    	type="email" 
-	                    	class="form-control" 
-	                    	placeholder ="Enter your email address" 
-	                    	id="emailInput" 
-	                    	v-model="email" />
-	                </div>
-	                <div class="mb-3">
-	                    <label for="passwordInput" class="form-label">Password</label>
-	                    <input 
-		                    type="password" 
-		                    class="form-control" 
-		                    placeholder ="Enter your password" 
-		                    id="passwordInput" 
-		                    v-model="password" />
-	                </div>
-	                <div class="d-grid mt-5">
-	                	<button 
-		                	type="submit" 
-		                	class="btn btn-primary btn-block"  
-		                	v-if="isEnabled">Submit</button>
-                		
-                		<button 
-	                		type="submit" 
-	                		class="btn btn-danger btn-block" 
-	                		disabled v-else>Submit</button>
-	                </div>
-	            </form>
-	        </div>
-	    </div>
+    <div class="row d-flex justify-content-center p-5">
+        <div class="col-md-5 border border rounded-2 p-5">
+        	<h1 class="text-center">Login</h1> 
+            <form @submit.prevent="handleSubmit">
+                <div class="mb-2">
+                    <label for="emailInput" class="form-label">Email Address:</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                        <input 
+                            type="email" 
+                            class="form-control" 
+                            placeholder="Enter your email address" 
+                            id="emailInput" 
+                            v-model="email" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="passwordInput" class="form-label">Password:</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input 
+                            type="password" 
+                            class="form-control" 
+                            placeholder="Enter your password" 
+                            id="passwordInput" 
+                            v-model="password" />
+                    </div>
+                </div>
+
+                <div class="d-grid mt-2">
+                    <button 
+                        type="submit" 
+                        class="btn btn-success btn-block"  
+                        v-if="isEnabled">Submit</button>
+                    
+                    <button 
+                        type="submit" 
+                        class="btn btn-success btn-block" 
+                        disabled v-else>Submit</button>
+                </div>
+            </form>
+            <h6 class="text-center mt-3">Don't have an account yet? 
+    <RouterLink to="/register">Click here</RouterLink> to register.</h6>
+        </div>
     </div>
-    <h5 class="text-center p-3">Don't have an account yet? 
-    	<RouterLink to="/register">Click here</RouterLink> to register.</h5>
+</div>
+
 </template>

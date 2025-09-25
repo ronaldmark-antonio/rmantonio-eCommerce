@@ -57,7 +57,7 @@ async function activateProduct(product) {
     </div>
   </div>
 
-  <table class="table table-striped table-bordered table-hover align-middle text-center">
+  <table class="table table-bordered table-hover align-middle text-center">
   <thead class="table-primary">
     <tr>
       <th style="width: 200px;">Name</th>
