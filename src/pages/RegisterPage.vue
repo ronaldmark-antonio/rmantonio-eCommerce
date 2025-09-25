@@ -83,7 +83,7 @@ async function handleSubmit(e) {
 <template>
   <div class="container-fluid">
     <div class="row d-flex justify-content-center p-5">
-      <div class="col-md-5 border border rounded-2 p-5">
+      <div class="col-md-5 register-card apple-shadow p-5">
         <h1 class="my-3 text-center">Register</h1>
         <form @submit.prevent="handleSubmit">
           <!-- First Name Field -->
@@ -182,9 +182,26 @@ async function handleSubmit(e) {
                   disabled v-else>Submit</button>
                 </div>
         </form>
-        <h6 class="text-center p-3 mb-1">Already have an account? 
-      <RouterLink to="/login" class="text-success">Click here</RouterLink> to log in.</h6>
+        <p class="text-center p-3 mb-1">Already have an account? 
+      <RouterLink to="/login" class="text-success">Click here</RouterLink> to log in.</p>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.apple-shadow {
+  box-shadow:
+    0 10px 15px rgba(0, 0, 0, 0.08),
+    0 4px 6px rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  background-color: #ffffff;
+}
+
+.apple-shadow:hover {
+  box-shadow:
+    0 15px 25px rgba(0, 0, 0, 0.1),
+    0 5px 10px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s ease-in-out;
+}
+</style>

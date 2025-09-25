@@ -45,7 +45,6 @@ async function activateProduct(product) {
     notyf.error("Server error: Could not activate product.");
   }
 }
-
 </script>
 
 <template>
@@ -57,37 +56,62 @@ async function activateProduct(product) {
     </div>
   </div>
 
-  <table class="table table-bordered table-hover align-middle text-center">
-  <thead class="table-primary">
-    <tr>
-      <th style="width: 200px;">Name</th>
-      <th>Description</th>
-      <th style="width: 120px;">Price</th>
-      <th style="width: 130px;">Availability</th>
-      <th colspan="2" style="width: 200px;">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr v-for="product in productsData" :key="product._id">
-      <td class="text-start">{{ product.name }}</td>
-      <td class="text-start">{{ product.description }}</td>
-      <td>&#8369;{{ product.price.toLocaleString() }}</td>
-      <td>
-        <span v-if="product.isActive" class="badge bg-success">Available</span>
-        <span v-else class="badge bg-danger">Unavailable</span>
-      </td>
-      <td>
-        <button class="btn btn-sm btn-primary w-100" @click="updateProduct(product._id)">
-          Update
-        </button>
-      </td>
-      <td>
-        <button class="btn btn-sm btn-danger w-100" v-if="product.isActive" @click="archiveProduct(product)">Disable</button>
-        <button class="btn btn-sm btn-success w-100" v-else @click="activateProduct(product)">Activate</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
+  <div class="apple-shadow p-4">
+    <table class="table table-bordered table-hover align-middle text-center">
+      <thead>
+        <tr>
+          <th style="width: 200px;">Name</th>
+          <th>Description</th>
+          <th style="width: 120px;">Price</th>
+          <th style="width: 130px;">Availability</th>
+          <th colspan="2" style="width: 200px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="product in productsData" :key="product._id" class="apple-table-row">
+          <td class="text-start">{{ product.name }}</td>
+          <td class="text-start">{{ product.description }}</td>
+          <td>&#8369;{{ product.price.toLocaleString() }}</td>
+          <td>
+            <span v-if="product.isActive" class="badge bg-success">Available</span>
+            <span v-else class="badge bg-danger">Unavailable</span>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-primary w-100 apple-btn" @click="updateProduct(product._id)">
+              Update
+            </button>
+          </td>
+          <td>
+            <button
+              class="btn btn-sm w-100 apple-btn"
+              :class="product.isActive ? 'btn-danger' : 'btn-success'"
+              @click="product.isActive ? archiveProduct(product) : activateProduct(product)"
+            >
+              {{ product.isActive ? 'Disable' : 'Activate' }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
+
+<style scoped>
+.apple-shadow {
+  box-shadow:
+    0 10px 15px rgba(0, 0, 0, 0.08),
+    0 4px 6px rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  background-color: #ffffff;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.apple-shadow:hover {
+  box-shadow:
+    0 15px 25px rgba(0, 0, 0, 0.1),
+    0 5px 10px rgba(0, 0, 0, 0.08);
+}
+</style>
+
+
 

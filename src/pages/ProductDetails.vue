@@ -59,12 +59,7 @@ async function addToCart() {
         </nav>
         <div class="row mx-auto my-3 gap-4 gap-md-0" v-if="product.data">
             <div class="col-12 col-md-6">
-                <img
-                    class="img-fluid rounded"
-                    :src="`https://placehold.co/600x400/377399/ffffff?font=lora&text=${encodeURIComponent(
-                        product.data.name
-                    )}`"
-                />
+            <img class="img-fluid rounded apple-shadow apple-hover" :src="`https://placehold.co/600x400/ffffff/000000?font=lora&text=${encodeURIComponent(product.data.name)}`"/>
             </div>
             <div class="col-12 col-md-6">
                 <div class="d-flex">
@@ -73,24 +68,35 @@ async function addToCart() {
                 <p class="mb-3">
                     {{ product.data.description }}
                 </p>
-                <p class="fw-semibold text-primary">Price: &#8369;{{ product.data.price.toLocaleString() }}</p>
+                <p class="fw-semibold">Price: &#8369;{{ product.data.price.toLocaleString() }}</p>
 
                 <div class="mb-2">
                 	<label for="quantity" class="form-label">Quantity:</label>
-                	<div class="input-group" style="width: 150px;">
-                		<button class="btn btn-primary" type="button" @click="quantity--" :disabled="quantity <= 1">-</button>
-                			<input
-                			type="number"
-                			class="form-control text-center"
-                			id="quantity"
-                			v-model="quantity"
-                			min="1" 
-                			/>
-                			<button class="btn btn-primary" type="button" @click="quantity++">+</button>
-                		</div>
+                	<div class="input-group input-group-sm" style="width: 110px;">
+                      <button
+                        class="btn btn-dark"
+                        type="button"
+                        @click="quantity = Math.max(1, quantity - 1)"
+                        :disabled="quantity <= 1"
+                      >-</button>
 
-                		<router-link to="/login" class="btn btn-outline-success mt-4" type="button" v-if="!user.email">Login to Add to cart</router-link>
-                        <button class="btn btn-sm btn-success my-3" v-else @click="addToCart">Add to Cart</button>
+                      <input
+                        type="number"
+                        class="form-control text-center"
+                        id="quantity"
+                        v-model.number="quantity"
+                        min="1"
+                        style="max-width: 50px;"
+                        @input="validateQuantity"
+                      />
+                      <button
+                        class="btn btn-dark"
+                        type="button"
+                        @click="quantity++"
+                      >+</button>
+                    </div>
+            		<router-link to="/login" class="btn btn-outline-success mt-4" type="button" v-if="!user.email">Login to Add to cart</router-link>
+                    <button class="btn btn-sm btn-success my-3" v-else @click="addToCart">Add to Cart</button>
                 	</div>
             </div>
         </div>
@@ -102,15 +108,30 @@ async function addToCart() {
 </template>
 
 <style scoped>
-  input[type=number]::-webkit-outer-spin-button,
-  input[type=number]::-webkit-inner-spin-button {
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
-  }
+}
 
-  /* Firefox */
-  input[type=number] {
+/* Firefox */
+input[type=number] {
     -moz-appearance: textfield;
     appearance: textfield;
-  }
+}
+
+.apple-shadow {
+    box-shadow:
+      0 10px 15px rgba(0, 0, 0, 0.08),
+      0 4px 6px rgba(0, 0, 0, 0.06);
+    border-radius: 16px;
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+    border: none;
+}
+
+.apple-hover:hover {
+    box-shadow:
+      0 20px 30px rgba(0, 0, 0, 0.1),
+      0 8px 15px rgba(0, 0, 0, 0.08);
+}
 </style>
