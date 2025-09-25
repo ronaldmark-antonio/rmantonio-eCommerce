@@ -2,15 +2,18 @@
   import { onBeforeMount, reactive, ref } from 'vue';
   import { useGlobalStore } from '../stores/global';
   import api from '@/api';
+  import { Notyf } from 'notyf';
 
 
   const { user } = useGlobalStore();
+  const notyf = new Notyf
   const cart = reactive({
     userId: "",
     cartItems: [],
     totalPrice: 0
   });
   const productData = ref([]);
+  const originalQuantities = ref({});
 
   async function loadProducts(cartItems) {
     const results = await Promise.all(
@@ -27,7 +30,46 @@
       );
 
     productData.value = results;
-    console.log(productData.value);
+    originalQuantities.value = results.reduce((entries, product) => {
+        entries[product._id] = product.quantity;
+        return entries;
+      }, {}
+    );
+  }
+
+  const getTotal = () => {
+    return productData.value.reduce((total, product) => {
+      total += product.quantity * product.price;
+      return total;
+    }, 0)
+  }
+
+  const hasEdits = () => {
+    return productData.value.some(
+      (product) => product.quantity !== originalQuantities.value[product._id]
+    );
+  }
+
+  async function updateCart() {
+    try {
+      let updatedProducts = productData.value.filter((product) => product.quantity !== originalQuantities.value[product._id])
+      updatedProducts.forEach(async (product) => {
+        await api.patch("/cart/update-cart-quantity", {
+          productId: product._id,
+          newQuantity: product.quantity
+        });
+      });
+
+      originalQuantities.value = productData.value.reduce((entries, product) => {
+          entries[product._id] = product.quantity;
+          return entries;
+        }, {}
+      );
+      notyf.success("Cart updated!")
+    } catch (error) {
+      notyf.error("Server error")
+      console.error(error)
+    }
   }
 
   onBeforeMount(async () => {
@@ -63,8 +105,15 @@
         <tr v-for="product in productData" :key="product._id">
           <td class="text-start">{{ product.name }}</td>
           <td class="text-start">&#8369;{{ product.price.toLocaleString() }}</td>
-          <td>{{ product.quantity }}</td>
-          <td>&#8369;{{ product.subtotal }}</td>
+          <td>
+          <input
+            type="number"
+            min="1"
+            v-model.number="product.quantity"
+            @blur="() => {if (!product.quantity || product.quantity < 1) product.quantity = 1}"
+            class="form-control form-control-sm">
+          </td>
+          <td>&#8369;{{ product.price * product.quantity }}</td>
           <td>
             <button class="btn btn-sm btn-danger w-100" @click="removeProduct(product._id)">
               Remove
@@ -73,11 +122,12 @@
         </tr>
         <tr>
           <td colspan="3"><button class="btn btn-sm btn-success" @click="checkoutAll">Checkout</button></td>
-          <td colspan="2">?</td>
+          <td colspan="2"><h4>Total: &#8369;{{ getTotal() }} {{ hasEdits()? " (unsaved)":"" }}</h4></td>
         </tr>
       </tbody>
     </table>
-     <button class="btn btn-sm btn-danger" @click="clearCart">Clear Cart</button>
+    <button v-if="hasEdits()" class="btn btn-sm btn-success mx-2" @click="updateCart">Update Cart</button>
+    <button class="btn btn-sm btn-danger" @click="clearCart">Clear Cart</button>
   </div>
   <div v-else>
     Were you planning to shop on company time? Get back to work admin!
