@@ -16,16 +16,34 @@
 </ul>
 
 <h3>Features by Student-1</h3>
+<h3>Register Page</h3> 
+<h3>Admin Dashboard Page:</h3> 
 <ul>
-	<li><h3>Register Page</h3></li>
-	<li><h3>Admin Dashboard Page: Update Product Information, Deactivate/reactivate product</h3></li>
-	<li><h3>Cart View Page: Update quantity, Subtotal for each item, Total price for all items</h3></li>
+	<li>Update Product Information</li>
+	<li>Deactivate/reactivate product</li>
+</ul>
+<h3>Cart View Page:</h3> 
+<ul>
+	<li>Update quantity</li>
+	<li>Subtotal for each item</li>
+	<li>Total price for all items</li>
+	<li>Get All Cart</li>
 </ul>
 
 <h3>Features by Student-2</h3>
+<h3>Login Page</h3> 
+<h3>Products Catalog</h3>
+<h3>Admin Dashboard Page:</h3> 
 <ul>
-	<li><h3>Login Page</h3></li>
-	<li><h3>Products Catalog</h3></li>
-	<li><h3>Admin Dashboard Page: Create Product, Retrieve all products</h3></li>
-	<li><h3>Cart View Page: Add to Cart, Get All Cart, Remove Item from cart, Clear all items from cart</h3></li>
-</ul>
+	<li>Create Product</li>
+	<li>Retrieve all products</li>
+</ul> 
+<h3>Cart View Page::</h3> 
+<ul>
+	<li>Add to Cart</li>
+	<li>Remove Item from cart</li>
+	<li>Clear all items from cart</li>
+</ul> 
+
+
+
