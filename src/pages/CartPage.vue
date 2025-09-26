@@ -79,42 +79,42 @@ async function updateCart() {
   }
 }
 
+async function removeProduct(productId) {
+  try {
+    await api.patch(`/cart/${productId}/remove-from-cart`);
+
+    productData.value = productData.value.filter(product => product._id !== productId);
+    originalQuantities.value = productData.value.reduce((acc, product) => {
+      acc[product._id] = product.quantity;
+      return acc;
+    }, {});
+
+    notyf.success("Product removed from cart");
+  } catch (error) {
+    console.error("Failed to remove product:", error);
+    notyf.error("Failed to remove product");
+  }
+}
+
 async function clearCart() {
 if (confirm("Do you really want to clear your cart?")) {
   try {
-    let res = await api.put("/cart/clear-cart");
-    if (res.status === 200) {
-      notyf.success("Cart cleared.");
-      router.push("/products")
-    }
+    await api.put('/cart/clear-cart');
+
+    productData.value = [];
+    originalQuantities.value = {};
+
+    notyf.success("Cart cleared");
   } catch (error) {
-    notyf.error("server error in clearing cart.");
-    console.error(error);
+    console.error("Failed to clear cart:", error);
+    notyf.error("Failed to clear cart");
   }
 }
-}
-
-async function removeProduct(productId) {
-  try {
-    const { status } = await api.patch(`/cart/${productId}/remove-from-cart`);
-    if (status !== 200) return notyf.error("Failed to remove product.");
-      productData.value = productData.value.filter(p => p._id !== productId);
-      originalQuantities.value = Object.fromEntries(productData.value.map(p => [p._id, p.quantity]));
-
-      notyf.success("Product removed from cart.");
-  } catch (err) {
-      console.error("Remove error:", err);
-      notyf.error("Server error while removing product.");
-  }
 }
 
 onBeforeMount(async () => {
   if (!user.token || !user.email) {
     return router.replace("/login");
-  }
-
-  if (user.isAdmin) {
-    return router.replace("/products");
   }
 
   try {
@@ -126,12 +126,12 @@ onBeforeMount(async () => {
     await loadProducts(cart.cartItems);
   } catch (err) {
     if (err.response?.status === 404) {
-        noCart.value = true;
+      noCart.value = true;
     } else {
-        console.error("Error loading cart:", err);
+      console.error("Cart fetch error:", err);
     }
   } finally {
-      loading.value = false;
+    loading.value = false;
   }
 });
 

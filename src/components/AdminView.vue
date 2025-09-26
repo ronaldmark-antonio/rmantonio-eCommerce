@@ -66,9 +66,9 @@ async function activateProduct(product) {
         </RouterLink>
       </div>
     </div>
-    <div v-if="productsData.length === 0" class="text-center">
+    <div v-if="productsData.length === 0" class="text-center my-5">
       <h3>Your Product Catalog is Empty</h3>
-      <p class="text-muted">Looks like you're just getting started. Click "Add Product" to begin building your store!</p>
+      <p class="text-dark">Looks like you're just getting started. Click "Add Product" to begin building your store!</p>
     </div>
     <table
       v-else
