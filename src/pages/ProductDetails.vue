@@ -74,7 +74,7 @@ async function addToCart() {
                 	<label for="quantity" class="form-label">Quantity:</label>
                 	<div class="input-group input-group-sm" style="width: 110px;">
                       <button
-                        class="btn btn-dark"
+                        class="btn btn-success"
                         type="button"
                         @click="quantity = Math.max(1, quantity - 1)"
                         :disabled="quantity <= 1"
@@ -90,7 +90,7 @@ async function addToCart() {
                         @input="validateQuantity"
                       />
                       <button
-                        class="btn btn-dark"
+                        class="btn btn-success"
                         type="button"
                         @click="quantity++"
                       >+</button>
