@@ -3,9 +3,11 @@ import { onBeforeMount, reactive, ref } from 'vue';
 import { useGlobalStore } from '../stores/global';
 import api from '@/api';
 import { Notyf } from 'notyf';
+import { useRouter } from 'vue-router';
 
 const loading = ref(true);
 const { user } = useGlobalStore();
+const router = useRouter();
 const notyf = new Notyf
 const cart = reactive({
   userId: "",
@@ -14,6 +16,7 @@ const cart = reactive({
 });
 const productData = ref([]);
 const originalQuantities = ref({});
+const noCart = ref(false)
 
 async function loadProducts(cartItems) {
   const results = await Promise.all(
@@ -51,6 +54,7 @@ const hasEdits = () => {
 }
 
 async function updateCart() {
+  loading.value = true;
   try {
     let updatedProducts = productData.value.filter((product) => product.quantity !== originalQuantities.value[product._id])
     updatedProducts.forEach(async (product) => {
@@ -69,6 +73,23 @@ async function updateCart() {
   } catch (error) {
     notyf.error("Server error")
     console.error(error)
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function clearCart() {
+  if (confirm("Do you really want to clear your cart?")) {
+    try {
+      let res = await api.put("/cart/clear-cart");
+      if (res.status === 200) {
+        notyf.success("Cart cleared.");
+        router.push("/products")
+      }
+    } catch (error) {
+      notyf.error("erver error in clearing cart.");
+      console.error(error);
+    }
   }
 }
 
@@ -82,7 +103,9 @@ onBeforeMount(async () => {
 
       await loadProducts(cart.cartItems);
     } catch (err) {
-      console.error(err);
+      if (err.response.status === 404) {
+        noCart.value = true
+      }
     } finally {
     loading.value = false;
   }
@@ -93,8 +116,8 @@ onBeforeMount(async () => {
 <template>
   <div v-if="!user.isAdmin" class="container my-5">
     <h1 class="text-center mb-4">Your Shopping Cart</h1>
-    <p class="text-center" v-if="!loading && productData.length === 0">Your cart is empty. Please Add to cart in our products</p>
-    <table class="table table-bordered" v-else-if="!loading && productData.length > 0">
+    <p class="text-center" v-if="loading || productData.length === 0 || noCart">Your cart is empty. Products you add to your cart will appear here.</p>
+    <table class="table table-bordered" v-else>
       <thead class="table-primary">
         <tr>
           <th style="width: 200px;">Name</th>
@@ -161,5 +184,6 @@ input[type="number"]::-webkit-outer-spin-button {
 
 input[type="number"] {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 </style>
