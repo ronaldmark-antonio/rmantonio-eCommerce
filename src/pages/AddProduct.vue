@@ -15,6 +15,9 @@ const description = ref("");
 const price = ref("");
 const isEnabled = ref(false);
 
+const formattedPrice = ref('');
+
+
 watch([name, description, price], (currentValue, oldValue) => {
   if (currentValue.every(input => input)) {
     isEnabled.value = true;
@@ -73,79 +76,114 @@ async function addProduct(e) {
     notyf.error("Server error: Could not add product");
   }
 }
+
+function formatPrice() {
+  let digits = formattedPrice.value.replace(/[^\d]/g, '');
+  let withCommas = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  formattedPrice.value = withCommas;
+  price.value = parseInt(digits) || 0;
+}
 </script>
 
 <template>
   <div class="container-fluid my-5">
     <div class="row d-flex justify-content-center">
       <div class="col-md-8">
-        <!-- Card for the form -->
-        <div class="card shadow-sm rounded-3">
-          <div class="card-body">
-            <h3 class="card-title mb-4 text-center">Add Product</h3>
+        <div class="apple-shadow p-4 rounded-3">
+          <h3 class="card-title mb-4 text-center">
+            <i class="bi bi-plus-circle me-2"></i> Add Product
+          </h3>
 
-            <form @submit.prevent="addProduct">
-              <div class="form-group">
-                <label for="nameInput">Name:</label>
+          <form @submit.prevent="addProduct">
+            <div class="form-group mb-3">
+              <label for="nameInput" class="form-label">Name:</label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="bi bi-tag-fill"></i>
+                </span>
                 <input
                   type="text"
-                  class="form-control"
                   id="nameInput"
-                  placeholder="Enter Name"
+                  class="form-control"
+                  placeholder="Enter name"
                   v-model="name"
                   required
                 />
               </div>
+            </div>
 
-              <div class="form-group mt-3">
-                <label for="descriptionInput">Description:</label>
+            <div class="form-group mb-3">
+              <label for="descriptionInput" class="form-label">Description:</label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="bi bi-card-text"></i>
+                </span>
                 <textarea
-                  class="form-control"
                   id="descriptionInput"
+                  class="form-control"
                   rows="5"
-                  placeholder="Enter Description"
+                  placeholder="Enter description"
                   v-model="description"
                   required
                 ></textarea>
               </div>
+            </div>
 
-              <div class="form-group mt-3">
-                <label for="priceInput">Price:</label>
+            <div class="form-group mb-4">
+              <label for="priceInput" class="form-label">Price:</label>
+              <div class="input-group">
+                <span class="input-group-text">₱</span>
                 <input
-                  type="number"
-                  class="form-control"
+                  type="text"
                   id="priceInput"
-                  placeholder="Enter Price"
-                  min="0"
-                  v-model="price"
+                  class="form-control"
+                  placeholder="Enter price"
+                  v-model="formattedPrice"
+                  @input="formatPrice"
                   required
                 />
               </div>
+            </div>
 
-              <div class="d-flex mt-3">
-                <button
-                  type="submit"
-                  class="btn btn-primary w-48"
-                  v-if="!isEnabled"
-                  disabled
-                >Submit
-                </button>
-                <button
-                  type="submit"
-                  class="btn btn-primary w-48"
-                  v-else
-                >Submit
-                </button>
-                <RouterLink
-                  to="/products"
-                  class="btn btn-danger w-48 me-2 mx-2" 
-                >Cancel
-                </RouterLink>
-              </div>
-            </form>
-          </div>
+            <div class="d-flex">
+              <button
+                type="submit"
+                class="btn btn-success"
+                :disabled="!isEnabled"
+              >
+                <i class="bi bi-check-circle-fill me-1"></i> Submit
+              </button>
+              <RouterLink
+                to="/products"
+                class="btn btn-outline-success ms-2"
+              >
+                <i class="bi bi-x-circle-fill me-1"></i> Cancel
+              </RouterLink>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.apple-shadow {
+  box-shadow:
+    0 10px 15px rgba(0, 0, 0, 0.08),
+    0 4px 6px rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  background-color: #ffffff;
+  transition: box-shadow 0.3s ease-in-out;
+  padding: 2rem;
+}
+
+.apple-shadow:hover {
+  box-shadow:
+    0 15px 25px rgba(0, 0, 0, 0.1),
+    0 5px 10px rgba(0, 0, 0, 0.08);
+}
+</style>
+
+

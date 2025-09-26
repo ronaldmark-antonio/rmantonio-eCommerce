@@ -31,8 +31,9 @@
             class="btn btn-success d-block"
             :to="{ path: `/products/${productData._id}` }"
           >
-            Details
+            <i class="bi bi-info-circle me-1"></i> Details
           </router-link>
+
         </div>
       </div>
     </div>

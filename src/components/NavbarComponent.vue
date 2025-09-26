@@ -28,26 +28,36 @@ const email = ref("")
 
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav ms-auto align-items-lg-center gap-3">
-          <router-link :to="{ name: 'Products' }" 
-            class="nav-link fw-semibold text-white">Products</router-link>
+          <router-link :to="{ name: 'Products' }" class="nav-link fw-semibold text-white">
+            <i class="bi bi-box-seam me-1"></i> Products
+          </router-link>
+
            <router-link :to="{ name: 'Cart' }" 
             class="nav-link fw-semibold text-white"
-            v-if="user.email && user.isAdmin === false" >Cart</router-link>
+            v-if="user.email && user.isAdmin === false">
+            <i class="bi bi-cart me-1"></i> Cart
+          </router-link>
            <router-link :to="{ name: 'Orders' }" 
             class="nav-link fw-semibold text-white" 
-            v-if="user.email" >Orders</router-link>
+            v-if="user.email">
+            <i class="bi bi-receipt me-1"></i> Orders
+          </router-link>
            <router-link :to="{ name: 'Profile' }" 
             class="nav-link fw-semibold text-white" 
-            v-if="user.email" >Profile</router-link>
+            v-if="user.email">
+            <i class="bi bi-person-circle me-1"></i> Profile
+          </router-link>
            <router-link :to="{ name: 'Register' }" 
             class="nav-link fw-semibold text-white" 
-            v-if="!user.email" >Register</router-link>
-          <router-link :to="{ name: 'Login' }" 
-            class="nav-link fw-semibold text-white login-highlight" 
-            v-if="!user.email">Login</router-link>
-           <router-link :to="{ name: 'Logout' }" 
-            class="nav-link fw-semibold text-white" 
-            v-else>Logout</router-link>
+            v-if="!user.email"><i class="bi bi-person-plus me-1"></i> Register</router-link>
+            <router-link :to="{ name: 'Login' }" 
+            class="nav-link fw-semibold text-white login-highlight" v-if="!user.email">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Login</router-link>
+            <router-link :to="{ name: 'Logout' }" 
+              class="nav-link fw-semibold text-white" 
+              v-else>
+              <i class="bi bi-box-arrow-right me-1"></i> Logout
+            </router-link>
         </div>
       </div>
     </div>

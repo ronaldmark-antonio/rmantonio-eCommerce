@@ -48,16 +48,32 @@ async function activateProduct(product) {
 </script>
 
 <template>
-  <h1 class="text-center mt-5">Admin Dashboard</h1>
-  <div class="row">
-    <div class="col text-center my-3">
-      <RouterLink class="btn btn-primary mx-2" to="/addProduct">Add Product</RouterLink>
-      <RouterLink class="btn btn-success mx-2" to="/?">Orders</RouterLink>
-    </div>
-  </div>
+  <div class="apple-shadow p-4 my-5">
 
-  <div class="apple-shadow p-4">
-    <table class="table table-bordered table-hover align-middle text-center">
+    <h1 class="text-center mb-4">
+      <i class="bi bi-person-gear me-2"></i>
+      Admin Dashboard
+    </h1>
+
+    <div class="row mb-4">
+      <div class="col text-center">
+        <RouterLink class="btn btn-success mx-2" to="/addProduct">
+          <i class="bi bi-plus-circle me-1"></i> Add Product
+        </RouterLink>
+
+        <RouterLink class="btn btn-outline-success mx-2" to="/orders">
+          <i class="bi bi-cart-check me-1"></i> Orders
+        </RouterLink>
+      </div>
+    </div>
+    <div v-if="productsData.length === 0" class="text-center py-5">
+      <h3>Your Product Catalog is Empty</h3>
+      <p class="text-muted">Looks like you're just getting started. Click "Add Product" to begin building your store!</p>
+    </div>
+    <table
+      v-else
+      class="table table-bordered table-hover align-middle text-center"
+    >
       <thead>
         <tr>
           <th style="width: 200px;">Name</th>
@@ -68,17 +84,28 @@ async function activateProduct(product) {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="product in productsData" :key="product._id" class="apple-table-row">
+        <tr
+          v-for="product in productsData"
+          :key="product._id"
+          class="apple-table-row"
+        >
           <td class="text-start">{{ product.name }}</td>
           <td class="text-start">{{ product.description }}</td>
           <td>&#8369;{{ product.price.toLocaleString() }}</td>
           <td>
-            <span v-if="product.isActive" class="badge bg-success">Available</span>
-            <span v-else class="badge bg-danger">Unavailable</span>
+            <span v-if="product.isActive" class="badge bg-success">
+              <i class="bi bi-check-circle-fill me-1"></i> Available
+            </span>
+            <span v-else class="badge bg-danger">
+              <i class="bi bi-x-circle-fill me-1"></i> Unavailable
+            </span>
           </td>
           <td>
-            <button class="btn btn-sm btn-primary w-100 apple-btn" @click="updateProduct(product._id)">
-              Update
+            <button
+              class="btn btn-sm btn-outline-success w-100 apple-btn"
+              @click="updateProduct(product._id)"
+            >
+              <i class="bi bi-pencil-square me-1"></i> Update
             </button>
           </td>
           <td>
@@ -87,14 +114,20 @@ async function activateProduct(product) {
               :class="product.isActive ? 'btn-danger' : 'btn-success'"
               @click="product.isActive ? archiveProduct(product) : activateProduct(product)"
             >
+              <i
+                :class="product.isActive ? 'bi bi-x-circle' : 'bi bi-check-circle'"
+                class="me-1"
+              ></i>
               {{ product.isActive ? 'Disable' : 'Activate' }}
             </button>
           </td>
         </tr>
       </tbody>
     </table>
+
   </div>
 </template>
+
 
 <style scoped>
 .apple-shadow {

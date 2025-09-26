@@ -1,126 +1,138 @@
 <script setup>
-  import { onBeforeMount, ref, watch } from 'vue';
-  import { useRoute, useRouter } from 'vue-router';
-  import { Notyf } from 'notyf';
+import { onBeforeMount, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { Notyf } from 'notyf';
+import api from '../api';
+import { useGlobalStore } from '../stores/global';
 
-  import api from '../api';
-  import { useGlobalStore } from '../stores/global';
+const route = useRoute();
+const router = useRouter();
+const notyf = new Notyf();
+const { user } = useGlobalStore();
 
-  const route = useRoute();
-  const router = useRouter();
-  const notyf = new Notyf()
-  const { user } = useGlobalStore();
-  const name = ref("");
-  const description = ref("");
-  const price = ref(0);
-  const updateEnabled = ref(false);
+const name = ref('');
+const description = ref('');
+const price = ref(0);
+const formattedPrice = ref('');
+const updateEnabled = ref(false);
 
-  watch([name, description, price], (currValue, oldValue) => {
-    if (currValue.every(input => input)) {
-      updateEnabled.value = true;
-    } else {
-      updateEnabled.value = false;
+function formatPrice() {
+  let digits = formattedPrice.value.replace(/[^\d]/g, '');
+  let withCommas = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  formattedPrice.value = withCommas;
+  price.value = parseInt(digits) || 0;
+}
+
+watch([name, description, price], (currValue) => {
+  updateEnabled.value = currValue.every(input => input);
+});
+
+async function handleUpdate() {
+  try {
+    let res = await api.patch(`/products/${route.params.productId}/update`, {
+      name: name.value,
+      description: description.value,
+      price: price.value,
+    });
+
+    if (res.status === 200) {
+      notyf.success('Product updated successfully!');
+      router.push('/products');
     }
-  })
+  } catch (err) {
+    notyf.error(`Error in product update: ${err.response?.data?.error || err.message}`);
+  }
+}
 
-  async function handleUpdate() {
-    try {
-      let res = await api.patch(`/products/${route.params.productId}/update`, {
-        name: name.value,
-        description: description.value,
-        price: price.value,
-      });
-
-      if (res.status === 200) {
-        notyf.success("Product updated successfully!");
-
-        name.value = ""
-        description.value = ""
-        price.value = 0
-        router.push("/products")
-      }
-    } catch (err) {
-      notyf.error(`Error in product update: ${err.response.data.error}`);
-    }
+onBeforeMount(async () => {
+  if (!user.token) {
+    router.push('/login');
+    return;
   }
 
-  onBeforeMount(async () => {
-    if (!user.token) {
-      router.push('/login')
-      return
-    }
+  let { data } = await api.get(`/products/${route.params.productId}`);
 
-    let { data } = await api.get(`/products/${route.params.productId}`);
-    name.value = data.name
-    description.value = data.description
-    price.value = data.price
-  })
+  name.value = data.name;
+  description.value = data.description;
+  price.value = data.price;
 
+  formattedPrice.value = data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+});
 </script>
 
 <template>
   <div class="container-fluid my-5">
     <div class="row d-flex justify-content-center">
       <div class="col-md-8">
-        <div class="card shadow-sm rounded-3">
+        <div class="apple-shadow p-4 rounded-3">
           <div class="card-body">
-            <h3 class="card-title mb-4 text-center">Update Product</h3>
+            <h3 class="card-title mb-4 text-center">
+              <i class="bi bi-pencil-square me-2"></i> Update Product
+            </h3>
 
             <form @submit.prevent="handleUpdate">
-              <div class="form-group">
-                <label for="name">Name:</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="name"
-                  v-model="name"
-                  placeholder="Enter product name"
-                  required
-                />
+              <div class="form-group mb-3">
+                <label for="name" class="form-label">Name:</label>
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="bi bi-tag-fill"></i>
+                  </span>
+                  <input
+                    type="text"
+                    id="name"
+                    class="form-control"
+                    v-model="name"
+                    placeholder="Enter product name"
+                    required
+                  />
+                </div>
               </div>
 
-              <div class="form-group mt-3">
-                <label for="description">Description:</label>
-                <textarea
-                  class="form-control"
-                  id="description"
-                  rows="5"
-                  v-model="description"
-                  placeholder="Enter product description"
-                  required
-                ></textarea>
+              <div class="form-group mb-3">
+                <label for="description" class="form-label">Description:</label>
+                <div class="input-group">
+                  <span class="input-group-text align-items-start pt-2">
+                    <i class="bi bi-card-text"></i>
+                  </span>
+                  <textarea
+                    id="description"
+                    class="form-control"
+                    rows="5"
+                    v-model="description"
+                    placeholder="Enter product description"
+                    required
+                  ></textarea>
+                </div>
               </div>
 
-              <div class="form-group mt-3">
-                <label for="price">Price</label>
-                <input
-                  type="number"
-                  class="form-control"
-                  id="price"
-                  v-model="price"
-                  placeholder="Enter product price"
-                  required
-                />
+              <div class="form-group mb-4">
+                <label for="price" class="form-label">Price:</label>
+                <div class="input-group">
+                  <span class="input-group-text">₱</span>
+                  <input
+                    type="text"
+                    id="price"
+                    class="form-control"
+                    v-model="formattedPrice"
+                    @input="formatPrice"
+                    placeholder="Enter product price"
+                    required
+                  />
+                </div>
               </div>
 
-              <div class="d-flex mt-3">
+              <div class="d-flex gap-3 mt-3">
                 <button
                   type="submit"
-                  class="btn btn-success w-48"
-                  v-if="updateEnabled"
-                >Update
+                  class="btn btn-success px-4"
+                  :disabled="!updateEnabled"
+                >
+                  <i class="bi bi-pencil-square me-1"></i> Update
                 </button>
-                <button
-                  type="submit"
-                  class="btn btn-danger w-48"
-                  v-else
-                  disabled
-                >Update
-                </button>
-                <RouterLink
-                  to="/products"
-                  class="btn btn-danger w-48 me-2 mx-2"
-                >Cancel
+
+                <RouterLink to="/products" class="btn btn-outline-success px-4">
+                  <i class="bi bi-x-circle me-1"></i> Cancel
                 </RouterLink>
               </div>
             </form>
@@ -131,16 +143,32 @@
   </div>
 </template>
 
-<style scoped>
-  input[type=number]::-webkit-outer-spin-button,
-  input[type=number]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
 
-  /* Firefox */
-  input[type=number] {
-    -moz-appearance: textfield;
-    appearance: textfield;
-  }
+<style scoped>
+/* Remove default number input arrows if type changes */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.apple-shadow {
+  box-shadow:
+    0 10px 15px rgba(0, 0, 0, 0.08),
+    0 4px 6px rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  background-color: #ffffff;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.apple-shadow:hover {
+  box-shadow:
+    0 15px 25px rgba(0, 0, 0, 0.1),
+    0 5px 10px rgba(0, 0, 0, 0.08);
+}
+
 </style>

@@ -50,25 +50,56 @@ const hasEdits = () => {
   );
 }
 
-async function updateCart() {
-  try {
-    let updatedProducts = productData.value.filter((product) => product.quantity !== originalQuantities.value[product._id])
-    updatedProducts.forEach(async (product) => {
-      await api.patch("/cart/update-cart-quantity", {
-        productId: product._id,
-        newQuantity: product.quantity
-      });
-    });
+// async function updateCart() {
+//   try {
+//     let updatedProducts = productData.value.filter((product) => product.quantity !== originalQuantities.value[product._id])
+//     updatedProducts.forEach(async (product) => {
+//       await api.patch("/cart/update-cart-quantity", {
+//         productId: product._id,
+//         newQuantity: product.quantity
+//       });
+//     });
 
-    originalQuantities.value = productData.value.reduce((entries, product) => {
-        entries[product._id] = product.quantity;
-        return entries;
-      }, {}
-    );
-    notyf.success("Cart Updated!")
+//     originalQuantities.value = productData.value.reduce((entries, product) => {
+//         entries[product._id] = product.quantity;
+//         return entries;
+//       }, {}
+//     );
+//     notyf.success("Cart Updated!")
+//   } catch (error) {
+//     notyf.error("Server error")
+//     console.error(error)
+//   }
+// }
+
+async function removeProduct(productId) {
+  try {
+    await api.patch(`/cart/${productId}/remove-from-cart`);
+
+    productData.value = productData.value.filter(product => product._id !== productId);
+    originalQuantities.value = productData.value.reduce((acc, product) => {
+      acc[product._id] = product.quantity;
+      return acc;
+    }, {});
+
+    notyf.success("Product removed from cart");
   } catch (error) {
-    notyf.error("Server error")
-    console.error(error)
+    console.error("Failed to remove product:", error);
+    notyf.error("Failed to remove product");
+  }
+}
+
+async function clearCart() {
+  try {
+    await api.put('/cart/clear-cart');
+
+    productData.value = [];
+    originalQuantities.value = {};
+
+    notyf.success("Cart cleared");
+  } catch (error) {
+    console.error("Failed to clear cart:", error);
+    notyf.error("Failed to clear cart");
   }
 }
 
@@ -138,10 +169,10 @@ onBeforeMount(async () => {
         <tr>
           <td colspan="3">
             <button class="btn btn-sm btn-success" @click="checkoutAll">Checkout</button>
-             <button v-if="hasEdits()" class="btn btn-sm btn-success mx-2" @click="updateCart">Update Cart</button>
+             <!-- <button v-if="hasEdits()" class="btn btn-sm btn-success mx-2" @click="updateCart">Update Cart</button> -->
           </td>
           <td colspan="2">
-            <h4>Total: &#8369;{{ getTotal().toLocaleString() }}{{ hasEdits() ? " (unsaved)" : "" }}</h4>
+            <h4>Total: &#8369;{{ getTotal().toLocaleString() }} <!-- {{ hasEdits() ? " (unsaved)" : "" }} --></h4>
           </td>
         </tr>
       </tbody>

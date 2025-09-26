@@ -63,56 +63,64 @@ async function handleSubmit(){
 </script>
 
 <template>
-	<div class="container-fluid">
+  <div class="container-fluid">
     <div class="row d-flex justify-content-center p-5">
-        <div class="col-md-5 login-card apple-shadow p-5">
-        	<h1 class="text-center">Login</h1> 
-            <form @submit.prevent="handleSubmit">
-                <div class="mb-2">
-                    <label for="emailInput" class="form-label">Email Address:</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                        <input 
-                            type="email" 
-                            class="form-control" 
-                            placeholder="Enter your email address" 
-                            id="emailInput" 
-                            v-model="email" />
-                    </div>
-                </div>
+      <div class="col-md-5 login-card apple-shadow p-5">
+        <h1 class="text-center">
+          <i class="fas fa-sign-in-alt me-2"></i> Login
+        </h1> 
+        <form @submit.prevent="handleSubmit">
+          <div class="mb-2">
+            <label for="emailInput" class="form-label">Email Address:</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+              <input 
+                type="email" 
+                class="form-control" 
+                placeholder="Enter your email address" 
+                id="emailInput" 
+                v-model="email" />
+            </div>
+          </div>
 
-                <div class="mb-3">
-                    <label for="passwordInput" class="form-label">Password:</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                        <input 
-                            type="password" 
-                            class="form-control" 
-                            placeholder="Enter your password" 
-                            id="passwordInput" 
-                            v-model="password" />
-                    </div>
-                </div>
+          <div class="mb-3">
+            <label for="passwordInput" class="form-label">Password:</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-lock"></i></span>
+              <input 
+                type="password" 
+                class="form-control" 
+                placeholder="Enter your password" 
+                id="passwordInput" 
+                v-model="password" />
+            </div>
+          </div>
 
-                <div class="d-grid mt-2">
-                    <button 
-                        type="submit" 
-                        class="btn btn-success btn-block"  
-                        v-if="isEnabled">Submit</button>
-                    
-                    <button 
-                        type="submit" 
-                        class="btn btn-success btn-block" 
-                        disabled v-else>Submit</button>
-                </div>
-            </form>
-            <p class="text-center mt-3">Don't have an account yet? 
-    <RouterLink to="/register" class="text-success">Click here</RouterLink> to register.</p>
-        </div>
+          <div class="d-grid mt-2">
+            <button 
+              type="submit" 
+              class="btn btn-success btn-block"  
+              v-if="isEnabled">
+              <i class="fas fa-check-circle me-2"></i> Submit
+            </button>
+
+            <button 
+              type="submit" 
+              class="btn btn-success btn-block" 
+              disabled v-else>
+              <i class="fas fa-check-circle me-2"></i> Submit
+            </button>
+          </div>
+        </form>
+        <p class="text-center mt-3">
+          Don't have an account yet? 
+          <RouterLink to="/register" class="text-success">Click here</RouterLink> to register.
+        </p>
+      </div>
     </div>
-</div>
-
+  </div>
 </template>
+
 
 <style scoped>
 .apple-shadow {

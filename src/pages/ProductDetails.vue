@@ -95,8 +95,23 @@ async function addToCart() {
                         @click="quantity++"
                       >+</button>
                     </div>
-            		<router-link to="/login" class="btn btn-outline-success mt-4" type="button" v-if="!user.email">Login to Add to cart</router-link>
-                    <button class="btn btn-sm btn-success my-3" v-else @click="addToCart">Add to Cart</button>
+            		<router-link 
+                      to="/login" 
+                      class="btn btn-outline-success btn-sm mt-2 d-inline-flex align-items-center gap-1" 
+                      type="button" 
+                      v-if="!user.email">
+                      <i class="bi bi-box-arrow-in-right"></i>
+                      <i class="bi bi-cart"></i>
+                      <span>Login to Add</span>
+                    </router-link>
+                   <button 
+                      class="btn btn-sm btn-success my-3 d-inline-flex align-items-center gap-1" 
+                      v-else 
+                      @click="addToCart"
+                    >
+                      <i class="bi bi-cart-plus"></i>
+                      <span>Add to Cart</span>
+                    </button>
                 	</div>
             </div>
         </div>
