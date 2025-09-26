@@ -3,9 +3,11 @@ import { onBeforeMount, reactive, ref } from 'vue';
 import { useGlobalStore } from '../stores/global';
 import api from '@/api';
 import { Notyf } from 'notyf';
+import { useRouter } from 'vue-router';
 
 const loading = ref(true);
 const { user } = useGlobalStore();
+const router = useRouter();
 const notyf = new Notyf
 const cart = reactive({
   userId: "",
@@ -14,6 +16,7 @@ const cart = reactive({
 });
 const productData = ref([]);
 const originalQuantities = ref({});
+const noCart = ref(false)
 
 async function loadProducts(cartItems) {
   const results = await Promise.all(
@@ -50,27 +53,30 @@ const hasEdits = () => {
   );
 }
 
-// async function updateCart() {
-//   try {
-//     let updatedProducts = productData.value.filter((product) => product.quantity !== originalQuantities.value[product._id])
-//     updatedProducts.forEach(async (product) => {
-//       await api.patch("/cart/update-cart-quantity", {
-//         productId: product._id,
-//         newQuantity: product.quantity
-//       });
-//     });
+async function updateCart() {
+  loading.value = true;
+  try {
+    let updatedProducts = productData.value.filter((product) => product.quantity !== originalQuantities.value[product._id])
+    updatedProducts.forEach(async (product) => {
+      await api.patch("/cart/update-cart-quantity", {
+        productId: product._id,
+        newQuantity: product.quantity
+      });
+    });
 
-//     originalQuantities.value = productData.value.reduce((entries, product) => {
-//         entries[product._id] = product.quantity;
-//         return entries;
-//       }, {}
-//     );
-//     notyf.success("Cart Updated!")
-//   } catch (error) {
-//     notyf.error("Server error")
-//     console.error(error)
-//   }
-// }
+    originalQuantities.value = productData.value.reduce((entries, product) => {
+        entries[product._id] = product.quantity;
+        return entries;
+      }, {}
+    );
+    notyf.success("Cart Updated!")
+  } catch (error) {
+    notyf.error("Server error")
+    console.error(error)
+  } finally {
+    loading.value = false;
+  }
+}
 
 async function removeProduct(productId) {
   try {
@@ -113,7 +119,9 @@ onBeforeMount(async () => {
 
       await loadProducts(cart.cartItems);
     } catch (err) {
-      console.error(err);
+      if (err.response.status === 404) {
+        noCart.value = true
+      }
     } finally {
     loading.value = false;
   }
@@ -124,8 +132,8 @@ onBeforeMount(async () => {
 <template>
   <div v-if="!user.isAdmin" class="container my-5">
     <h1 class="text-center mb-4">Your Shopping Cart</h1>
-    <p class="text-center" v-if="!loading && productData.length === 0">Your cart is empty. Please Add to cart in our products</p>
-    <table class="table table-bordered" v-else-if="!loading && productData.length > 0">
+    <p class="text-center" v-if="loading || productData.length === 0 || noCart">Your cart is empty. Products you add to your cart will appear here.</p>
+    <table class="table table-bordered" v-else>
       <thead class="table-primary">
         <tr>
           <th style="width: 200px;">Name</th>
@@ -169,10 +177,10 @@ onBeforeMount(async () => {
         <tr>
           <td colspan="3">
             <button class="btn btn-sm btn-success" @click="checkoutAll">Checkout</button>
-             <!-- <button v-if="hasEdits()" class="btn btn-sm btn-success mx-2" @click="updateCart">Update Cart</button> -->
+             <button v-if="hasEdits()" class="btn btn-sm btn-success mx-2" @click="updateCart">Update Cart</button>
           </td>
           <td colspan="2">
-            <h4>Total: &#8369;{{ getTotal().toLocaleString() }} <!-- {{ hasEdits() ? " (unsaved)" : "" }} --></h4>
+            <h4>Total: &#8369;{{ getTotal().toLocaleString() }} {{ hasEdits() ? " (unsaved)" : "" }}</h4>
           </td>
         </tr>
       </tbody>
@@ -192,5 +200,6 @@ input[type="number"]::-webkit-outer-spin-button {
 
 input[type="number"] {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 </style>
