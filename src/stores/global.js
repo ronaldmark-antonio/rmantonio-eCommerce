@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { reactive } from 'vue';
-import axios from 'axios';
+import api from '../api';
 
 export const useGlobalStore = defineStore('global',() => {
 
@@ -19,13 +19,7 @@ export const useGlobalStore = defineStore('global',() => {
         	return;
     	}
 
-        let {data} = await axios({
-            method: 'get',
-            url: 'http://localhost:4000/users/details',
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        let {data} = await api.get("/users/details")
 
 		user.token = token;
         user.email = data.user.email;

@@ -1,6 +1,6 @@
 <script>
 import api from '../api.js';
-import { reactive, watch } from 'vue';
+import { reactive, ref, watch } from 'vue';
 import ProductComponent from '../components/ProductComponent.vue';
 
 import UserView from '../components/UserView.vue';
@@ -17,34 +17,39 @@ export default {
 
   const { user } = useGlobalStore();
   const products = reactive({data:[]})
+  const loading = ref(false);
 
   watch([user], async () => {
-      if (!user.isLoading) {
-        try {
-          if (user.isAdmin) {
-              let response = await api.get('/products/all');
-              products.data = response.data;
-          } else {
-              let response = await api.get('/products/active');
-              products.data = response.data;
-          }
-        } catch (err) {
-            console.error("Error fetching products:", err);
-        }
+    try {
+      loading.value = true;
+      if (user.isAdmin) {
+          let response = await api.get('/products/all');
+          products.data = response.data;
+      } else {
+          let response = await api.get('/products/active');
+          products.data = response.data;
       }
-    }, { immediate: true });
-
-        return {
-          products,
-          user
-        }
+    } catch (err) {
+      console.error("Error fetching products:", err);
+    } finally {
+      loading.value = false
     }
+  }, { immediate: true });
+
+      return {
+        products,
+        user,
+        loading
+      }
+  }
 }
 </script>
 
 <template>
-  <div class="container">
-    <p v-if="user.isLoading">Loading...</p>
+  <div class="text-center my-5" v-if="loading">
+    <div class="spinner-grow"></div>
+  </div>
+  <div class="container" v-else>
     <AdminView v-if="user.isAdmin && !user.isLoading" :productsData="products.data" />
     <UserView v-if="!user.isAdmin && !user.isLoading" :productsData="products.data" />
   </div>
