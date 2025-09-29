@@ -9,16 +9,17 @@ import { ref } from 'vue';
 
 const quantity = ref(1);
 const notyf = new Notyf();
+const router = useRouter()
 const { user } = useGlobalStore();
+const loading = ref(false);
 
-const router = useRouter();
 const product = reactive({ data: null });
 
 onBeforeMount(async () => {
-    const route = useRoute();
-    let { data } = await api.get(`/products/${route.params.productId}`);
+  const route = useRoute();
+  let { data } = await api.get(`/products/${route.params.productId}`);
 
-    product.data = data;
+  product.data = data;
 });
 
 async function addToCart() {
@@ -31,18 +32,15 @@ async function addToCart() {
     subtotal : subtotal 
   };
 
+  loading.value = true;
   try {
-    const res = await api.post('/cart/add-to-cart', payload, {
-      headers: {
-        Authorization: `Bearer ${user.token}`
-      }
-    });
-
+    await api.post('/cart/add-to-cart', payload);
     notyf.success("Added to Cart.");
-  
   } catch (error) {
     console.error("Fetch error:", error);
     notyf.error("Server error: Failed to Add to Cart.");
+  } finally {
+    loading.value = false;
   }
 }
 </script>
@@ -57,7 +55,10 @@ async function addToCart() {
                 </li>
             </ol>
         </nav>
-        <div class="row mx-auto my-3 gap-4 gap-md-0" v-if="product.data">
+        <div class="text-center my-5" v-if="loading">
+            <div class="spinner-grow"></div>
+        </div>
+        <div class="row mx-auto my-3 gap-4 gap-md-0" v-else>
             <div class="col-12 col-md-6">
             <img class="img-fluid rounded apple-shadow apple-hover" :src="`https://placehold.co/600x400/ffffff/000000?font=lora&text=${encodeURIComponent(product.data.name)}`"/>
             </div>
@@ -114,10 +115,6 @@ async function addToCart() {
                     </button>
                 	</div>
             </div>
-        </div>
-
-        <div class="text-center my-5" v-if="!product.data">
-            <div class="spinner-grow"></div>
         </div>
     </div>
 </template>

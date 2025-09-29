@@ -80,24 +80,30 @@ async function updateCart() {
 }
 
 async function removeProduct(productId) {
-  try {
-    await api.patch(`/cart/${productId}/remove-from-cart`);
+  if (confirm("Do you really want to remove this product?")) {
+    loading.value = true;
+    try {
+      await api.patch(`/cart/${productId}/remove-from-cart`);
 
-    productData.value = productData.value.filter(product => product._id !== productId);
-    originalQuantities.value = productData.value.reduce((acc, product) => {
-      acc[product._id] = product.quantity;
-      return acc;
-    }, {});
+      productData.value = productData.value.filter(product => product._id !== productId);
+      originalQuantities.value = productData.value.reduce((acc, product) => {
+        acc[product._id] = product.quantity;
+        return acc;
+      }, {});
 
-    notyf.success("Product removed from cart");
-  } catch (error) {
-    console.error("Failed to remove product:", error);
-    notyf.error("Failed to remove product");
+      notyf.success("Product removed from cart");
+    } catch (error) {
+      console.error("Failed to remove product:", error);
+      notyf.error("Failed to remove product");
+    } finally {
+      loading.value = false;
+    }
   }
 }
 
 async function clearCart() {
 if (confirm("Do you really want to clear your cart?")) {
+  loading.value = true;
   try {
     await api.put('/cart/clear-cart');
 
@@ -108,8 +114,31 @@ if (confirm("Do you really want to clear your cart?")) {
   } catch (error) {
     console.error("Failed to clear cart:", error);
     notyf.error("Failed to clear cart");
+  } finally {
+    loading.value = false;
   }
 }
+}
+
+async function checkoutCart() {
+  if (confirm("Do you want to checkout your cart?")) {
+    loading.value = true
+    try {
+      let res = await api.post("/orders/checkout");
+      if (res.status === 201) {
+        await api.put('/cart/clear-cart');
+        productData.value = [];
+        originalQuantities.value = {};
+
+        notyf.success("Cart successfully checked out!");
+        router.push("/");
+      }
+    } catch (error) {
+      notyf.error("Error in checking out.");
+    } finally {
+      loading.value = false;
+    }
+  }
 }
 
 onBeforeMount(async () => {
@@ -143,7 +172,10 @@ onBeforeMount(async () => {
       <h1 class="text-center mb-4">
         <i class="bi bi-cart me-2"></i> Your Shopping Cart
       </h1>
-      <p class="text-center" v-if="loading || productData.length === 0 || noCart">
+      <div class="text-center my-5" v-if="loading">
+        <div class="spinner-grow"></div>
+      </div>
+      <p class="text-center" v-else-if="productData.length === 0 || noCart">
         Your cart is empty. Products you add to your cart will appear here.
       </p>
 
@@ -159,7 +191,7 @@ onBeforeMount(async () => {
         </thead>
         <tbody>
           <tr v-for="product in productData" :key="product._id">
-            <td class="text-start">{{ product.name }}</td>
+            <td class="text-start"><router-link :to="{ path: `/products/${product._id}` }">{{ product.name }}</router-link></td>
             <td class="text-start">&#8369;{{ product.price.toLocaleString() }}</td>
             <td>
               <div class="input-group input-group-sm" style="width: 110px;">
@@ -193,7 +225,7 @@ onBeforeMount(async () => {
 
           <tr>
             <td colspan="3">
-              <button class="btn btn-sm btn-success" @click="checkoutAll">Checkout</button>
+              <button class="btn btn-sm btn-success" @click="checkoutCart">Checkout</button>
               <button
                 v-if="hasEdits()"
                 class="btn btn-sm btn-success mx-2"
