@@ -1,43 +1,56 @@
 <script setup>
-  import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref } from 'vue'
+import api from '../api'
 
-  import api from '../api';
+const ordersData = ref([])
+const loading = ref(false)
+const productTable = ref({})
 
-  const ordersData = ref([]);
-  const loading = ref(false);
-  const productTable = ref({});
+const monthMap = {
+  0: 'Jan.', 1: 'Feb.', 2: 'Mar.', 3: 'Apr.', 4: 'May', 5: 'Jun.',
+  6: 'Jul.', 7: 'Aug.', 8: 'Sept.', 9: 'Oct.', 10: 'Nov.', 11: 'Dec.'
+}
 
-  async function getProductName(productId) {
-    let productName = productTable.value[productId];
-    if (!productName) {
-      try {
-        let res = await api.get(`/products/${productId}`);
-        if (res.status === 200) {
-          productName = res.data.name;
-          productTable.value[productId] = productName;
-        }
-      } catch (error) {
-        console.error(`Error in fetching product ${productId}`, error);
-      }
-    }
-  }
+const formatDate = (dateStr) => {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+  const yy = String(date.getFullYear()).slice(-2);
+  return `${mm}-${dd}-${yy}`;
+};
 
-	onBeforeMount(async () => {
-    loading.value = true;
+async function getProductName(productId) {
+  if (!productTable.value[productId]) {
     try {
-      let res = await api.get("/orders/my-orders");
+      let res = await api.get(`/products/${productId}`)
       if (res.status === 200) {
-        ordersData.value = res.data.orders;
-        res.data.orders.forEach((order) => {
-          order.productsOrdered.forEach((product) => getProductName(product.productId))
-        })
+        productTable.value[productId] = res.data.name
       }
     } catch (error) {
-      console.error(error);
-    } finally {
-      loading.value = false;
+      console.error(`Error fetching product ${productId}:`, error)
+      productTable.value[productId] = 'Unknown Product'
     }
-  })
+  }
+}
+
+onBeforeMount(async () => {
+  loading.value = true
+  try {
+    let res = await api.get("/orders/my-orders")
+    if (res.status === 200) {
+      ordersData.value = res.data.orders
+
+      res.data.orders.forEach((order) => {
+        order.productsOrdered.forEach((product) => getProductName(product.productId))
+      })
+    }
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loading.value = false
+  }
+})
 </script>
 
 <template>
@@ -45,10 +58,12 @@
   <div class="text-center my-5" v-if="loading">
     <div class="spinner-grow"></div>
   </div>
+
   <div class="apple-shadow apple-hover p-4 rounded-4" v-else>
     <h1 class="text-center mb-4">
       <i class="bi bi-receipt me-1"></i> Order History
     </h1>
+
     <p class="text-center" v-if="ordersData.length === 0">
       You have not placed any orders yet.
     </p>
@@ -56,8 +71,14 @@
     <div class="accordion" v-for="(order, orderNum) in ordersData" :key="order._id">
       <div class="accordion-item">
         <h2 class="accordion-header" :id="`product-heading-${orderNum + 1}`">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="`#product-${orderNum + 1}`" aria-expanded="true">
-            Order #{{ orderNum + 1 }} - Purchased on: {{ order.orderedOn.split("T")[0] }}
+          <button 
+            class="accordion-button bg-white text-dark fw-semi-bold" 
+            type="button" 
+            data-bs-toggle="collapse" 
+            :data-bs-target="`#product-${orderNum + 1}`" 
+            aria-expanded="true"
+          >
+            Order #{{ orderNum + 1 }} - Purchased on: {{ formatDate(order.orderedOn) }} (Click for Details)
           </button>
         </h2>
         <div
@@ -69,9 +90,13 @@
           }"
         >
           <div class="accordion-body">
+            <p>Items:</p>
             <ul>
-              <li v-for="product in order.productsOrdered">
-                  {{ productTable[product.productId] || "Loading..." }} (&#8369;{{ (product.subtotal / product.quantity).toLocaleString() }}) - Qty: {{ product.quantity }}</li>
+              <li v-for="product in order.productsOrdered" :key="product.productId">
+                {{ productTable[product.productId] || "Loading..." }} 
+                (&#8369;{{ (product.subtotal / product.quantity).toLocaleString() }}) 
+                - Quantity: {{ product.quantity }}
+              </li>
             </ul>
             <h5>Total: &#8369;{{ order.totalPrice.toLocaleString() }}</h5>
           </div>

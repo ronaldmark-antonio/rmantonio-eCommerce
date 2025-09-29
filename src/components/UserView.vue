@@ -17,8 +17,6 @@
   </div>
 </template>
 
-
-
 <script setup>
 import ProductComponent from '../components/ProductComponent.vue';
 import { defineProps } from 'vue';

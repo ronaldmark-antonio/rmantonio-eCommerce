@@ -11,6 +11,14 @@
   const productTable = ref({});
   const groupBy = ref("user");
 
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+  const yy = String(date.getFullYear()).slice(-2);
+  return `${mm}-${dd}-${yy}`;
+}
+
   async function getProductName(productId) {
     let productName = productTable.value[productId];
     if (!productName) {
@@ -28,7 +36,7 @@
 
   function groupOrders() {
     rawData.value.forEach((order) => {
-      let orderDate = order.orderedOn.split("T")[0];
+      let orderDate = formatDate(order.orderedOn);
       let orderContents = {
         productsOrdered: order.productsOrdered,
         totalPrice: order.totalPrice,
@@ -81,18 +89,19 @@
   </div>
 
   <div class="apple-shadow apple-hover p-4 rounded-4" v-else>
+
     <h1 class="text-center mb-4">
       <i class="bi bi-receipt me-1"></i> Order History
     </h1>
     <div class="row">
       <div class="col d-flex justify-content-end align-items-center">
-        <span class="fw-semibold mx-2">Group By: </span>
+        <span class=" mx-2">Group By: </span>
         <div class="btn-group" role="group">
           <input type="radio" class="btn-check" name="btnradio" id="groupBy1" value="user" v-model="groupBy" autocomplete="off" checked>
-          <label class="btn btn-outline-primary" for="groupBy1">User</label>
+          <label class="btn btn-outline-success" for="groupBy1">User</label>
 
           <input type="radio" class="btn-check" name="btnradio" id="groupBy2" value="date" v-model="groupBy" autocomplete="off">
-          <label class="btn btn-outline-primary" for="groupBy2">Date</label>
+          <label class="btn btn-outline-success" for="groupBy2">Date</label>
         </div>
       </div>
     </div>
@@ -104,11 +113,11 @@
     <div class="col">
 
 
-      <div class="accordion accordion-flush my-3" id="outer-accordion">
+      <div class="accordion accordion-item my-3" id="outer-accordion">
         <div class="accordion-item" v-for="(subgroups, group) in ordersData" :key="group">
           <h2 class="accordion-header" :id="`heading-${group}`">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="`#group-${group}`" data-bs-parent="#outer-accordion" aria-expanded="false">
-              {{ group }}
+            <button class="accordion-button bg-white text-dark collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="`#group-${group}`" data-bs-parent="#outer-accordion" aria-expanded="false">
+              {{ group }} (Click for Details)
             </button>
           </h2>
 
@@ -118,8 +127,8 @@
             <div class="accordion" v-for="(orders, subgroup) in subgroups" :key="subgroup" :id="`accordion-${group}-${subgroup}`">
               <div class="accordion-item">
                 <h2 class="accordion-header" :id="`heading-${group}-${subgroup}`">
-                  <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="`#${group}-${subgroup}`" :data-bs-parent="`#accordion-${group}-${subgroup}`" aria-expanded="true">
-                     - {{ subgroup }}
+                  <button class="accordion-button bg-white text-dark" type="button" data-bs-toggle="collapse" :data-bs-target="`#${group}-${subgroup}`" :data-bs-parent="`#accordion-${group}-${subgroup}`" aria-expanded="true">
+                    {{ subgroup }} (Click for Details)
                   </button>
                 </h2>
                 <div
@@ -146,8 +155,6 @@
           </div>
         </div>
       </div>
-      
-      
     </div>
     </div>
   </div>

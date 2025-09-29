@@ -13,12 +13,12 @@ import RegisterPage from './pages/RegisterPage.vue';
 import LoginPage from './pages/LoginPage.vue'
 import ProductsPage from './pages/ProductsPage.vue'
 import ProductDetails from './pages/ProductDetails.vue';
+import AddProduct from './pages/AddProduct.vue';
 import UpdateProduct from './pages/UpdateProduct.vue';
-import LogoutPage from './pages/LogoutPage.vue';
 import CartPage from './pages/CartPage.vue';
 import OrdersPage from './pages/OrdersPage.vue';
 import ProfilePage from './pages/ProfilePage.vue';
-import AddProduct from './pages/AddProduct.vue';
+import LogoutPage from './pages/LogoutPage.vue';
 import ErrorPage from './pages/ErrorPage.vue';
 
 import { createRouter, createWebHistory } from 'vue-router';
@@ -51,15 +51,15 @@ const router = createRouter({
         component: ProductDetails
     },
     {   
+        path: '/addProduct',
+        name: 'Add Product',
+        component: AddProduct
+    },
+    {   
         path: "/products/edit/:productId",
         component: UpdateProduct
     },
-    {
-        path: '/logout',
-        name: 'Logout',
-        component: LogoutPage
-    },
-    {
+        {
         path: '/cart',
         name: 'Cart',
         component: CartPage
@@ -74,10 +74,10 @@ const router = createRouter({
         name: 'Profile',
         component: ProfilePage
     },
-    {   
-        path: '/addProduct',
-        name: 'Add Product',
-        component: AddProduct
+    {
+        path: '/logout',
+        name: 'Logout',
+        component: LogoutPage
     },
     {
         path: '/:catchAll(.*)',
@@ -88,7 +88,5 @@ const router = createRouter({
 
 const app = createApp(App)
 app.use(router)
-
 app.use(createPinia())
-
 app.mount('#app')

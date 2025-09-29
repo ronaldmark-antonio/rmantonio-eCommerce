@@ -131,19 +131,4 @@ input[type=number] {
     -moz-appearance: textfield;
     appearance: textfield;
 }
-
-.apple-shadow {
-    box-shadow:
-      0 10px 15px rgba(0, 0, 0, 0.08),
-      0 4px 6px rgba(0, 0, 0, 0.06);
-    border-radius: 16px;
-    transition: box-shadow 0.3s ease, transform 0.2s ease;
-    border: none;
-}
-
-.apple-hover:hover {
-    box-shadow:
-      0 20px 30px rgba(0, 0, 0, 0.1),
-      0 8px 15px rgba(0, 0, 0, 0.08);
-}
 </style>
