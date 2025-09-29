@@ -258,20 +258,4 @@ input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
 }
-
-.apple-shadow {
-  box-shadow:
-    0 10px 15px rgba(0, 0, 0, 0.08),
-    0 4px 6px rgba(0, 0, 0, 0.06);
-  background-color: #ffffff;
-  border-radius: 1rem;
-  transition: box-shadow 0.3s ease-in-out;
-}
-
-.apple-hover:hover {
-  box-shadow:
-    0 15px 25px rgba(0, 0, 0, 0.1),
-    0 5px 10px rgba(0, 0, 0, 0.08);
-}
-
 </style>

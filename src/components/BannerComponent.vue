@@ -27,7 +27,7 @@ export default {
                url('/images/banner-background.png') no-repeat center;
    background-size: cover; 
    background-position: center;
-   height: 500px;
+   height: 550px;
    display: flex;
    align-items: center;
    justify-content: flex-start;

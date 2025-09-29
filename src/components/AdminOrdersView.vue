@@ -1,85 +1,98 @@
 <script setup>
-  import { onBeforeMount, ref, watch } from 'vue';
+import { onBeforeMount, ref, watch } from 'vue'
+import { useGlobalStore } from '../stores/global.js';
+import { useRouter } from 'vue-router'
+import api from '../api'
 
-  import api from '../api';
+const rawData = ref([])
+const ordersData = ref([])
+const groupedByUser = ref({})
+const groupedByDate = ref({})
+const loading = ref(false)
+const productTable = ref({})
+const groupBy = ref("user")
 
-  const rawData = ref([]);
-  const ordersData = ref([]);
-  const groupedByUser = ref({});
-  const groupedByDate = ref({});
-  const loading = ref(false);
-  const productTable = ref({});
-  const groupBy = ref("user");
+const router = useRouter()
+const {user} = useGlobalStore();
 
 function formatDate(dateString) {
-  const date = new Date(dateString);
-  const mm = String(date.getMonth() + 1).padStart(2, '0');
-  const dd = String(date.getDate()).padStart(2, '0');
-  const yy = String(date.getFullYear()).slice(-2);
-  return `${mm}-${dd}-${yy}`;
+  const date = new Date(dateString)
+  const mm = String(date.getMonth() + 1).padStart(2, '0')
+  const dd = String(date.getDate()).padStart(2, '0')
+  const yy = String(date.getFullYear()).slice(-2)
+  return `${mm}-${dd}-${yy}`
 }
 
-  async function getProductName(productId) {
-    let productName = productTable.value[productId];
-    if (!productName) {
-      try {
-        let res = await api.get(`/products/${productId}`);
-        if (res.status === 200) {
-          productName = res.data.name;
-          productTable.value[productId] = productName;
-        }
-      } catch (error) {
-        console.error(`Error in fetching product ${productId}`, error);
-      }
-    }
-  }
-
-  function groupOrders() {
-    rawData.value.forEach((order) => {
-      let orderDate = formatDate(order.orderedOn);
-      let orderContents = {
-        productsOrdered: order.productsOrdered,
-        totalPrice: order.totalPrice,
-        status: order.status
-      }
-      groupedByUser.value[order.userId] ??= {};
-      groupedByDate.value[orderDate] ??= {};
-
-      groupedByUser.value[order.userId][orderDate] ??= [];
-      groupedByDate.value[orderDate][order.userId] ??= [];
-
-      groupedByUser.value[order.userId][orderDate].push(orderContents);
-      groupedByDate.value[orderDate][order.userId].push(orderContents);
-    })
-  }
-
-	onBeforeMount(async () => {
-    loading.value = true;
+async function getProductName(productId) {
+  if (!productTable.value[productId]) {
     try {
-      let res = await api.get("/orders/all-orders");
+      const res = await api.get(`/products/${productId}`)
       if (res.status === 200) {
-        rawData.value = res.data;
-        res.data.forEach((order) => {
-          order.productsOrdered.forEach((product) => getProductName(product.productId))
-        });
-        groupOrders();
-        ordersData.value = groupedByUser.value;
+        productTable.value[productId] = res.data.name
       }
     } catch (error) {
-      console.error(error);
-    } finally {
-      loading.value = false;
+      console.error(`Error fetching product ${productId}`, error)
+      productTable.value[productId] = 'Unknown Product'
     }
-  });
+  }
+}
 
-  watch([groupBy], (newVal, oldVal) => {
-    if (groupBy.value === "user") {
-      ordersData.value = groupedByUser.value;
-    } else if (groupBy.value === "date") {
-      ordersData.value = groupedByDate.value;
+function groupOrders() {
+  rawData.value.forEach((order) => {
+    const orderDate = formatDate(order.orderedOn)
+    const orderContents = {
+      productsOrdered: order.productsOrdered,
+      totalPrice: order.totalPrice,
+      status: order.status
     }
-    console.log(ordersData.value)
+
+    groupedByUser.value[order.userId] ??= {}
+    groupedByUser.value[order.userId][orderDate] ??= []
+    groupedByUser.value[order.userId][orderDate].push(orderContents)
+
+    groupedByDate.value[orderDate] ??= {}
+    groupedByDate.value[orderDate][order.userId] ??= []
+    groupedByDate.value[orderDate][order.userId].push(orderContents)
   })
+}
+
+onBeforeMount(async () => {
+
+  if (!user.email) {
+    return router.replace("/login");
+  }
+
+  loading.value = true
+  try {
+    const res = await api.get("/orders/all-orders")
+    if (res.status === 200) {
+      rawData.value = res.data
+
+      // Preload product names
+      res.data.forEach((order) => {
+        order.productsOrdered.forEach((product) =>
+          getProductName(product.productId)
+        )
+      })
+
+      groupOrders()
+      ordersData.value = groupedByUser.value
+    }
+  } catch (error) {
+    if (error.response?.status === 401) {
+      router.push('/login')
+    } else {
+      console.error(error)
+    }
+  } finally {
+    loading.value = false
+  }
+})
+
+watch(groupBy, () => {
+  ordersData.value =
+    groupBy.value === "user" ? groupedByUser.value : groupedByDate.value
+})
 </script>
 
 <template>
@@ -135,13 +148,13 @@ function formatDate(dateString) {
                   :id="`${group}-${subgroup}`"
                   class="accordion-collapse collapse"
                 >
-                  <div class="accordion-body">
+                  <div class="accordion-body ">
                     <ol>
                       <li v-for="order in orders">
                         Total Price: &#8369;{{ order.totalPrice.toLocaleString() }}
                         <ul>
                           <li v-for="product in order.productsOrdered">
-                            {{ productTable[product.productId] || "Loading..." }} (&#8369;{{ (product.subtotal / product.quantity).toLocaleString() }}) - Qty: {{ product.quantity }}
+                            {{ productTable[product.productId] || "Loading..." }} (&#8369;{{ (product.subtotal / product.quantity).toLocaleString() }}) - Quantity: {{ product.quantity }}
                           </li>
                         </ul>
                       </li>
@@ -150,7 +163,6 @@ function formatDate(dateString) {
                 </div>
               </div>
             </div>
-
 
           </div>
         </div>

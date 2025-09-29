@@ -1,15 +1,15 @@
 <script setup>
 import { onBeforeMount, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useGlobalStore } from '../stores/global.js'
 import api from '../api'
+
+const router = useRouter()
+const {user} = useGlobalStore();
 
 const ordersData = ref([])
 const loading = ref(false)
 const productTable = ref({})
-
-const monthMap = {
-  0: 'Jan.', 1: 'Feb.', 2: 'Mar.', 3: 'Apr.', 4: 'May', 5: 'Jun.',
-  6: 'Jul.', 7: 'Aug.', 8: 'Sept.', 9: 'Oct.', 10: 'Nov.', 11: 'Dec.'
-}
 
 const formatDate = (dateStr) => {
   if (!dateStr) return '';
@@ -35,6 +35,11 @@ async function getProductName(productId) {
 }
 
 onBeforeMount(async () => {
+
+  if (!user.email) {
+    return router.replace("/login");
+  }
+
   loading.value = true
   try {
     let res = await api.get("/orders/my-orders")
@@ -42,7 +47,9 @@ onBeforeMount(async () => {
       ordersData.value = res.data.orders
 
       res.data.orders.forEach((order) => {
-        order.productsOrdered.forEach((product) => getProductName(product.productId))
+        order.productsOrdered.forEach((product) =>
+          getProductName(product.productId)
+        )
       })
     }
   } catch (error) {
@@ -52,6 +59,7 @@ onBeforeMount(async () => {
   }
 })
 </script>
+
 
 <template>
 <div class="container my-5">
