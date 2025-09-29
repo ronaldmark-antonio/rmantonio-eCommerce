@@ -18,10 +18,6 @@ export default {
   props: {
     bannerProps: Object
   },
-  mounted() {
-    console.log(this.bannerProps.title);
-    console.log(this.bannerProps.tagline);
-  }
 };
 </script>
 

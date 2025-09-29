@@ -21,9 +21,6 @@ export default {
 </script>
 
 <template>
-  <div class="text-center my-5" v-if="loading">
-    <div class="spinner-grow"></div>
-  </div>
   <div class="container-fluid">
     <BannerComponent :bannerProps=bannerProps />
     <HighlightsComponent />
