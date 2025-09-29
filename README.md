@@ -30,9 +30,6 @@
 	<li>Get All Cart</li>
 </ul>
 <h3>Checkout Order</h3> 
-<ul>
-	<li>View User Deatails (Profile) - Update Password</li>
-</ul> 
 <h3>Strecth Goals:</h3> 
 <ul>
 	<li>Order History</li>
@@ -40,7 +37,7 @@
 
 <h3>Features by Student-2</h3>
 <h3>Login Page</h3> 
-<h3>Products Catalog</h3>
+<h3>Products Catalog Page</h3>
 <h3>Admin Dashboard Page:</h3> 
 <ul>
 	<li>Create Product</li>
