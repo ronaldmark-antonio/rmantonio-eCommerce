@@ -19,6 +19,7 @@ import CartPage from './pages/CartPage.vue';
 import OrdersPage from './pages/OrdersPage.vue';
 import ProfilePage from './pages/ProfilePage.vue';
 import AddProduct from './pages/AddProduct.vue';
+import ErrorPage from './pages/ErrorPage.vue';
 
 import { createRouter, createWebHistory } from 'vue-router';
 
@@ -78,6 +79,10 @@ const router = createRouter({
         name: 'Add Product',
         component: AddProduct
     },
+    {
+        path: '/:catchAll(.*)',
+        component: ErrorPage
+    } 
     ]
 })
 
