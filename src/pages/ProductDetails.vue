@@ -58,7 +58,7 @@ async function addToCart() {
         <div class="text-center my-5" v-if="loading">
             <div class="spinner-grow"></div>
         </div>
-        <div class="row mx-auto my-3 gap-4 gap-md-0" v-else>
+        <div class="row mx-auto my-3 gap-4 gap-md-0" v-else-if="product.data">
             <div class="col-12 col-md-6">
             <img class="img-fluid rounded apple-shadow apple-hover" :src="`https://placehold.co/600x400/ffffff/000000?font=lora&text=${encodeURIComponent(product.data.name)}`"/>
             </div>
