@@ -1,11 +1,6 @@
 <script setup>
-import { onBeforeMount, ref, watch } from "vue";
 import { useGlobalStore } from "../stores/global";
 const { user } = useGlobalStore();
-
-console.log(user.email);
-
-const email = ref("");
 </script>
 
 <template>
