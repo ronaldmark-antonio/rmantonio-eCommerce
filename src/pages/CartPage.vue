@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeMount, reactive, ref } from 'vue';
+import { onBeforeMount, reactive, ref, watch } from 'vue';
 import { useGlobalStore } from '../stores/global';
 import api from '@/api';
 import { Notyf } from 'notyf';
@@ -16,7 +16,6 @@ const cart = reactive({
   totalPrice: 0
 });
 const productData = ref([]);
-const originalQuantities = ref({});
 const noCart = ref(false)
 
 async function loadProducts(cartItems) {
@@ -34,11 +33,6 @@ async function loadProducts(cartItems) {
     );
 
   productData.value = results;
-  originalQuantities.value = results.reduce((entries, product) => {
-      entries[product._id] = product.quantity;
-      return entries;
-    }, {}
-  );
 }
 
 const getTotal = () => {
@@ -48,29 +42,13 @@ const getTotal = () => {
   }, 0)
 }
 
-const hasEdits = () => {
-  return productData.value.some(
-    (product) => product.quantity !== originalQuantities.value[product._id]
-  );
-}
-
-async function updateCart() {
+async function updateCart(productId, newQuantity) {
   loading.value = true;
   try {
-    let updatedProducts = productData.value.filter((product) => product.quantity !== originalQuantities.value[product._id])
-    updatedProducts.forEach(async (product) => {
-      await api.patch("/cart/update-cart-quantity", {
-        productId: product._id,
-        newQuantity: product.quantity
+    await api.patch("/cart/update-cart-quantity", {
+        productId: productId,
+        newQuantity: newQuantity
       });
-    });
-
-    originalQuantities.value = productData.value.reduce((entries, product) => {
-        entries[product._id] = product.quantity;
-        return entries;
-      }, {}
-    );
-    notyf.success("Cart Updated!")
   } catch (error) {
     notyf.error("Server error")
     console.error(error)
@@ -86,10 +64,6 @@ async function removeProduct(productId) {
       await api.patch(`/cart/${productId}/remove-from-cart`);
 
       productData.value = productData.value.filter(product => product._id !== productId);
-      originalQuantities.value = productData.value.reduce((acc, product) => {
-        acc[product._id] = product.quantity;
-        return acc;
-      }, {});
 
       notyf.success("Product removed from cart");
     } catch (error) {
@@ -108,7 +82,6 @@ if (confirm("Do you really want to clear your cart?")) {
     await api.put('/cart/clear-cart');
 
     productData.value = [];
-    originalQuantities.value = {};
 
     notyf.success("Cart cleared");
   } catch (error) {
@@ -128,7 +101,6 @@ async function checkoutCart() {
       if (res.status === 201) {
         await api.put('/cart/clear-cart');
         productData.value = [];
-        originalQuantities.value = {};
 
         notyf.success("Cart successfully checked out!");
         router.push("/");
@@ -191,14 +163,15 @@ onBeforeMount(async () => {
         </thead>
         <tbody>
           <tr v-for="product in productData" :key="product._id">
-            <td class="text-start"><router-link :to="{ path: `/products/${product._id}` }">{{ product.name }}</router-link></td>
+            <td class="text-start"><router-link class="routerLink" :to="{ path: `/products/${product._id}` }">{{ product.name }}</router-link></td>
             <td class="text-start">&#8369;{{ product.price.toLocaleString() }}</td>
             <td>
               <div class="input-group input-group-sm" style="width: 110px;">
                 <button
                   class="btn btn-success"
                   type="button"
-                  @click="product.quantity = Math.max(1, product.quantity - 1)"
+                  @click="product.quantity -= 1;
+                    updateCart(product._id, product.quantity)"
                   :disabled="product.quantity <= 1"
                 >-</button>
                 <input
@@ -211,7 +184,8 @@ onBeforeMount(async () => {
                 <button
                   class="btn btn-success"
                   type="button"
-                  @click="product.quantity++"
+                  @click="product.quantity++;
+                    updateCart(product._id, product.quantity)"
                 >+</button>
               </div>
             </td>
@@ -226,14 +200,9 @@ onBeforeMount(async () => {
           <tr>
             <td colspan="3">
               <button class="btn btn-sm btn-success" @click="checkoutCart">Checkout</button>
-              <button
-                v-if="hasEdits()"
-                class="btn btn-sm btn-success mx-2"
-                @click="updateCart"
-              >Update Cart</button>
             </td>
             <td colspan="2">
-              <h4>Total: &#8369;{{ getTotal().toLocaleString() }} {{ hasEdits() ? " (unsaved)" : "" }}</h4>
+              <h4>Total: &#8369;{{ getTotal().toLocaleString() }} </h4>
             </td>
           </tr>
         </tbody>

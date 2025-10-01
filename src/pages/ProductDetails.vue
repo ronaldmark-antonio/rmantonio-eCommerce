@@ -49,7 +49,7 @@ async function addToCart() {
     <div class="container">
         <nav class="my-3" aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><router-link to="/products">Products</router-link></li>
+                <li class="breadcrumb-item"><router-link class="routerLink" to="/products">Products</router-link></li>
                 <li class="breadcrumb-item active" aria-current="page">
                     {{ product.data ? product.data.name : "..." }}
                 </li>
