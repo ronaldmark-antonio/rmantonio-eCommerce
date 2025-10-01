@@ -1,3 +1,4 @@
 {
-	"url": "https://86cmr8pnej.execute-api.us-west-2.amazonaws.com/production"
+	"url": "http://zuitt-bootcamp-prod-561-8914-senas.s3-website.us-east-1.amazonaws.com",
+	"url2": "http://zuitt-bootcamp-prod-561-9035-antonio.s3-website.us-east-1.amazonaws.com"
 }
