@@ -83,8 +83,6 @@ async function addToCart() {
         </p>
         <p class="fw-semibold">
           Price: &#8369;{{ subtotal.toLocaleString() }}
-          <span class="text-muted">× {{ quantity }} =</span>
-          <span class="text-success">&#8369;{{ subtotal.toLocaleString() }}</span>
       </p>
 
 
