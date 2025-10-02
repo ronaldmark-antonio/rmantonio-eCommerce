@@ -6,12 +6,11 @@
       style="min-height: 100%; border: none; background-color: #fff;">
       
       <img
-  class="card-img-top rounded"
-  :src="getCloudinaryImageUrl(productData.image)"
-  :alt="productData.name"
-  style="border: none;"
-/>
-
+        class="card-img-top rounded"
+        :src="`https://placehold.co/600x400/ffffff/000000?font=lora&text=${encodeURIComponent(productData.name)}`"
+        :alt="productData.name"
+        style="border: none;"
+      />
       
       <div class="card-body d-flex flex-column gap-2">
         <h4 class="card-title fw-bold mb-2">
@@ -52,23 +51,6 @@ export default {
   props: {
     productData: Object,
   },
-  methods: {
-  getCloudinaryImageUrl(publicId) {
-    const cloudName = "djanrocmu";
-
-    if (!publicId) {
-      return `https://placehold.co/600x400/ffffff/000000?font=lora&text=${encodeURIComponent(this.productData.name)}`;
-    }
-
-    if (publicId.startsWith("http")) {
-      return publicId; // already a URL
-    }
-
-    return `https://res.cloudinary.com/${cloudName}/image/upload/${publicId}`;
-  }
-}
-
 };
-
 </script>
 
