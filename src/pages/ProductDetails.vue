@@ -82,7 +82,7 @@ async function addToCart() {
             {{ product.data.description }}
         </p>
         <p class="fw-semibold">
-          rice: &#8369;{{ product.data.price.toLocaleString() }}
+          Price: &#8369;{{ subtotal.toLocaleString() }}
           <span class="text-muted">× {{ quantity }} =</span>
           <span class="text-success">&#8369;{{ subtotal.toLocaleString() }}</span>
       </p>
