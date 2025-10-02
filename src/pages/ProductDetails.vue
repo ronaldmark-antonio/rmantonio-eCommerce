@@ -48,24 +48,22 @@
 <template>
     <div class="container">
         <nav class="my-3" aria-label="breadcrumb">
-          <ol class="breadcrumb bg-light p-2 rounded small">
+          <ol class="breadcrumb apple-shadow rounded px-3 py-2">
             <li class="breadcrumb-item">
-              <router-link to="/" class="text-decoration-none text-success">
+              <router-link to="/" class="breadcrumb-link">
                 <i class="bi bi-house-door"></i> Home
             </router-link>
         </li>
         <li class="breadcrumb-item">
-          <router-link to="/products" class="text-decoration-none text-success">
+          <router-link to="/products" class="breadcrumb-link">
             <i class="bi bi-box-seam"></i> Products
         </router-link>
     </li>
     <li class="breadcrumb-item active text-dark" aria-current="page">
-      <i class="bi bi-tag"></i>
-      {{ product.data ? product.data.name : "Loading..." }}
+      <i class="bi bi-tag"></i> {{ product.data ? product.data.name : "Loading..." }}
   </li>
 </ol>
 </nav>
-
 <div class="text-center my-5" v-if="loading">
     <div class="spinner-grow"></div>
 </div>
@@ -142,16 +140,4 @@ input[type=number] {
     -moz-appearance: textfield;
     appearance: textfield;
 }
-
-.breadcrumb {
-  background-color: #f8f9fa;
-  padding: 0.75rem 1rem;
-  border-radius: 0.25rem;
-  font-size: 0.875rem;
-}
-.breadcrumb-item + .breadcrumb-item::before {
-  content: "›";
-  color: #6c757d;
-}
-
 </style>
