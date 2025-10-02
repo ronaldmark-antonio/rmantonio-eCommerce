@@ -140,4 +140,32 @@ input[type=number] {
     -moz-appearance: textfield;
     appearance: textfield;
 }
+
+.breadcrumb {
+  background-color: #f8f9fa;
+  font-size: 0.875rem;
+}
+
+.breadcrumb-link {
+  text-decoration: none;
+  color: #198754; /* Bootstrap green */
+  transition: color 0.2s ease;
+}
+
+.breadcrumb-link:hover {
+  color: #145c32;
+  text-decoration: underline;
+}
+
+/* Apple-style subtle shadow */
+.apple-shadow {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+/* Optional Apple-hover effect */
+.apple-hover:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
 </style>
