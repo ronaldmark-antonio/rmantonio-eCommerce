@@ -1,57 +1,50 @@
 <script setup>
-    import { onBeforeMount, reactive } from "vue";
-    import { useRoute, useRouter } from "vue-router";
-    import api from "../api";
+import { onBeforeMount, reactive, ref, computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import api from "../api";
+import { useGlobalStore } from "../stores/global";
+import { Notyf } from "notyf";
 
-    import { useGlobalStore } from "../stores/global";
-    import { Notyf } from "notyf";
-    import { ref } from 'vue';
+const quantity = ref(1);
+const notyf = new Notyf();
+const router = useRouter();
+const { user } = useGlobalStore();
+const loading = ref(false);
+const product = reactive({ data: null });
 
-    import { computed } from 'vue';
-
-    const quantity = ref(1);
-    const notyf = new Notyf();
-    const router = useRouter()
-    const { user } = useGlobalStore();
-    const loading = ref(false);
-
-    const product = reactive({ data: null });
+const subtotal = computed(() => {
+  if (!product.data) return 0;
+  return product.data.price * quantity.value;
+});
 
 
-    const subtotal = computed(() => {
-      if (!product.data) return 0;
-      return product.data.price * quantity.value;
-    });
+onBeforeMount(async () => {
+  const route = useRoute();
+  let { data } = await api.get(`/products/${route.params.productId}`);
+  product.data = data;
+});
 
-    onBeforeMount(async () => {
-      const route = useRoute();
-      let { data } = await api.get(`/products/${route.params.productId}`);
 
-      product.data = data;
-    });
+async function addToCart() {
+  const payload = {
+    productId: product.data._id,
+    quantity: quantity.value,
+    subtotal: subtotal.value
+  };
 
-    async function addToCart() {
-
-      const subtotal  = product.data.price * quantity.value;
-
-      const payload = {
-        productId: product.data._id,
-        quantity: quantity.value,
-        subtotal : subtotal 
-    };
-
-    loading.value = true;
-    try {
-        await api.post('/cart/add-to-cart', payload);
-        notyf.success("Added to Cart.");
-    } catch (error) {
-        console.error("Fetch error:", error);
-        notyf.error("Server error: Failed to Add to Cart.");
-    } finally {
-        loading.value = false;
-    }
+  loading.value = true;
+  try {
+    await api.post('/cart/add-to-cart', payload);
+    notyf.success("Added to Cart.");
+  } catch (error) {
+    console.error("Fetch error:", error);
+    notyf.error("Server error: Failed to Add to Cart.");
+  } finally {
+    loading.value = false;
+  }
 }
 </script>
+
 
 <template>
     <div class="container">
