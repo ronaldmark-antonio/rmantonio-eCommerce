@@ -7,6 +7,8 @@
     import { Notyf } from "notyf";
     import { ref } from 'vue';
 
+    import { computed } from 'vue';
+
     const quantity = ref(1);
     const notyf = new Notyf();
     const router = useRouter()
@@ -25,7 +27,7 @@
     async function addToCart() {
 
       const subtotal  = product.data.price * quantity.value;
-      
+
       const payload = {
         productId: product.data._id,
         quantity: quantity.value,
@@ -42,6 +44,12 @@
     } finally {
         loading.value = false;
     }
+
+    const subtotal = computed(() => {
+      if (!product.data) return 0;
+      return product.data.price * quantity.value;
+  });
+
 }
 </script>
 
@@ -80,50 +88,55 @@
         <p class="mb-3">
             {{ product.data.description }}
         </p>
-        <p class="fw-semibold">Price: &#8369;{{ product.data.price.toLocaleString() }}</p>
+        <p class="fw-semibold">
+          Price: &#8369;{{ product.data.price.toLocaleString() }}
+          <span class="text-muted">× {{ quantity }} =</span>
+          <span class="text-success">&#8369;{{ subtotal.toLocaleString() }}</span>
+      </p>
 
-        <div class="mb-2">
-           <label for="quantity" class="form-label">Quantity:</label>
-           <div class="input-group input-group-sm" style="width: 110px;">
-              <button
-              class="btn btn-success"
-              type="button"
-              @click="quantity = Math.max(1, quantity - 1)"
-              :disabled="quantity <= 1"
-              >-</button>
 
-              <input
-              type="number"
-              class="form-control text-center"
-              id="quantity"
-              v-model.number="quantity"
-              min="1"
-              style="max-width: 50px;"
-              @input="validateQuantity"
-              />
-              <button
-              class="btn btn-success"
-              type="button"
-              @click="quantity++"
-              >+</button>
-          </div>
-          <router-link 
-          to="/login" 
-          class="btn btn-outline-success btn-sm mt-2 d-inline-flex align-items-center gap-1" 
-          type="button" 
-          v-if="!user.email">
-          <i class="bi bi-box-arrow-in-right"></i>
-          <i class="bi bi-cart"></i>
-          <span>Login to Add</span>
-      </router-link>
-      <button 
-      class="btn btn-sm btn-success my-3 d-inline-flex align-items-center gap-1" 
-      v-else 
-      @click="addToCart"
-      >
-      <i class="bi bi-cart-plus"></i>
-      <span>Add to Cart</span>
-  </button>
+      <div class="mb-2">
+         <label for="quantity" class="form-label">Quantity:</label>
+         <div class="input-group input-group-sm" style="width: 110px;">
+          <button
+          class="btn btn-success"
+          type="button"
+          @click="quantity = Math.max(1, quantity - 1)"
+          :disabled="quantity <= 1"
+          >-</button>
+
+          <input
+          type="number"
+          class="form-control text-center"
+          id="quantity"
+          v-model.number="quantity"
+          min="1"
+          style="max-width: 50px;"
+          @input="validateQuantity"
+          />
+          <button
+          class="btn btn-success"
+          type="button"
+          @click="quantity++"
+          >+</button>
+      </div>
+      <router-link 
+      to="/login" 
+      class="btn btn-outline-success btn-sm mt-2 d-inline-flex align-items-center gap-1" 
+      type="button" 
+      v-if="!user.email">
+      <i class="bi bi-box-arrow-in-right"></i>
+      <i class="bi bi-cart"></i>
+      <span>Login to Add</span>
+  </router-link>
+  <button 
+  class="btn btn-sm btn-success my-3 d-inline-flex align-items-center gap-1" 
+  v-else 
+  @click="addToCart"
+  >
+  <i class="bi bi-cart-plus"></i>
+  <span>Add to Cart</span>
+</button>
 </div>
 </div>
 </div>
