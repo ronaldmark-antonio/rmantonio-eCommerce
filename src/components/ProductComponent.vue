@@ -53,15 +53,21 @@ export default {
     productData: Object,
   },
   methods: {
-    getCloudinaryImageUrl(publicId) {
-      const cloudName = "djanrocmu"; // 🔁 Replace with your real Cloudinary cloud name
-      if (!publicId) {
-        // fallback placeholder image if no image is provided
-        return `https://placehold.co/600x400/ffffff/000000?font=lora&text=${encodeURIComponent(this.productData.name)}`;
-      }
-      return `https://res.cloudinary.com/djanrocmu/image/upload/v1759394873/iPhone_14_g4wilr.webp`;
+  getCloudinaryImageUrl(publicId) {
+    const cloudName = "djanrocmu";
+
+    if (!publicId) {
+      return `https://placehold.co/600x400/ffffff/000000?font=lora&text=${encodeURIComponent(this.productData.name)}`;
     }
+
+    if (publicId.startsWith("http")) {
+      return publicId; // already a URL
+    }
+
+    return `https://res.cloudinary.com/${cloudName}/image/upload/${publicId}`;
   }
+}
+
 };
 
 </script>
