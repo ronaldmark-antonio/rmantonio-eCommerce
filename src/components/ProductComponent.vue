@@ -59,7 +59,7 @@ export default {
         // fallback placeholder image if no image is provided
         return `https://placehold.co/600x400/ffffff/000000?font=lora&text=${encodeURIComponent(this.productData.name)}`;
       }
-      return `https://res.cloudinary.com/djanrocmu/image/upload/${publicId}.jpg`;
+      return `https://res.cloudinary.com/djanrocmu/image/upload/v1759394873/iPhone_14_g4wilr.webp`;
     }
   }
 };
