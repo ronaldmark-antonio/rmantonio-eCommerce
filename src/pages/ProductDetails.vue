@@ -17,12 +17,18 @@
 
     const product = reactive({ data: null });
 
+
+    const subtotal = computed(() => {
+      if (!product.data) return 0;
+      return product.data.price * quantity.value;
+    });
+
     onBeforeMount(async () => {
       const route = useRoute();
       let { data } = await api.get(`/products/${route.params.productId}`);
 
       product.data = data;
-  });
+    });
 
     async function addToCart() {
 
@@ -44,12 +50,6 @@
     } finally {
         loading.value = false;
     }
-
-    const subtotal = computed(() => {
-      if (!product.data) return 0;
-      return product.data.price * quantity.value;
-  });
-
 }
 </script>
 
