@@ -54,4 +54,16 @@ h1, h2, h3, h4, h5, h6 {
     0 5px 10px rgba(0, 0, 0, 0.08);
   transition: box-shadow 0.3s ease-in-out;
 }
+
+.breadcrumb {
+  background-color: #f8f9fa;
+  padding: 0.75rem 1rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+}
+.breadcrumb-item + .breadcrumb-item::before {
+  content: "›";
+  color: #6c757d;
+}
+
 </style>
