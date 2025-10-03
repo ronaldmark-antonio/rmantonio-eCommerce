@@ -42,7 +42,7 @@ async function addProduct(e) {
   if (!token) return notyf.error("You must be logged in as admin");
 
   try {
-    const response = await fetch("http://localhost:4000/products", {
+    const response = await fetch("https://86cmr8pnej.execute-api.us-west-2.amazonaws.com/production/products", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
