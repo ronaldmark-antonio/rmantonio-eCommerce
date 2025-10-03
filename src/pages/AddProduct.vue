@@ -47,13 +47,7 @@ async function addProduct(e) {
       price: Number(price.value)
     })
 
-    let data;
-    const contentType = response.headers.get("content-type");
-    if (contentType && contentType.includes("application/json")) {
-      data = await response.json();
-    } else {
-      data = await response.text();
-    }
+    let data = response.data;
 
     if (response.status === 409 || data.message === "Product already exists") {
       notyf.error("Product Already Exists");
