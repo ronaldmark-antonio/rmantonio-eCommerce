@@ -1,6 +1,6 @@
 <script setup>
-import { onBeforeMount, reactive, ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { onBeforeMount, ref, watch } from "vue";
+import { useRouter } from "vue-router";
 import api from "../api";
 import { useGlobalStore } from "../stores/global";
 import { Notyf } from "notyf";
@@ -8,7 +8,6 @@ import { Notyf } from "notyf";
 const notyf = new Notyf();
 const { user } = useGlobalStore();
 const router = useRouter();
-const course = reactive({ data: null });
 
 const name = ref("");
 const description = ref("");
@@ -42,18 +41,11 @@ async function addProduct(e) {
   if (!token) return notyf.error("You must be logged in as admin");
 
   try {
-    const response = await fetch("https://86cmr8pnej.execute-api.us-west-2.amazonaws.com/production/products", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        name: name.value,
-        description: description.value,
-        price: Number(price.value)
-      })
-    });
+    const response = await api.post("/products", {
+      name: name.value,
+      description: description.value,
+      price: Number(price.value)
+    })
 
     let data;
     const contentType = response.headers.get("content-type");
@@ -167,5 +159,3 @@ function formatPrice() {
     </div>
   </div>
 </template>
-
-

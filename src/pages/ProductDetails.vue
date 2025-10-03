@@ -81,53 +81,50 @@ async function addToCart() {
         <p class="mb-3">
             {{ product.data.description }}
         </p>
-        <p class="fw-semibold">
-          Price: &#8369;{{ subtotal.toLocaleString() }}
-      </p>
+        <p class="fw-semibold">Price: &#8369;{{ product.data.price.toLocaleString() }}</p>
 
+        <div class="mb-2">
+           <label for="quantity" class="form-label">Quantity:</label>
+           <div class="input-group input-group-sm" style="width: 110px;">
+              <button
+              class="btn btn-success"
+              type="button"
+              @click="quantity = Math.max(1, quantity - 1)"
+              :disabled="quantity <= 1"
+              >-</button>
 
-      <div class="mb-2">
-         <label for="quantity" class="form-label">Quantity:</label>
-         <div class="input-group input-group-sm" style="width: 110px;">
-          <button
-          class="btn btn-success"
-          type="button"
-          @click="quantity = Math.max(1, quantity - 1)"
-          :disabled="quantity <= 1"
-          >-</button>
-
-          <input
-          type="number"
-          class="form-control text-center"
-          id="quantity"
-          v-model.number="quantity"
-          min="1"
-          style="max-width: 50px;"
-          @input="validateQuantity"
-          />
-          <button
-          class="btn btn-success"
-          type="button"
-          @click="quantity++"
-          >+</button>
-      </div>
-      <router-link 
-      to="/login" 
-      class="btn btn-outline-success btn-sm mt-2 d-inline-flex align-items-center gap-1" 
-      type="button" 
-      v-if="!user.email">
-      <i class="bi bi-box-arrow-in-right"></i>
-      <i class="bi bi-cart"></i>
-      <span>Login to Add</span>
-  </router-link>
-  <button 
-  class="btn btn-sm btn-success my-3 d-inline-flex align-items-center gap-1" 
-  v-else 
-  @click="addToCart"
-  >
-  <i class="bi bi-cart-plus"></i>
-  <span>Add to Cart</span>
-</button>
+              <input
+              type="number"
+              class="form-control text-center"
+              id="quantity"
+              v-model.number="quantity"
+              min="1"
+              style="max-width: 50px;"
+              @input="validateQuantity"
+              />
+              <button
+              class="btn btn-success"
+              type="button"
+              @click="quantity++"
+              >+</button>
+          </div>
+          <router-link 
+          to="/login" 
+          class="btn btn-outline-success btn-sm mt-2 d-inline-flex align-items-center gap-1" 
+          type="button" 
+          v-if="!user.email">
+          <i class="bi bi-box-arrow-in-right"></i>
+          <i class="bi bi-cart"></i>
+          <span>Login to Add</span>
+      </router-link>
+      <button 
+      class="btn btn-sm btn-success my-3 d-inline-flex align-items-center gap-1" 
+      v-else 
+      @click="addToCart"
+      >
+      <i class="bi bi-cart-plus"></i>
+      <span>Add to Cart</span>
+  </button>
 </div>
 </div>
 </div>
