@@ -48,7 +48,7 @@ async function addProduct(e) {
     })
 
     let data = response.data;
-
+    
     if (response.status === 409 || data.message === "Product already exists") {
       notyf.error("Product Already Exists");
     } else if (response.status === 201 || data.course === "Product added successfully") {
