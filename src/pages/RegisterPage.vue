@@ -45,7 +45,7 @@ async function handleSubmit(e) {
 
   try {
     
-    let res = await api.post("/users/register", {
+    let res = await api.post("https://rmantonio-ecommerceapi.onrender.com/users/register", {
       firstName: firstName.value,
       lastName: lastName.value,
       email: email.value,
