@@ -109,7 +109,7 @@ async function addToCart() {
               >+</button>
           </div>
           <router-link 
-          to="https://rmantonio-ecommerceapi.onrender.com/login" 
+          to="/login" 
           class="btn btn-outline-success btn-sm mt-2 d-inline-flex align-items-center gap-1" 
           type="button" 
           v-if="!user.email">
