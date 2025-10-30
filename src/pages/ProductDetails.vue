@@ -20,7 +20,7 @@ const subtotal = computed(() => {
 
 onBeforeMount(async () => {
   const route = useRoute();
-  let { data } = await api.get(`/products/${route.params.productId}`);
+  let { data } = await api.get(`https://rmantonio-ecommerceapi.onrender.com/products/${route.params.productId}`);
   product.data = data;
 });
 
@@ -109,7 +109,7 @@ async function addToCart() {
               >+</button>
           </div>
           <router-link 
-          to="/login" 
+          to="https://rmantonio-ecommerceapi.onrender.com/login" 
           class="btn btn-outline-success btn-sm mt-2 d-inline-flex align-items-center gap-1" 
           type="button" 
           v-if="!user.email">
