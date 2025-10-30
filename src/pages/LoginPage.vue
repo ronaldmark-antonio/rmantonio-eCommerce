@@ -10,11 +10,11 @@ const {getUserDetails, user} = useGlobalStore();
 const notyf = new Notyf();
 const router = useRouter()
 
-onBeforeMount(() => {
+/*onBeforeMount(() => {
   if (user.token) {
     router.replace('/products');
   }
-});
+});*/
 
 const email = ref("");
 const password = ref("");
