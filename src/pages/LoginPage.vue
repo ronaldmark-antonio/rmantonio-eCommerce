@@ -32,7 +32,7 @@ watch([email,password], (currentValue, oldValue) => {
  
 async function handleSubmit(){
 	try {
-		let res = await api.post('users/login', {
+		let res = await api.post('https://rmantonio-ecommerceapi.onrender.com/users/login', {
 			email: email.value,
 			password: password.value
 		})
