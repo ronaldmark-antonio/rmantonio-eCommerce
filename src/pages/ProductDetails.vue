@@ -20,7 +20,7 @@ const subtotal = computed(() => {
 
 onBeforeMount(async () => {
   const route = useRoute();
-  let { data } = await api.get(`/products/${route.params.productId}`);
+  let { data } = await api.get(`https://rmantonio-ecommerceapi.onrender.com/products/${route.params.productId}`);
   product.data = data;
 });
 
@@ -34,7 +34,7 @@ async function addToCart() {
 
   loading.value = true;
   try {
-    await api.post('/cart/add-to-cart', payload);
+    await api.post('https://rmantonio-ecommerceapi.onrender.com/cart/add-to-cart', payload);
     notyf.success("Added to Cart.");
   } catch (error) {
     console.error("Fetch error:", error);
