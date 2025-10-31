@@ -34,7 +34,7 @@ async function addToCart() {
 
   loading.value = true;
   try {
-    await api.post('/cart/add-to-cart', payload);
+    await api.post('https://rmantonio-ecommerceapi.onrender.com/cart/add-to-cart', payload);
     notyf.success("Added to Cart.");
   } catch (error) {
     console.error("Fetch error:", error);
