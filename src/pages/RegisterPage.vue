@@ -9,11 +9,11 @@ const { user } = useGlobalStore();
 const notyf = new Notyf();
 const router = useRouter();
 
-/*onBeforeMount(() => {
+onBeforeMount(() => {
   if (user.token) {
     router.replace('/products');
   }
-});*/
+});
 
 const firstName = ref("");
 const lastName = ref("");
