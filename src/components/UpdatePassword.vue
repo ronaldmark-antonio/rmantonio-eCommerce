@@ -31,8 +31,7 @@ const handleReset = async () => {
       return
     }
 
-    const response = await api.patch(
-      '/users/update-password',
+    const response = await api.patch('https://rmantonio-ecommerceapi.onrender.com/users/update-password',
       { newPassword: newPassword.value },
       { headers: { Authorization: `Bearer ${token}` } }
     )
