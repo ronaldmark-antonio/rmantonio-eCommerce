@@ -21,7 +21,7 @@ const noCart = ref(false)
 async function loadProducts(cartItems) {
   const results = await Promise.all(
       cartItems.map(async (product) => {
-        let res = await api.get(`/products/${product.productId}`);
+        let res = await api.get(`https://rmantonio-ecommerceapi.onrender.com/products/${product.productId}`);
         return {
           _id: product.productId,
           name: res.data.name,
@@ -45,7 +45,7 @@ const getTotal = () => {
 async function updateCart(productId, newQuantity) {
   loading.value = true;
   try {
-    await api.patch("/cart/update-cart-quantity", {
+    await api.patch("https://rmantonio-ecommerceapi.onrender.com/cart/update-cart-quantity", {
         productId: productId,
         newQuantity: newQuantity
       });
@@ -61,7 +61,7 @@ async function removeProduct(productId) {
   if (confirm("Do you really want to remove this product?")) {
     loading.value = true;
     try {
-      await api.patch(`/cart/${productId}/remove-from-cart`);
+      await api.patch(`https://rmantonio-ecommerceapi.onrender.com/cart/${productId}/remove-from-cart`);
 
       productData.value = productData.value.filter(product => product._id !== productId);
 
@@ -79,7 +79,7 @@ async function clearCart() {
 if (confirm("Do you really want to clear your cart?")) {
   loading.value = true;
   try {
-    await api.put('/cart/clear-cart');
+    await api.put('https://rmantonio-ecommerceapi.onrender.com/cart/clear-cart');
 
     productData.value = [];
 
@@ -97,7 +97,7 @@ async function checkoutCart() {
   if (confirm("Do you want to checkout your cart?")) {
     loading.value = true
     try {
-      let res = await api.post("/orders/checkout");
+      let res = await api.post("https://rmantonio-ecommerceapi.onrender.com/orders/checkout");
       if (res.status === 201) {
         await api.put('/cart/clear-cart');
         productData.value = [];
@@ -119,7 +119,7 @@ onBeforeMount(async () => {
   }
 
   try {
-    const res = await api.get("/cart/get-cart");
+    const res = await api.get("https://rmantonio-ecommerceapi.onrender.com/cart/get-cart");
     cart.userId = res.data.cart.userId;
     cart.cartItems = res.data.cart.cartItems;
     cart.totalPrice = res.data.cart.totalPrice;

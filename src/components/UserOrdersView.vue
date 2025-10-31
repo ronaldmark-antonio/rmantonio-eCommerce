@@ -23,7 +23,7 @@ const formatDate = (dateStr) => {
 async function getProductName(productId) {
   if (!productTable.value[productId]) {
     try {
-      let res = await api.get(`/products/${productId}`)
+      let res = await api.get(`https://rmantonio-ecommerceapi.onrender.com/products/${productId}`)
       if (res.status === 200) {
         productTable.value[productId] = res.data.name
       }
@@ -42,7 +42,7 @@ onBeforeMount(async () => {
 
   loading.value = true
   try {
-    let res = await api.get("/orders/my-orders")
+    let res = await api.get("https://rmantonio-ecommerceapi.onrender.com/orders/my-orders")
     if (res.status === 200) {
       ordersData.value = res.data.orders
 
