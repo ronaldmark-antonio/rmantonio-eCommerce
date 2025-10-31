@@ -99,7 +99,7 @@ async function checkoutCart() {
     try {
       let res = await api.post("https://rmantonio-ecommerceapi.onrender.com/orders/checkout");
       if (res.status === 201) {
-        await api.put('/cart/clear-cart');
+        await api.put('https://rmantonio-ecommerceapi.onrender.com/cart/clear-cart');
         productData.value = [];
 
         notyf.success("Cart successfully checked out!");
