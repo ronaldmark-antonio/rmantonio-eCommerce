@@ -18,7 +18,7 @@ function updateProduct(id) {
 
 async function archiveProduct(product) {
     try {
-      let res = await api.patch(`/products/${product._id}/archive`)
+      let res = await api.patch(`https://rmantonio-ecommerceapi.onrender.com/products/${product._id}/archive`)
       if (res.status === 200) {
         product.isActive = false;
         notyf.success("Product archived.");
@@ -33,7 +33,7 @@ async function archiveProduct(product) {
 
 async function activateProduct(product) {
   try {
-    let res = await api.patch(`/products/${product._id}/activate`)
+    let res = await api.patch(`https://rmantonio-ecommerceapi.onrender.com/products/${product._id}/activate`)
     if (res.status === 200) {
       product.isActive = true;
       notyf.success("Product set as active.");
