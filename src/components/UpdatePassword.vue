@@ -56,7 +56,7 @@ onBeforeMount(async () => {
   }
 
   try {
-    const { data } = await api.get('/users/details', {
+    const { data } = await api.get('https://rmantonio-ecommerceapi.onrender.com/users/details', {
       headers: { Authorization: `Bearer ${user.token}` },
     })
 

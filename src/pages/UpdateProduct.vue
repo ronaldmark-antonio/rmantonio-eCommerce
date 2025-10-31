@@ -51,7 +51,7 @@ onBeforeMount(async () => {
     return;
   }
 
-  let { data } = await api.get(`/products/${route.params.productId}`);
+  let { data } = await api.get(`https://rmantonio-ecommerceapi.onrender.com/products/${route.params.productId}`);
 
   name.value = data.name;
   description.value = data.description;
