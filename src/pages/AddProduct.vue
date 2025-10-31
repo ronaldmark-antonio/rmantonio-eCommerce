@@ -41,7 +41,7 @@ async function addProduct(e) {
   if (!token) return notyf.error("You must be logged in as admin");
 
   try {
-    const response = await api.post("/products", {
+    const response = await api.post("https://rmantonio-ecommerceapi.onrender.com/products", {
       name: name.value,
       description: description.value,
       price: Number(price.value)

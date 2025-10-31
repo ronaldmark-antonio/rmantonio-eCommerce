@@ -30,7 +30,7 @@ watch([name, description, price], (currValue) => {
 
 async function handleUpdate() {
   try {
-    let res = await api.patch(`/products/${route.params.productId}/update`, {
+    let res = await api.patch(`https://rmantonio-ecommerceapi.onrender.com/products/${route.params.productId}/update`, {
       name: name.value,
       description: description.value,
       price: price.value,
