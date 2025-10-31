@@ -19,7 +19,7 @@ export const useGlobalStore = defineStore('global',() => {
         	return;
     	}
 
-        let {data} = await api.get("/users/details")
+        let {data} = await api.get("https://rmantonio-ecommerce.vercel.app//users/details")
 
 		user.token = token;
         user.email = data.user.email;
