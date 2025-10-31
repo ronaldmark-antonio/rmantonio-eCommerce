@@ -19,7 +19,7 @@ export const useGlobalStore = defineStore('global',() => {
         	return;
     	}
 
-        let {data} = await api.get("/users/details")
+        let {data} = await api.get("https://rmantonio-ecommerceapi.onrender.com/users/details")
 
 		user.token = token;
         user.email = data.user.email;

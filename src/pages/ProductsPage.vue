@@ -23,10 +23,10 @@ export default {
     try {
       loading.value = true;
       if (user.isAdmin) {
-          let response = await api.get('/products/all');
+          let response = await api.get('https://rmantonio-ecommerceapi.onrender.com/products/all');
           products.data = response.data;
       } else {
-          let response = await api.get('/products/active');
+          let response = await api.get('https://rmantonio-ecommerceapi.onrender.com/products/active');
           products.data = response.data;
       }
     } catch (err) {
