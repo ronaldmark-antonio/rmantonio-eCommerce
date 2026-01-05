@@ -23,6 +23,9 @@ const password = ref("");
 const confirmPass = ref("");
 const submitEnabled = ref(false);
 
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
+
 watch([firstName, lastName, email, mobileNum, password, confirmPass], 
   (currValue, oldValue) => {
     
@@ -73,6 +76,10 @@ async function handleSubmit(e) {
     
     if (err.response.status === 400) {
       notyf.error(err.response.data.error);
+    } 
+
+    if (err.response.status === 409) {
+      notyf.error("Email already exists");
     } else {
       notyf.error("Registeration failed. Please contact administrator.");
     }
@@ -146,47 +153,67 @@ async function handleSubmit(e) {
           </div>
 
           <div class="mb-2">
-            <label for="passwordInput" class="form-label">Password:</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="fas fa-lock"></i></span>
-              <input 
-                type="password" 
-                class="form-control" 
-                id="passwordInput" 
-                placeholder="Enter your password" 
-                v-model="password" 
-                required />
-            </div>
+            <label class="form-label">Password:</label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="fas fa-lock"></i>
+                </span>
+
+                <input
+                  :type="showPassword ? 'text' : 'password'"
+                  class="form-control"
+                  placeholder="Enter your password"
+                  v-model="password"
+                  required
+                />
+
+                <span
+                  class="input-group-text password-eye"
+                  @click="showPassword = !showPassword"
+                >
+                  <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                </span>
+              </div>
           </div>
 
           <div class="mb-2">
-            <label for="confirmPasswordInput" class="form-label">Confirm Password:</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="fas fa-lock"></i></span>
-              <input 
-                type="password" 
-                class="form-control" 
-                id="cpasswordInput"  
-                placeholder="Confirm your password" 
-                v-model="confirmPass" 
-                required />
-            </div>
+            <label class="form-label">Confirm Password:</label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="fas fa-lock"></i>
+                </span>
+
+                <input
+                  :type="showConfirmPassword ? 'text' : 'password'"
+                  class="form-control"
+                  placeholder="Confirm your password"
+                  v-model="confirmPass"
+                  required
+                />
+
+                <span
+                  class="input-group-text password-eye"
+                  @click="showConfirmPassword = !showConfirmPassword"
+                >
+                  <i :class="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                </span>
+              </div>
           </div>
 
           <div class="d-grid mt-3">
-  <button 
-    type="submit" 
-    class="btn btn-success btn-block" 
-    v-if="submitEnabled">
-    <i class="fas fa-check-circle me-2"></i> Submit
-  </button>
-  <button 
-    type="submit" 
-    class="btn btn-success btn-block" 
-    disabled v-else>
-    <i class="fas fa-check-circle me-2"></i> Submit
-  </button>
-</div>
+          <button 
+            type="submit" 
+            class="btn btn-success btn-block" 
+            v-if="submitEnabled">
+            <i class="fas fa-check-circle me-2"></i> Submit
+          </button>
+          <button 
+            type="submit" 
+            class="btn btn-success btn-block" 
+            disabled v-else>
+            <i class="fas fa-check-circle me-2"></i> Submit
+          </button>
+        </div>
 
         </form>
         <p class="text-center p-3 mb-1">
