@@ -68,6 +68,8 @@ async function handleSubmit(e) {
 
       router.push("/login")
 
+    } else {
+        notyf.error("Registeration failed. Please contact administrator.");
     }
 
   } catch(err) {
@@ -76,7 +78,7 @@ async function handleSubmit(e) {
       notyf.error(err.response.data.error);
     } 
 
-    if (err.response.status === 409) {
+    else if (err.response.status === 409) {
       notyf.error("Email already exists");
     } else {
       notyf.error("Registeration failed. Please contact administrator.");
