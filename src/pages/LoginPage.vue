@@ -20,6 +20,9 @@ const email = ref("");
 const password = ref("");
 const isEnabled = ref(false);
 
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
+
 watch([email,password], (currentValue, oldValue) => {
 
     if(currentValue.every(input => input !== "")){
