@@ -143,7 +143,7 @@ async function handleSubmit(e) {
             <div class="input-group">
               <span class="input-group-text"><i class="fas fa-envelope"></i></span>
               <input 
-                type="email" 
+                type="text" 
                 class="form-control" 
                 id="emailInput"
                 placeholder="Enter your email address" 
