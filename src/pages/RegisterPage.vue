@@ -79,7 +79,7 @@ async function handleSubmit(e) {
     } 
 
     else if (err.response.status === 409) {
-      notyf.error("Email already exists");
+      notyf.error(err.response.data.error);
     } else {
       notyf.error("Registeration failed. Please contact administrator.");
     }
