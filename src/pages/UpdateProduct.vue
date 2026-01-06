@@ -37,7 +37,7 @@ async function handleUpdate() {
     });
 
     if (res.status === 200) {
-      notyf.success('Product updated successfully!');
+      notyf.success('Product updated successfully');
       router.push('/products');
     }
   } catch (err) {
