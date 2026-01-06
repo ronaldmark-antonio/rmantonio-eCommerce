@@ -54,10 +54,10 @@ async function addToCart() {
       "https://rmantonio-ecommerceapi.onrender.com/cart/add-to-cart",
       payload
     );
-    notyf.success("Added to Cart.");
+    notyf.success("Added to cart");
   } catch (error) {
     console.error("Fetch error:", error);
-    notyf.error("Server error: Failed to Add to Cart.");
+    notyf.error("Server error: Failed to add to cart");
   } finally {
     loading.value = false;
   }
