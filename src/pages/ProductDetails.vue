@@ -17,13 +17,29 @@ const subtotal = computed(() => {
   return product.data.price * quantity.value;
 });
 
+const incrementQuantity = () => {
+  quantity.value++;
+};
+
+const decrementQuantity = () => {
+  if (quantity.value > 1) {
+    quantity.value--;
+  }
+};
+
+const validateQuantity = () => {
+  if (!quantity.value || quantity.value < 1) {
+    quantity.value = 1;
+  }
+};
 
 onBeforeMount(async () => {
   const route = useRoute();
-  let { data } = await api.get(`https://rmantonio-ecommerceapi.onrender.com/products/${route.params.productId}`);
+  let { data } = await api.get(
+    `https://rmantonio-ecommerceapi.onrender.com/products/${route.params.productId}`
+  );
   product.data = data;
 });
-
 
 async function addToCart() {
   const payload = {
@@ -34,7 +50,10 @@ async function addToCart() {
 
   loading.value = true;
   try {
-    await api.post('https://rmantonio-ecommerceapi.onrender.com/cart/add-to-cart', payload);
+    await api.post(
+      "https://rmantonio-ecommerceapi.onrender.com/cart/add-to-cart",
+      payload
+    );
     notyf.success("Added to Cart.");
   } catch (error) {
     console.error("Fetch error:", error);
@@ -45,102 +64,118 @@ async function addToCart() {
 }
 </script>
 
-
 <template>
-    <div class="container">
-        <nav class="my-3" aria-label="breadcrumb">
-          <ol class="breadcrumb bg-light p-2 rounded small">
-            <li class="breadcrumb-item">
-              <router-link to="/" class="text-decoration-none text-success">
-                <i class="bi bi-house-door"></i> Home
-            </router-link>
+  <div class="container">
+    <nav class="my-3" aria-label="breadcrumb">
+      <ol class="breadcrumb bg-light p-2 rounded small">
+        <li class="breadcrumb-item">
+          <router-link to="/" class="text-decoration-none text-success">
+            <i class="bi bi-house-door"></i> Home
+          </router-link>
         </li>
         <li class="breadcrumb-item">
           <router-link to="/products" class="text-decoration-none text-success">
             <i class="bi bi-box-seam"></i> Products
-        </router-link>
-    </li>
-    <li class="breadcrumb-item active text-dark" aria-current="page">
-      <i class="bi bi-tag"></i>
-      {{ product.data ? product.data.name : "Loading..." }}
-  </li>
-</ol>
-</nav>
+          </router-link>
+        </li>
+        <li class="breadcrumb-item active text-dark" aria-current="page">
+          <i class="bi bi-tag"></i>
+          {{ product.data ? product.data.name : "Loading..." }}
+        </li>
+      </ol>
+    </nav>
 
-<div class="text-center my-5" v-if="loading">
-    <div class="spinner-grow"></div>
-</div>
-<div class="row mx-auto my-3 gap-4 gap-md-0" v-else-if="product.data">
-    <div class="col-12 col-md-6">
-        <img class="img-fluid rounded apple-shadow apple-hover" :src="`https://placehold.co/600x400/ffffff/000000?font=lora&text=${encodeURIComponent(product.data.name)}`"/>
+    <div class="text-center my-5" v-if="loading">
+      <div class="spinner-grow"></div>
     </div>
-    <div class="col-12 col-md-6">
-        <div class="d-flex">
-            <h1 class="mb-3">{{ product.data.name }}</h1>
-        </div>
-        <p class="mb-3">
-            {{ product.data.description }}
+
+    <div class="row mx-auto my-3 gap-4 gap-md-0" v-else-if="product.data">
+      <div class="col-12 col-md-6">
+        <img
+          class="img-fluid rounded apple-shadow apple-hover"
+          :src="`https://placehold.co/600x400/ffffff/000000?font=lora&text=${encodeURIComponent(product.data.name)}`"
+        />
+      </div>
+
+      <div class="col-12 col-md-6">
+        <h1 class="mb-3">{{ product.data.name }}</h1>
+
+        <p class="mb-3">{{ product.data.description }}</p>
+
+        <p class="fw-semibold">
+          Price: &#8369;{{ product.data.price.toLocaleString() }}
         </p>
-        <p class="fw-semibold">Price: &#8369;{{ product.data.price.toLocaleString() }}</p>
+
+        <p class="fw-semibold">
+          Subtotal:
+          <span class="text-success">
+            &#8369;{{ subtotal.toLocaleString() }}
+          </span>
+        </p>
 
         <div class="mb-2">
-           <label for="quantity" class="form-label">Quantity:</label>
-           <div class="input-group input-group-sm" style="width: 110px;">
-              <button
+          <label class="form-label">Quantity:</label>
+          <div class="input-group input-group-sm" style="width: 110px;">
+            <button
               class="btn btn-success"
               type="button"
-              @click="quantity = Math.max(1, quantity - 1)"
+              @click="decrementQuantity"
               :disabled="quantity <= 1"
-              >-</button>
+            >
+              -
+            </button>
 
-              <input
+            <input
               type="number"
               class="form-control text-center"
-              id="quantity"
               v-model.number="quantity"
               min="1"
-              style="max-width: 50px;"
               @input="validateQuantity"
-              />
-              <button
+              style="max-width: 50px;"
+            />
+
+            <button
               class="btn btn-success"
               type="button"
-              @click="quantity++"
-              >+</button>
+              @click="incrementQuantity"
+            >
+              +
+            </button>
           </div>
-          <router-link 
-          to="/login" 
-          class="btn btn-outline-success btn-sm mt-2 d-inline-flex align-items-center gap-1" 
-          type="button" 
-          v-if="!user.email">
-          <i class="bi bi-box-arrow-in-right"></i>
-          <i class="bi bi-cart"></i>
-          <span>Login to Add</span>
-      </router-link>
-      <button 
-      class="btn btn-sm btn-success my-3 d-inline-flex align-items-center gap-1" 
-      v-else 
-      @click="addToCart"
-      >
-      <i class="bi bi-cart-plus"></i>
-      <span>Add to Cart</span>
-  </button>
-</div>
-</div>
-</div>
-</div>
+
+          <router-link
+            to="/login"
+            class="btn btn-outline-success btn-sm mt-2 d-inline-flex align-items-center gap-1"
+            v-if="!user.email"
+          >
+            <i class="bi bi-box-arrow-in-right"></i>
+            <i class="bi bi-cart"></i>
+            <span>Login to Add</span>
+          </router-link>
+
+          <button
+            class="btn btn-sm btn-success my-3 d-inline-flex align-items-center gap-1"
+            v-else
+            @click="addToCart"
+          >
+            <i class="bi bi-cart-plus"></i>
+            <span>Add to Cart</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
-    input[type=number]::-webkit-outer-spin-button,
-    input[type=number]::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 
-/* Firefox */
-input[type=number] {
-    -moz-appearance: textfield;
-    appearance: textfield;
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 </style>

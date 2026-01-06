@@ -41,7 +41,7 @@ async function handleSubmit(){
 
 		if(res.data){
 
-			notyf.success("Login successfully!");
+			notyf.success("Login successfully");
 			localStorage.setItem("token", res.data.access);   
 
 			getUserDetails(res.data.access);
