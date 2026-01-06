@@ -65,7 +65,7 @@ async function removeProduct(productId) {
 
       productData.value = productData.value.filter(product => product._id !== productId);
 
-      notyf.success("Product removed from cart");
+      notyf.success("Product(s) removed from cart");
     } catch (error) {
       console.error("Failed to remove product:", error);
       notyf.error("Failed to remove product");
@@ -83,7 +83,7 @@ if (confirm("Do you really want to clear your cart?")) {
 
     productData.value = [];
 
-    notyf.success("Cart cleared");
+    notyf.success("Cart cleared successfully");
   } catch (error) {
     console.error("Failed to clear cart:", error);
     notyf.error("Failed to clear cart");
@@ -102,7 +102,7 @@ async function checkoutCart() {
         await api.put('https://rmantonio-ecommerceapi.onrender.com/cart/clear-cart');
         productData.value = [];
 
-        notyf.success("Cart successfully checked out!");
+        notyf.success("Cart checked out successfully");
         router.push("/");
       }
     } catch (error) {
