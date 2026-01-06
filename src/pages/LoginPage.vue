@@ -21,7 +21,6 @@ const password = ref("");
 const isEnabled = ref(false);
 
 const showPassword = ref(false);
-const showConfirmPassword = ref(false);
 
 watch([email,password], (currentValue, oldValue) => {
 
@@ -42,7 +41,7 @@ async function handleSubmit(){
 
 		if(res.data){
 
-			notyf.success("Login Successful");
+			notyf.success("Login successfully!");
 			localStorage.setItem("token", res.data.access);   
 
 			getUserDetails(res.data.access);
@@ -88,14 +87,30 @@ async function handleSubmit(){
 
           <div class="mb-3">
             <label for="passwordInput" class="form-label">Password:</label>
+
             <div class="input-group">
-              <span class="input-group-text"><i class="fas fa-lock"></i></span>
-              <input 
-                type="password" 
-                class="form-control" 
-                placeholder="Enter your password" 
-                id="passwordInput" 
-                v-model="password" />
+              <!-- Lock icon -->
+              <span class="input-group-text">
+                <i class="fas fa-lock"></i>
+              </span>
+
+              <!-- Password input -->
+              <input
+                :type="showPassword ? 'text' : 'password'"
+                class="form-control"
+                placeholder="Enter your password"
+                id="passwordInput"
+                v-model="password"
+                required
+              />
+
+              <!-- Eye toggle (same style as lock) -->
+              <span
+                class="input-group-text password-eye"
+                @click="showPassword = !showPassword"
+              >
+                <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+              </span>
             </div>
           </div>
 
