@@ -21,12 +21,12 @@ async function archiveProduct(product) {
       let res = await api.patch(`https://rmantonio-ecommerceapi.onrender.com/products/${product._id}/archive`)
       if (res.status === 200) {
         product.isActive = false;
-        notyf.success("Product archived.");
+        notyf.success("Product archived successfully");
       } else {
         notyf.error("Failed to archive product");
       }
     } catch (error) {
-      console.error("Fetch error:", error);
+      console.error("Product archive error", error);
       notyf.error("Server error: Could not archive product");
     }
   };
@@ -36,13 +36,13 @@ async function activateProduct(product) {
     let res = await api.patch(`https://rmantonio-ecommerceapi.onrender.com/products/${product._id}/activate`)
     if (res.status === 200) {
       product.isActive = true;
-      notyf.success("Product set as active.");
+      notyf.success("Product actived successfully");
     } else {
-      notyf.error("Server error in marking product as active.")
+      notyf.error("Failed to activate product")
     }
   } catch (error) {
     console.error("Product activation error", error);
-    notyf.error("Server error: Could not activate product.");
+    notyf.error("Server error: Could not activate product");
   }
 }
 </script>
