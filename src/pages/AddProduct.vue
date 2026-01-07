@@ -44,15 +44,15 @@ function normalizeName(value) {
 async function addProduct(e) {
   e.preventDefault();
 
-  const token = localStorage.getItem("token");
+  let token = localStorage.getItem("token");
   if (!token) {
     notyf.error("You must be logged in as admin");
     return;
   }
 
   if (typeof products !== "undefined" && Array.isArray(products)) {
-    const normalizedNewName = normalizeName(name.value);
-    const isDuplicate = products.some(
+    let normalizedNewName = normalizeName(name.value);
+    let isDuplicate = products.some(
       p => normalizeName(p.name) === normalizedNewName
     );
 
@@ -63,7 +63,7 @@ async function addProduct(e) {
   }
 
   try {
-    const response = await api.post(
+    let response = await api.post(
       "https://rmantonio-ecommerceapi.onrender.com/products",
       {
         name: name.value.trim(),
