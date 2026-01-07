@@ -49,10 +49,10 @@ async function addProduct(e) {
 
     let data = response.data;
     
-    if (response.status === 409 || data.message === "Product already exists") {
-      notyf.error("Product Already Exists");
+    if (response.status === 409 || data.message === "Product already exist") {
+      notyf.error("Product already exist");
     } else if (response.status === 201 || data.course === "Product added successfully") {
-      notyf.success("Product Added");
+      notyf.success("Product added successfully");
       router.push("/products");
     } else {
       notyf.error("Unsuccessful Product Creation");
