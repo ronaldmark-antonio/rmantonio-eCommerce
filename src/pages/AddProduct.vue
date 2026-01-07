@@ -34,34 +34,65 @@ onBeforeMount(() => {
   }
 });
 
+function normalizeName(value) {
+  return value
+    .toLowerCase()
+    .replace(/[\s\-_]+/g, "")
+    .trim();
+}
+
 async function addProduct(e) {
   e.preventDefault();
 
   const token = localStorage.getItem("token");
-  if (!token) return notyf.error("You must be logged in as admin");
+  if (!token) {
+    notyf.error("You must be logged in as admin");
+    return;
+  }
+
+  if (typeof products !== "undefined" && Array.isArray(products)) {
+    const normalizedNewName = normalizeName(name.value);
+    const isDuplicate = products.some(
+      p => normalizeName(p.name) === normalizedNewName
+    );
+
+    if (isDuplicate) {
+      notyf.error("Product already exists");
+      return;
+    }
+  }
 
   try {
-    const response = await api.post("https://rmantonio-ecommerceapi.onrender.com/products", {
-      name: name.value,
-      description: description.value,
-      price: Number(price.value)
-    })
+    const response = await api.post(
+      "https://rmantonio-ecommerceapi.onrender.com/products",
+      {
+        name: name.value.trim(),
+        description: description.value,
+        price: Number(price.value),
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-    let data = response.data;
-    
-    if (response.status === 409 || data.message === "Product already exist") {
-      notyf.error("Product already exist");
-    } else if (response.status === 201 || data.course === "Product added successfully") {
+    if (response.status === 201) {
       notyf.success("Product added successfully");
       router.push("/products");
-    } else {
-      notyf.error("Unsuccessful Product Creation");
     }
+
   } catch (error) {
-    console.error("Fetch error:", error);
-    notyf.error("Server error: Could not add product");
+    if (error.response?.status === 409) {
+      notyf.error("Product already exists");
+    } else if (error.response?.status === 401 || error.response?.status === 403) {
+      notyf.error("Unauthorized: Admin access required");
+    } else {
+      notyf.error(error.response?.data?.message || "Server error");
+    }
   }
 }
+
 
 function formatPrice() {
   let digits = formattedPrice.value.replace(/[^\d]/g, '');

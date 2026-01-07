@@ -58,7 +58,7 @@ async function handleSubmit(){
 		if(err.response.status === 404 || err.response.status === 401 || err.response.status === 400){
 			notyf.error(err.response.data.error);
 		} else {
-			notyf.error("Login Failed. Please contact administrator.");
+			notyf.error("Login Failed. Please contact administrator");
 		}
 	}
 }

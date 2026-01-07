@@ -69,7 +69,7 @@ async function handleSubmit(e) {
       router.push("/login")
 
     } else {
-        notyf.error("Registeration failed. Please contact administrator.");
+        notyf.error("Registeration failed. Please contact administrator");
     }
 
   } catch(err) {
@@ -81,7 +81,7 @@ async function handleSubmit(e) {
     else if (err.response.status === 409) {
       notyf.error(err.response.data.error);
     } else {
-      notyf.error("Registeration failed. Please contact administrator.");
+      notyf.error("Registeration failed. Please contact administrator");
     }
   }
 }
