@@ -1,50 +1,63 @@
 <script setup>
-import { defineProps } from "vue";
+import { defineProps, computed } from "vue";
 import { useRouter } from "vue-router";
 import { Notyf } from "notyf";
 import "notyf/notyf.min.css";
 import api from "../api";
 
+const router = useRouter();
+const notyf = new Notyf();
+
 const props = defineProps({
   productsData: Array,
 });
 
-const router = useRouter();
-const notyf = new Notyf();
-
 function updateProduct(id) {
   router.push(`/products/edit/${id}`);
-};
+}
 
 async function archiveProduct(product) {
-    try {
-      let res = await api.patch(`https://rmantonio-ecommerceapi.onrender.com/products/${product._id}/archive`)
-      if (res.status === 200) {
-        product.isActive = false;
-        notyf.success("Product archived successfully");
-      } else {
-        notyf.error("Failed to archive product");
-      }
-    } catch (error) {
-      console.error("Product archive error", error);
-      notyf.error("Server error: Could not archive product");
+  try {
+    let res = await api.patch(
+      `https://rmantonio-ecommerceapi.onrender.com/products/${product._id}/archive`
+    );
+    if (res.status === 200) {
+      product.isActive = false;
+      notyf.success("Product archived successfully");
+    } else {
+      notyf.error("Failed to archive product");
     }
-  };
+  } catch (error) {
+    console.error("Product archive error", error);
+    notyf.error("Server error: Could not archive product");
+  }
+}
 
 async function activateProduct(product) {
   try {
-    let res = await api.patch(`https://rmantonio-ecommerceapi.onrender.com/products/${product._id}/activate`)
+    let res = await api.patch(
+      `https://rmantonio-ecommerceapi.onrender.com/products/${product._id}/activate`
+    );
     if (res.status === 200) {
       product.isActive = true;
-      notyf.success("Product actived successfully");
+      notyf.success("Product activated successfully");
     } else {
-      notyf.error("Failed to activate product")
+      notyf.error("Failed to activate product");
     }
   } catch (error) {
     console.error("Product activation error", error);
     notyf.error("Server error: Could not activate product");
   }
 }
+
+const sortedProducts = computed(() => {
+  return [...props.productsData].sort((a, b) => {
+    if (a.createdAt && b.createdAt) {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    }
+    return b._id.localeCompare(a._id);
+  });
+});
 </script>
 
 <template>
@@ -85,7 +98,7 @@ async function activateProduct(product) {
       </thead>
       <tbody>
         <tr
-          v-for="product in productsData"
+          v-for="product in sortedProducts"
           :key="product._id"
           class="apple-table-row"
         >
@@ -124,7 +137,6 @@ async function activateProduct(product) {
         </tr>
       </tbody>
     </table>
-
   </div>
 </template>
 
