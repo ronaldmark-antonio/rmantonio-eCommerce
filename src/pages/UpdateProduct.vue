@@ -16,32 +16,51 @@ const price = ref(0);
 const formattedPrice = ref('');
 const updateEnabled = ref(false);
 
+// Original product data to compare changes
+let originalProduct = {
+  name: '',
+  description: '',
+  price: 0
+};
+
 function formatPrice() {
   let digits = formattedPrice.value.replace(/[^\d]/g, '');
   let withCommas = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
   formattedPrice.value = withCommas;
   price.value = parseInt(digits) || 0;
 }
 
-watch([name, description, price], (currValue) => {
-  updateEnabled.value = currValue.every(input => input);
+// Enable button only if something changed
+watch([name, description, price], () => {
+  updateEnabled.value = 
+    name.value.trim() !== originalProduct.name ||
+    description.value.trim() !== originalProduct.description ||
+    price.value !== originalProduct.price;
 });
 
 async function handleUpdate() {
   try {
-    let res = await api.patch(`https://rmantonio-ecommerceapi.onrender.com/products/${route.params.productId}/update`, {
-      name: name.value,
-      description: description.value,
-      price: price.value,
-    });
+    const res = await api.patch(
+      `https://rmantonio-ecommerceapi.onrender.com/products/${route.params.productId}/update`,
+      {
+        name: name.value.trim(),
+        description: description.value,
+        price: price.value,
+      }
+    );
 
     if (res.status === 200) {
       notyf.success('Product updated successfully');
       router.push('/products');
     }
   } catch (err) {
-    notyf.error(`Error in product update: ${err.response?.data?.error || err.message}`);
+    if (err.response?.status === 409) {
+      notyf.error('Another product with this name already exists');
+    } else if (err.response?.status === 404) {
+      notyf.error('Product not found. Please refresh the page.');
+    } else {
+      notyf.error(`Error in product update: ${err.response?.data?.error || err.message}`);
+    }
   }
 }
 
@@ -51,15 +70,30 @@ onBeforeMount(async () => {
     return;
   }
 
-  let { data } = await api.get(`https://rmantonio-ecommerceapi.onrender.com/products/${route.params.productId}`);
+  try {
+    const { data } = await api.get(
+      `https://rmantonio-ecommerceapi.onrender.com/products/${route.params.productId}`
+    );
 
-  name.value = data.name;
-  description.value = data.description;
-  price.value = data.price;
+    name.value = data.name;
+    description.value = data.description;
+    price.value = data.price;
+    formattedPrice.value = data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-  formattedPrice.value = data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    // Save original values for comparison
+    originalProduct.name = data.name;
+    originalProduct.description = data.description;
+    originalProduct.price = data.price;
+
+    // Button should be disabled initially
+    updateEnabled.value = false;
+  } catch (err) {
+    notyf.error('Failed to load product. Please go back and try again.');
+    router.push('/products');
+  }
 });
 </script>
+
 
 <template>
   <div class="container-fluid my-5">
