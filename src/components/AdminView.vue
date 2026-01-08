@@ -123,8 +123,8 @@ const sortedProducts = computed(() => {
           </td>
           <td>
             <button
-              class="btn btn-sm w-100 apple-btn"
-              :class="product.isActive ? 'btn-danger' : 'btn-success'"
+              class="btn btn-sm apple-btn"
+              :class="product.isActive ? 'btn-outline-danger w-100' : 'btn-success'"
               @click="product.isActive ? archiveProduct(product) : activateProduct(product)"
             >
               <i
