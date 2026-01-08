@@ -82,22 +82,23 @@ const sortedProducts = computed(() => {
 
     <div v-if="productsData.length === 0" class="text-center my-5">
       <h3>Your Product Catalog is Empty</h3>
-      <p class="text-dark">Looks like you're just getting started. Click "Add Product" to begin building your store!</p>
+      <p class="text-dark">Click "Add Product" to begin building your store!</p>
     </div>
 
-    <div v-else class="table-responsive">
-      <table class="table table-bordered table-hover align-middle text-center">
+    <div v-else>
+      <!-- Desktop table -->
+      <table class="table table-bordered table-hover align-middle text-center desktop-table">
         <thead>
           <tr>
-            <th class="col-name">Name</th>
-            <th class="col-desc">Description</th>
-            <th class="col-price">Price</th>
-            <th class="col-availability">Availability</th>
-            <th class="col-actions" colspan="2">Actions</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Availability</th>
+            <th colspan="2">Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="product in sortedProducts" :key="product._id" class="apple-table-row">
+          <tr v-for="product in sortedProducts" :key="product._id">
             <td class="text-start">{{ product.name }}</td>
             <td class="text-start">{{ product.description }}</td>
             <td>&#8369;{{ product.price.toLocaleString() }}</td>
@@ -111,7 +112,7 @@ const sortedProducts = computed(() => {
             </td>
             <td>
               <button
-                class="btn btn-sm btn-outline-success w-100 apple-btn"
+                class="btn btn-sm btn-outline-success w-100"
                 @click="updateProduct(product._id)"
               >
                 <i class="bi bi-pencil-square me-1"></i> Update
@@ -119,7 +120,7 @@ const sortedProducts = computed(() => {
             </td>
             <td>
               <button
-                class="btn btn-sm apple-btn w-100"
+                class="btn btn-sm w-100"
                 :class="product.isActive ? 'btn-outline-danger' : 'btn-success'"
                 @click="product.isActive ? archiveProduct(product) : activateProduct(product)"
               >
@@ -130,44 +131,85 @@ const sortedProducts = computed(() => {
           </tr>
         </tbody>
       </table>
-    </div>
 
+      <!-- Mobile cards -->
+      <div class="mobile-cards d-md-none">
+        <div v-for="product in sortedProducts" :key="product._id" class="card mb-3">
+          <div class="card-body p-3">
+            <h5 class="card-title mb-2">{{ product.name }}</h5>
+            <p class="card-text mb-1"><strong>Description:</strong> {{ product.description }}</p>
+            <p class="card-text mb-1"><strong>Price:</strong> &#8369;{{ product.price.toLocaleString() }}</p>
+            <p class="card-text mb-2">
+              <strong>Availability:</strong>
+              <span v-if="product.isActive" class="badge bg-success">Available</span>
+              <span v-else class="badge bg-danger">Unavailable</span>
+            </p>
+            <div class="d-flex gap-2 flex-wrap">
+              <button
+                class="btn btn-sm btn-outline-success flex-fill"
+                @click="updateProduct(product._id)"
+              >
+                <i class="bi bi-pencil-square me-1"></i> Update
+              </button>
+              <button
+                class="btn btn-sm flex-fill"
+                :class="product.isActive ? 'btn-outline-danger' : 'btn-success'"
+                @click="product.isActive ? archiveProduct(product) : activateProduct(product)"
+              >
+                <i :class="product.isActive ? 'bi bi-x-circle' : 'bi bi-check-circle'" class="me-1"></i>
+                {{ product.isActive ? 'Disable' : 'Activate' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 </template>
 
 <style scoped>
-/* Narrow dashboard container */
 .dashboard-container {
-  max-width: 900px; /* Adjust as needed */
+  max-width: 900px;
   margin: 0 auto;
 }
 
-/* Column widths for table */
-.col-name { width: 15%; min-width: 100px; }
-.col-desc { width: 35%; min-width: 150px; }
-.col-price { width: 10%; min-width: 80px; }
-.col-availability { width: 15%; min-width: 100px; }
-.col-actions { width: 25%; min-width: 150px; }
-
 /* Reduce table cell padding */
-.table th,
-.table td {
-  padding: 0.3rem 0.5rem; /* smaller than Bootstrap default */
+.table th, .table td {
+  padding: 0.3rem 0.5rem;
   vertical-align: middle;
+  word-wrap: break-word;
 }
 
-/* Responsive adjustments for smaller screens */
-@media (max-width: 768px) {
-  .table td, .table th {
-    font-size: 0.8rem;
-    padding: 0.2rem 0.4rem;
+/* Desktop vs Mobile */
+.desktop-table {
+  display: table;
+}
+.mobile-cards {
+  display: none;
+}
+
+/* Mobile view */
+@media (max-width: 767px) {
+  .desktop-table {
+    display: none;
   }
+  .mobile-cards {
+    display: block;
+  }
+
+  .card {
+    font-size: 0.85rem;
+  }
+
   .btn {
     font-size: 0.75rem;
     padding: 0.25rem 0.4rem;
   }
 }
 </style>
+
+
 
 
 
