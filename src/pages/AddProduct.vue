@@ -93,7 +93,6 @@ async function addProduct(e) {
   }
 }
 
-
 function formatPrice() {
   let digits = formattedPrice.value.replace(/[^\d]/g, '');
   let withCommas = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',');

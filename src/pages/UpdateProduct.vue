@@ -15,7 +15,6 @@ const description = ref('');
 const price = ref(0);
 const formattedPrice = ref('');
 const updateEnabled = ref(false);
-const allProducts = ref([]); // ✅ store all products for validation
 
 function formatPrice() {
   let digits = formattedPrice.value.replace(/[^\d]/g, '');
@@ -29,43 +28,20 @@ watch([name, description, price], (currValue) => {
   updateEnabled.value = currValue.every(input => input);
 });
 
-// Normalize product name for duplicate checks
-function normalizeName(value) {
-  return value.toLowerCase().replace(/[\s\-_]+/g, '').trim();
-}
-
 async function handleUpdate() {
-  // ✅ Check for duplicate names
-  const normalizedNewName = normalizeName(name.value);
-  const isDuplicate = allProducts.value.some(
-    p =>
-      normalizeName(p.name) === normalizedNewName &&
-      p._id !== route.params.productId // exclude current product
-  );
-
-  if (isDuplicate) {
-    notyf.error('Another product with this name already exists');
-    return;
-  }
-
   try {
-    let res = await api.patch(
-      `https://rmantonio-ecommerceapi.onrender.com/products/${route.params.productId}/update`,
-      {
-        name: name.value.trim(),
-        description: description.value,
-        price: price.value,
-      }
-    );
+    let res = await api.patch(`https://rmantonio-ecommerceapi.onrender.com/products/${route.params.productId}/update`, {
+      name: name.value,
+      description: description.value,
+      price: price.value,
+    });
 
     if (res.status === 200) {
       notyf.success('Product updated successfully');
       router.push('/products');
     }
   } catch (err) {
-    notyf.error(
-      `Error in product update: ${err.response?.data?.error || err.message}`
-    );
+    notyf.error(`Error in product update: ${err.response?.data?.error || err.message}`);
   }
 }
 
@@ -75,19 +51,13 @@ onBeforeMount(async () => {
     return;
   }
 
-  // Fetch current product data
-  const { data } = await api.get(
-    `https://rmantonio-ecommerceapi.onrender.com/products/${route.params.productId}`
-  );
+  let { data } = await api.get(`https://rmantonio-ecommerceapi.onrender.com/products/${route.params.productId}`);
 
   name.value = data.name;
   description.value = data.description;
   price.value = data.price;
-  formattedPrice.value = data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-  // ✅ Fetch all products for name validation
-  const allData = await api.get('https://rmantonio-ecommerceapi.onrender.com/products');
-  allProducts.value = allData.data;
+  formattedPrice.value = data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 });
 </script>
 
