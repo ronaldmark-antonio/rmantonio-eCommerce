@@ -112,7 +112,7 @@ const sortedProducts = computed(() => {
             </td>
             <td>
               <button
-                class="btn btn-sm btn-outline-success w-100"
+                class="btn btn-sm btn-outline-dark w-100"
                 @click="updateProduct(product._id)"
               >
                 <i class="bi bi-pencil-square me-1"></i> Update
@@ -121,7 +121,7 @@ const sortedProducts = computed(() => {
             <td>
               <button
                 class="btn btn-sm w-100"
-                :class="product.isActive ? 'btn-outline-danger' : 'btn-success'"
+                :class="product.isActive ? 'btn-outline-danger' : 'btn-outline-success'"
                 @click="product.isActive ? archiveProduct(product) : activateProduct(product)"
               >
                 <i :class="product.isActive ? 'bi bi-x-circle' : 'bi bi-check-circle'" class="me-1"></i>
