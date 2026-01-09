@@ -146,14 +146,14 @@ const sortedProducts = computed(() => {
             </p>
             <div class="d-flex gap-2 flex-wrap">
               <button
-                class="btn btn-sm btn-outline-success flex-fill"
+                class="btn btn-sm btn-outline-dark flex-fill"
                 @click="updateProduct(product._id)"
               >
                 <i class="bi bi-pencil-square me-1"></i> Update
               </button>
               <button
                 class="btn btn-sm flex-fill"
-                :class="product.isActive ? 'btn-outline-danger' : 'btn-success'"
+                :class="product.isActive ? 'btn-outline-danger' : 'btn-outline-success'"
                 @click="product.isActive ? archiveProduct(product) : activateProduct(product)"
               >
                 <i :class="product.isActive ? 'bi bi-x-circle' : 'bi bi-check-circle'" class="me-1"></i>
