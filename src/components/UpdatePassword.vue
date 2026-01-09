@@ -18,6 +18,9 @@ const isAdmin = ref(false) // boolean for admin
 const newPassword = ref('')
 const confirmPassword = ref('')
 
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
+
 const handleReset = async () => {
   if (newPassword.value !== confirmPassword.value) {
     notyf.error("Passwords do not match")
@@ -128,12 +131,19 @@ onBeforeMount(async () => {
               <div class="input-group">
                 <span class="input-group-text"><i class="fas fa-lock"></i></span>
                 <input
-                  type="password"
+                  :type="showPassword ? 'text' : 'password'"
                   id="newPassword"
                   v-model="newPassword"
                   class="form-control"
                   required
                 />
+
+                <span
+                  class="input-group-text password-eye"
+                  @click="showPassword = !showPassword"
+                >
+                  <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                </span>
               </div>
             </div>
 
@@ -142,12 +152,19 @@ onBeforeMount(async () => {
               <div class="input-group">
                 <span class="input-group-text"><i class="fas fa-lock"></i></span>
                 <input
-                  type="password"
+                  :type="showConfirmPassword ? 'text' : 'password'"
                   id="confirmPassword"
                   v-model="confirmPassword"
                   class="form-control"
                   required
                 />
+
+                <span
+                  class="input-group-text password-eye"
+                  @click="showConfirmPassword = !showConfirmPassword"
+                >
+                  <i :class="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                </span>
               </div>
             </div>
 
