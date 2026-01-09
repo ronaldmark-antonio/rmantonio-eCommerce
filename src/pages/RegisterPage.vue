@@ -41,7 +41,7 @@ async function handleSubmit(e) {
   e.preventDefault()
   
   if (password.value !== confirmPass.value) {
-    notyf.error("Passwords do not match.");
+    notyf.error("Passwords do not match");
     submitEnabled.value = false;
     return;
   }
@@ -69,7 +69,7 @@ async function handleSubmit(e) {
       router.push("/login")
 
     } else {
-        notyf.error("Registeration failed. Please contact administrator");
+        notyf.error("Registration failed. Please contact administrator");
     }
 
   } catch(err) {
@@ -81,7 +81,7 @@ async function handleSubmit(e) {
     else if (err.response.status === 409) {
       notyf.error(err.response.data.error);
     } else {
-      notyf.error("Registeration failed. Please contact administrator");
+      notyf.error("Registration failed. Please contact administrator");
     }
   }
 }
