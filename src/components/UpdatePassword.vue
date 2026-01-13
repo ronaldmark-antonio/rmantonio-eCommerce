@@ -46,7 +46,7 @@ const handleReset = async () => {
     router.push('/products')
     
   } catch (err) {
-    const msg = err.response?.data?.message || 'Password reset failed'
+    const msg = err.response?.data?.message || 'Password must be at least 8 characters'
     notyf.error(msg)
   }
 }
