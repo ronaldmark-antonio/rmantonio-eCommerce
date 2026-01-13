@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeMount, ref, computed } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Notyf } from 'notyf'
 import api from '../api'
@@ -20,14 +20,6 @@ const confirmPassword = ref('')
 
 const showPassword = ref(false);
 const showConfirmPassword = ref(false);
-
-const isSubmitDisabled = computed(() => {
-  return (
-    !newPassword.value ||
-    !confirmPassword.value ||
-    newPassword.value !== confirmPassword.value
-  )
-})
 
 const handleReset = async () => {
   if (newPassword.value !== confirmPassword.value) {
@@ -176,13 +168,9 @@ onBeforeMount(async () => {
               </div>
             </div>
 
-            <button
-            type="submit"
-            class="btn btn-success w-100"
-            :disabled="isSubmitDisabled"
-            >
-            <i class="fas fa-check-circle me-2"></i> Submit
-          </button>
+            <button type="submit" class="btn btn-success w-100">
+              <i class="fas fa-check-circle me-2"></i> Submit
+            </button>
           </form>
         </div>
 
