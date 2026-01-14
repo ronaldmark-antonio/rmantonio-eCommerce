@@ -159,7 +159,7 @@ async function addToCart() {
             @click="addToCart"
           >
             <i class="bi bi-cart-plus"></i>
-            <span>Add to Cart</span>
+            <span>Add to cart</span>
           </button>
         </div>
       </div>
