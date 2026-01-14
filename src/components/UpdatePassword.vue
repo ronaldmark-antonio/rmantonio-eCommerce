@@ -137,6 +137,7 @@ onBeforeMount(async () => {
                 <input
                   :type="showPassword ? 'text' : 'password'"
                   id="newPassword"
+                  placeholder="Enter new password"
                   v-model="newPassword"
                   class="form-control"
                   required
@@ -158,6 +159,7 @@ onBeforeMount(async () => {
                 <input
                   :type="showConfirmPassword ? 'text' : 'password'"
                   id="confirmPassword"
+                  placeholder="Confirm new password"
                   v-model="confirmPassword"
                   class="form-control"
                   required
