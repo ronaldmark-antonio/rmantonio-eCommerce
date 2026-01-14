@@ -12,19 +12,19 @@
         style="border: none;"
       />
       
-      <div class="card-body d-flex flex-column gap-2">
-        <h4 class="card-title fw-bold mb-2">
+      <div class="card-body d-flex flex-column">
+        <h6 class="card-title mb-0">
           {{ productData.name }}
-        </h4>
-        <p class="card-text text-muted mb-2">
+        </h6>
+        <p class="card-text mb-0">
           {{
             productData.description
               ? productData.description.slice(0, 100) + (productData.description.length > 100 ? '...' : '')
               : 'No description available.'
           }}
         </p>
-        <p class="mb-1">
-          <span class="fw-semibold">Price: &#8369;{{ productData.price.toLocaleString() }}</span>
+        <p class="mb-2">
+          <span class="">Price: &#8369;{{ productData.price.toLocaleString() }}</span>
         </p>
         <div class="d-grid d-md-block mt-md-auto">
           <router-link
