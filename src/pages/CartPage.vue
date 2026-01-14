@@ -154,11 +154,11 @@ onBeforeMount(async () => {
       <table class="table table-bordered" v-else>
         <thead class="table-primary">
           <tr>
-            <th style="width: 200px;">Name</th>
-            <th style="width: 200px;">Price</th>
-            <th style="width: 50px;">Quantity</th>
-            <th style="width: 130px;">Subtotal</th>
-            <th style="width: 130px;">Action</th>
+            <th class="bg-dark text-white" style="width: 200px;">Name</th>
+            <th class="bg-dark text-white" style="width: 200px;">Price</th>
+            <th class="bg-dark text-white" style="width: 50px;">Quantity</th>
+            <th class="bg-dark text-white" style="width: 130px;">Subtotal</th>
+            <th class="bg-dark text-white" style="width: 130px;">Action</th>
           </tr>
         </thead>
         <tbody>
