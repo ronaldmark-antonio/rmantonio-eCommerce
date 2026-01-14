@@ -98,17 +98,17 @@ async function addToCart() {
       </div>
 
       <div class="col-12 col-md-6">
-        <h1 class="mb-3">{{ product.data.name }}</h1>
+        <h3 class="mb-3">{{ product.data.name }}</h3>
 
-        <p class="mb-3">{{ product.data.description }}</p>
+        <p class="mb-0">{{ product.data.description }}</p>
 
-        <p class="fw-semibold">
+        <p class="mb-3">
           Price: &#8369;{{ product.data.price.toLocaleString() }}
         </p>
 
-        <p class="fw-semibold">
+        <p class="mb-0">
           Subtotal:
-          <span class="text-success">
+          <span class="text-dark">
             &#8369;{{ subtotal.toLocaleString() }}
           </span>
         </p>
