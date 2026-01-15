@@ -142,7 +142,7 @@ onBeforeMount(async () => {
   <div v-if="!user.isAdmin" class="container my-5">
     <div class="apple-shadow apple-hover p-4 rounded-4">
       <h1 class="text-center mb-4">
-        <i class="bi bi-cart me-2"></i> Your Shopping Cart
+        <i class="bi bi-cart text-success me-1"></i> Your Shopping Cart
       </h1>
       <div class="text-center my-5" v-if="loading">
         <div class="spinner-grow"></div>

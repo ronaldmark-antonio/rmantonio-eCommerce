@@ -82,13 +82,13 @@ onBeforeMount(async () => {
     <div class="row d-flex justify-content-center p-5">
       <div class="col-md-5 register-card apple-shadow p-5">
         <h1 class="my-3 text-center">
-          <i class="fas fa-user-circle me-2"></i> Profile Details
+          <i class="fas fa-user-circle text-success me-1"></i> Profile Details
         </h1>
 
         <div class="text-center mb-4">
           <span 
             class="badge fs-6"
-            :class="isAdmin ? 'bg-success' : 'border border-success text-success'">
+            :class="isAdmin ? 'bg-dark' : 'border border-dark text-dark'">
             {{ isAdmin ? 'Admin Account' : 'Regular Account' }}
           </span>
         </div>
@@ -174,13 +174,13 @@ onBeforeMount(async () => {
               </div>
             </div>
 
-<button
-  type="submit"
-  class="btn btn-success w-100"
-  :disabled="isSubmitDisabled"
->
-  <i class="fas fa-check-circle me-2"></i> Submit
-</button>
+            <button
+              type="submit"
+              class="btn btn-success w-100"
+              :disabled="isSubmitDisabled"
+            >
+              <i class="fas fa-check-circle me-2"></i> Submit
+            </button>
 
           </form>
         </div>

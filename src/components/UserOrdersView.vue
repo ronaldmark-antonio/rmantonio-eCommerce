@@ -69,7 +69,7 @@ onBeforeMount(async () => {
 
   <div class="apple-shadow apple-hover p-4 rounded-4" v-else>
     <h1 class="text-center mb-4">
-      <i class="bi bi-receipt me-1"></i> Order History
+      <i class="bi bi-receipt me-1 text-success"></i> Order History
     </h1>
 
     <p class="text-center" v-if="ordersData.length === 0">

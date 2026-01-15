@@ -29,7 +29,7 @@ const { user } = useGlobalStore();
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav ms-auto align-items-lg-center gap-3">
           <router-link :to="{ name: 'Products' }" class="nav-link fw-semibold text-white">
-            <i class="bi bi-cart me-1"></i> Shop
+            <i class="bi bi-bag me-1"></i> Shop
           </router-link>
 
           <router-link

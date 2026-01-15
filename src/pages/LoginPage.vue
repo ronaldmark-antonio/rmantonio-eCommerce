@@ -69,7 +69,7 @@ async function handleSubmit(){
     <div class="row d-flex justify-content-center p-5">
       <div class="col-md-5 login-card apple-shadow p-5">
         <h1 class="text-center">
-          <i class="fas fa-sign-in-alt me-2"></i> Login
+          <i class="fas fa-sign-in-alt text-success me-1"></i> Login
         </h1> 
         <form @submit.prevent="handleSubmit">
           <div class="mb-2">
