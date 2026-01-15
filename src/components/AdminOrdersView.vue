@@ -103,9 +103,12 @@ watch(groupBy, () => {
 
   <div class="apple-shadow apple-hover p-4 rounded-4" v-else>
 
-    <h1 class="text-center mb-4">
-      <i class="bi bi-receipt me-1"></i> Order History
+    <h1 class="text-center">
+      <i class="bi bi-receipt me-1 text-success"></i> Order History
     </h1>
+    <p class="text-center mb-3 pb-1">
+        Stay connected! Monitor your customers' orders in real-time.
+    </p>
     <div class="row">
       <div class="col d-flex justify-content-end align-items-center">
         <span class=" mx-2">Group By: </span>
@@ -118,7 +121,7 @@ watch(groupBy, () => {
         </div>
       </div>
     </div>
-    <p class="text-center" v-if="Object.keys(ordersData).length === 0">
+    <p class="text-center text-muted" v-if="Object.keys(ordersData).length === 0">
       No orders have been placed yet.
     </p>
 

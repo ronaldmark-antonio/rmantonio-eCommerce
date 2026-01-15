@@ -63,10 +63,13 @@ const sortedProducts = computed(() => {
 <template>
   <div class="dashboard-container apple-shadow p-4 my-5">
 
-    <h1 class="text-center mb-4">
-      <i class="bi bi-person-gear me-2"></i>
+    <h1 class="text-center">
+      <i class="bi bi-person-gear text-success me-2"></i>
       Admin Dashboard
     </h1>
+    <p class="text-center mb-3 pb-1">
+        Welcome back admin! Manage your store with ease.
+    </p>
 
     <div class="row mb-4">
       <div class="col text-center">
