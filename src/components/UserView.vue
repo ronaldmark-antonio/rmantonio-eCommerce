@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col my-5">
       <h2 class="text-center py-1">
-        <i class="bi bi-phone me-2"></i> Mobile Phones
+        <i class="bi bi-phone text-success"></i> Mobile Phones
       </h2>
     </div>
   </div>

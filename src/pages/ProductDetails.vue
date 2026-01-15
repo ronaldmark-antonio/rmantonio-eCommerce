@@ -75,7 +75,7 @@ async function addToCart() {
         </li>
         <li class="breadcrumb-item">
           <router-link to="/products" class="text-decoration-none text-success">
-            <i class="bi bi-box-seam"></i> Products
+            <i class="bi bi-phone"></i> Mobile Phones
           </router-link>
         </li>
         <li class="breadcrumb-item active text-dark" aria-current="page">
