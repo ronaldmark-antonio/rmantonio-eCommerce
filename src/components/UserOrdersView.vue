@@ -68,11 +68,13 @@ onBeforeMount(async () => {
   </div>
 
   <div class="apple-shadow apple-hover p-4 rounded-4" v-else>
-    <h1 class="text-center mb-4">
+    <h1 class="text-center">
       <i class="bi bi-receipt me-1 text-success"></i> Order History
     </h1>
-
-    <p class="text-center" v-if="ordersData.length === 0">
+    <p class="text-center mb-3 pb-1">
+        Stay connected! Thank you for shopping with us.
+    </p>
+    <p class="text-center text-muted" v-if="ordersData.length === 0">
       You have not placed any orders yet.
     </p>
 

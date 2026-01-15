@@ -81,10 +81,12 @@ onBeforeMount(async () => {
   <div class="container-fluid">
     <div class="row d-flex justify-content-center p-5">
       <div class="col-md-5 register-card apple-shadow p-5">
-        <h1 class="my-3 text-center">
+        <h1 class="text-center">
           <i class="fas fa-user-circle text-success me-1"></i> Profile Details
         </h1>
-
+        <p class="text-center mb-3 pb-1">
+          Welcome back! Keep your profile up-to-date.
+        </p>
         <div class="text-center mb-4">
           <span 
             class="badge fs-6"

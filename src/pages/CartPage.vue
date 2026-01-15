@@ -141,13 +141,16 @@ onBeforeMount(async () => {
 <template>
   <div v-if="!user.isAdmin" class="container my-5">
     <div class="apple-shadow apple-hover p-4 rounded-4">
-      <h1 class="text-center mb-4">
+      <h1 class="text-center">
         <i class="bi bi-cart text-success me-1"></i> Your Shopping Cart
       </h1>
+      <p class="text-center mb-3 pb-1">
+        You’re almost there! Checkout now for exclusive deals.
+      </p>
       <div class="text-center my-5" v-if="loading">
         <div class="spinner-grow"></div>
       </div>
-      <p class="text-center" v-else-if="productData.length === 0 || noCart">
+      <p class="text-center text-muted" v-else-if="productData.length === 0 || noCart">
         Your cart is empty. Products you add to your cart will appear here.
       </p>
 
