@@ -1,9 +1,9 @@
 <template>
   <div class="row">
     <div class="col my-5">
-      <h1 class="text-center py-1">
-        <i class="bi bi-box-seam me-2"></i> Our Products
-      </h1>
+      <h2 class="text-center py-1">
+        <i class="bi bi-phone me-2"></i> Mobile Phones
+      </h2>
     </div>
   </div>
 
