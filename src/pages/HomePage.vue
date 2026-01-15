@@ -13,7 +13,7 @@ export default {
           title: "Tech Without Borders",
           tagline: "Connected Without Limits",
           destination: "Products",
-          buttonLabel: "View Our Products"
+          buttonLabel: "Shop Now"
         }
     };
   }
