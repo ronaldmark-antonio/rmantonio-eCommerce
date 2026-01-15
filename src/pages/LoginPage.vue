@@ -70,7 +70,10 @@ async function handleSubmit(){
       <div class="col-md-5 login-card apple-shadow p-5">
         <h1 class="text-center">
           <i class="fas fa-sign-in-alt text-success me-1"></i> Login
-        </h1> 
+        </h1>
+        <p class="text-center mb-3 pb-1">
+            Welcome back! Sign in & discover more.
+        </p>
         <form @submit.prevent="handleSubmit">
           <div class="mb-2">
             <label for="emailInput" class="form-label">Email Address:</label>

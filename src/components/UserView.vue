@@ -1,9 +1,12 @@
 <template>
   <div class="row">
-    <div class="col my-5">
-      <h2 class="text-center py-1">
+    <div class="col my-5 text-center">
+      <h1 class="py-1">
         <i class="bi bi-phone text-success"></i> Mobile Phones
-      </h2>
+      </h1>
+      <p class="text-center">
+        Upgrade your life! Find your perfect phone today.
+      </p>
     </div>
   </div>
 
@@ -24,5 +27,4 @@ import { defineProps } from 'vue';
 const props = defineProps({
     productsData: Array
 });
-
 </script>

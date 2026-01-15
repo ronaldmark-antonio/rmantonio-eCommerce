@@ -94,6 +94,9 @@ async function handleSubmit(e) {
         <h1 class="my-3 text-center">
           <i class="fas fa-user-plus text-success me-1"></i> Register
         </h1>
+        <p class="text-center mb-3 pb-1">
+            Sign up now! Create your account today.
+        </p>
         <form @submit.prevent="handleSubmit">
           <!-- First Name Field -->
           <div class="mb-2">
