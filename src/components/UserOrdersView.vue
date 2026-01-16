@@ -88,7 +88,7 @@ onBeforeMount(async () => {
             :data-bs-target="`#product-${orderNum + 1}`" 
             aria-expanded="true"
           >
-            Order #{{ orderNum + 1 }} - Purchased on: {{ formatDate(order.orderedOn) }} (Click for Details)
+            Order #{{ orderNum + 1 }} - Purchased on: {{ formatDate(order.orderedOn) }} (click for details)
           </button>
         </h2>
         <div
@@ -103,9 +103,8 @@ onBeforeMount(async () => {
             <p>Items:</p>
             <ul>
               <li v-for="product in order.productsOrdered" :key="product.productId">
-                {{ productTable[product.productId] || "Loading..." }} 
-                (&#8369;{{ (product.subtotal / product.quantity).toLocaleString() }}) 
-                - Quantity: {{ product.quantity }}
+                {{ productTable[product.productId] || "Loading..." }} | Quantity: {{ product.quantity }}
+                | Subtotal: &#8369;{{ (product.subtotal / product.quantity).toLocaleString() }}
               </li>
             </ul>
             <p>Total: &#8369;{{ order.totalPrice.toLocaleString() }}</p>
