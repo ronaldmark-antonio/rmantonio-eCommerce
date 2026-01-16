@@ -132,8 +132,8 @@ watch(groupBy, () => {
       <div class="accordion accordion-item my-3" id="outer-accordion">
         <div class="accordion-item" v-for="(subgroups, group) in ordersData" :key="group">
           <h2 class="accordion-header" :id="`heading-${group}`">
-            <button class="accordion-button bg-white text-dark collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="`#group-${group}`" data-bs-parent="#outer-accordion" aria-expanded="false">
-              {{ group }} (Click for Details)
+            <button class="accordion-button bg-white text-dark collapsed fw-bold" type="button" data-bs-toggle="collapse" :data-bs-target="`#group-${group}`" data-bs-parent="#outer-accordion" aria-expanded="false">
+              {{ group }} (click for details)
             </button>
           </h2>
 
@@ -144,7 +144,7 @@ watch(groupBy, () => {
               <div class="accordion-item">
                 <h2 class="accordion-header" :id="`heading-${group}-${subgroup}`">
                   <button class="accordion-button bg-white text-dark" type="button" data-bs-toggle="collapse" :data-bs-target="`#${group}-${subgroup}`" :data-bs-parent="`#accordion-${group}-${subgroup}`" aria-expanded="true">
-                    {{ subgroup }} (Click for Details)
+                    {{ subgroup }} (click for details)
                   </button>
                 </h2>
                 <div
