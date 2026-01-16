@@ -82,7 +82,7 @@ onBeforeMount(async () => {
       <div class="accordion-item">
         <h2 class="accordion-header" :id="`product-heading-${orderNum + 1}`">
           <button 
-            class="accordion-button bg-white text-dark fw-semi-bold" 
+            class="accordion-button bg-white text-dark fw-bold" 
             type="button" 
             data-bs-toggle="collapse" 
             :data-bs-target="`#product-${orderNum + 1}`" 
@@ -108,7 +108,7 @@ onBeforeMount(async () => {
                 - Quantity: {{ product.quantity }}
               </li>
             </ul>
-            <h5>Total: &#8369;{{ order.totalPrice.toLocaleString() }}</h5>
+            <p>Total: &#8369;{{ order.totalPrice.toLocaleString() }}</p>
           </div>
         </div>
       </div>
