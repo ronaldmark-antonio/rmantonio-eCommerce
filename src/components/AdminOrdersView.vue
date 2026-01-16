@@ -157,7 +157,7 @@ watch(groupBy, () => {
                         Total Price: &#8369;{{ order.totalPrice.toLocaleString() }}
                         <ul>
                           <li v-for="product in order.productsOrdered">
-                            {{ productTable[product.productId] || "Loading..." }} (&#8369;{{ (product.subtotal / product.quantity).toLocaleString() }}) - Quantity: {{ product.quantity }}
+                            {{ productTable[product.productId] || "Loading..." }} | Quantity: {{ product.quantity }} | Subtotal &#8369;{{ (product.subtotal / product.quantity).toLocaleString() }}
                           </li>
                         </ul>
                       </li>
