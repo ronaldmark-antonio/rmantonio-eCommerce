@@ -49,7 +49,7 @@ async function handleSubmit(){
 			email.value = "";
 			password.value = "";
 
-			router.push({ path: '/' });
+			router.push({ path: '/products' });
 
 		}
 	}
