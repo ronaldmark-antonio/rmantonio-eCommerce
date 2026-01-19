@@ -65,10 +65,10 @@ const sortedProducts = computed(() => {
 
     <h1 class="text-center">
       <i class="bi bi-person-gear text-success me-2"></i>
-      Admin Dashboard
+      Product Dashboard
     </h1>
     <p class="text-center mb-3 pb-1">
-        Welcome back admin! Manage your store with ease.
+        Welcome back Admin! Manage your store with ease.
     </p>
 
     <div class="row mb-4">
