@@ -7,12 +7,16 @@ const { user } = useGlobalStore();
   <nav class="navbar navbar-expand-lg sticky-top bg-success shadow-sm">
     <div class="container">
       <!-- Logo + Brand -->
-      <router-link :to="{ name: 'Home' }" class="navbar-brand d-flex align-items-center">
-        <div class="logo-bg">
-          <img src="/images/fusiontechpro-logo.png" alt="FusionTechPro Logo" class="logo-img" />
-        </div>
-        <span class="ms-2 text-white fw-bold fs-3">FusionTechPro</span>
-      </router-link>
+      <router-link
+  :to="user.email ? { name: 'Products' } : { name: 'Home' }"
+  class="navbar-brand d-flex align-items-center"
+>
+  <div class="logo-bg">
+    <img src="/images/fusiontechpro-logo.png" alt="FusionTechPro Logo" class="logo-img" />
+  </div>
+  <span class="ms-2 text-white fw-bold fs-3">FusionTechPro</span>
+</router-link>
+
 
       <button
         class="navbar-toggler"
