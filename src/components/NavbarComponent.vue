@@ -17,6 +17,7 @@ const { user } = useGlobalStore();
         <span class="ms-2 text-white fw-bold fs-3">FusionTechPro</span>
       </router-link>
 
+
       <button
         class="navbar-toggler"
         type="button"
@@ -31,7 +32,20 @@ const { user } = useGlobalStore();
 
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav ms-auto align-items-lg-center gap-3">
-          <router-link :to="{ name: 'Products' }" class="nav-link fw-semibold text-white">
+
+          <router-link 
+            :to="{ name: 'Products' }" 
+            class="nav-link fw-semibold text-white"
+            v-if="user.isAdmin === true">
+            
+            <i class="bi bi-grid me-1"></i> Dashboard
+          </router-link>
+
+          <router-link 
+            :to="{ name: 'Products' }" 
+            class="nav-link fw-semibold text-white"
+            v-else>
+            
             <i class="bi bi-bag me-1"></i> Shop
           </router-link>
 
