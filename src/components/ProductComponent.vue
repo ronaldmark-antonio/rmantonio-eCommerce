@@ -54,3 +54,56 @@ export default {
 };
 </script>
 
+<style scoped>
+@media (max-width: 767px) {
+  #ProductCard {
+    padding: 0.25rem;
+  }
+
+  #ProductCard img {
+    height: 140px;
+    object-fit: cover;
+  }
+
+  #ProductCard .card-body {
+    padding: 0.5rem;
+  }
+
+  #ProductCard .card-title {
+    font-size: 0.9rem;
+  }
+
+  #ProductCard .card-text,
+  #ProductCard p {
+    font-size: 0.8rem;
+    line-height: 1.3;
+  }
+
+  #ProductCard .btn {
+    font-size: 0.75rem;
+    padding: 0.35rem;
+  }
+}
+
+/* Mobile-specific Apple shadow */
+@media (max-width: 767px) {
+  .apple-shadow {
+    box-shadow:
+      0 12px 18px rgba(0, 0, 0, 0.18),
+      0 6px 12px rgba(0, 0, 0, 0.16);
+    border-radius: 16px;
+    background-color: #ffffff;
+  }
+
+  /* Disable hover effects on mobile */
+  .apple-shadow:hover {
+    box-shadow:
+      0 12px 18px rgba(0, 0, 0, 0.18),
+      0 6px 12px rgba(0, 0, 0, 0.16);
+    transform: none;
+  }
+}
+
+</style>
+
+
