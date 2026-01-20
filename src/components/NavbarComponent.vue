@@ -61,6 +61,16 @@ onMounted(() => {
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav ms-auto align-items-lg-center gap-3">
 
+          <!-- Highlighted Welcome badge for mobile only -->
+          <div 
+            v-if="user.email || user.isAdmin" 
+            class="d-flex d-lg-none align-items-center gap-2"
+          >
+            <span class="login-highlight fw-bold">
+              {{ loading ? "Loading..." : `Welcome, ${user.firstName} ${user.lastName}` }}
+            </span>
+          </div>
+
           <!-- Admin Dashboard -->
           <router-link
             :to="{ name: 'Products' }"
@@ -132,13 +142,16 @@ onMounted(() => {
             <i class="bi bi-box-arrow-right me-1"></i> Logout
           </router-link>
 
-          <!-- Highlighted Welcome badge for regular user -->
-          <div v-if="user.email || user.isAdmin" class="d-flex align-items-center gap-2">
+          <!-- Highlighted Welcome badge for desktop only -->
+          <div 
+            v-if="user.email || user.isAdmin" 
+            class="d-none d-lg-flex align-items-center gap-2"
+          >
             <span class="login-highlight fw-bold">
               {{ loading ? "Loading..." : `Welcome, ${user.firstName} ${user.lastName}` }}
             </span>
           </div>
-
+          
         </div>
       </div>
     </div>
