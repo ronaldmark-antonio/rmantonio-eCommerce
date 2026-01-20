@@ -1,6 +1,35 @@
 <script setup>
+import { ref, onMounted } from "vue";
 import { useGlobalStore } from "../stores/global";
-const { user } = useGlobalStore();
+import api from "../api";
+
+const { user, setUser } = useGlobalStore(); // assuming you have setUser to update store
+const loading = ref(true);
+
+async function fetchUserDetails() {
+  try {
+    const token = user.token || localStorage.getItem("token");
+    if (!token) return;
+
+    const { data } = await api.get("https://rmantonio-ecommerceapi.onrender.com/users/details",
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    // Update global store with fetched details
+    setUser({ ...user, ...data.user });
+  } catch (err) {
+    console.error("Failed to fetch user details:", err);
+  } finally {
+    loading.value = false;
+  }
+}
+
+// Fetch user details on mount if not already loaded
+onMounted(() => {
+  if (!user.firstName) fetchUserDetails();
+});
 </script>
 
 <template>
@@ -10,13 +39,12 @@ const { user } = useGlobalStore();
       <router-link
         :to="user.email ? { name: 'Products' } : { name: 'Home' }"
         class="navbar-brand d-flex align-items-center"
-        >
+      >
         <div class="logo-bg">
           <img src="/images/fusiontechpro-logo.png" alt="FusionTechPro Logo" class="logo-img" />
         </div>
         <span class="ms-2 text-white fw-bold fs-3">FusionTechPro</span>
       </router-link>
-
 
       <button
         class="navbar-toggler"
@@ -33,30 +61,34 @@ const { user } = useGlobalStore();
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav ms-auto align-items-lg-center gap-3">
 
-          <router-link 
-            :to="{ name: 'Products' }" 
+          <!-- Admin Dashboard -->
+          <router-link
+            :to="{ name: 'Products' }"
             class="nav-link fw-semibold text-white"
-            v-if="user.isAdmin === true">
-            
+            v-if="user.isAdmin"
+          >
             <i class="bi bi-grid me-1"></i> Dashboard
           </router-link>
 
-          <router-link 
-            :to="{ name: 'Products' }" 
+          <!-- Shop -->
+          <router-link
+            :to="{ name: 'Products' }"
             class="nav-link fw-semibold text-white"
-            v-else>
-            
+            v-else
+          >
             <i class="bi bi-bag me-1"></i> Shop
           </router-link>
 
+          <!-- Cart -->
           <router-link
             :to="{ name: 'Cart' }"
             class="nav-link fw-semibold text-white"
-            v-if="user.email && user.isAdmin === false"
+            v-if="user.email && !user.isAdmin"
           >
             <i class="bi bi-cart me-1"></i> Cart
           </router-link>
 
+          <!-- Orders -->
           <router-link
             :to="{ name: 'Orders' }"
             class="nav-link fw-semibold text-white"
@@ -65,14 +97,17 @@ const { user } = useGlobalStore();
             <i class="bi bi-receipt me-1"></i> Orders
           </router-link>
 
+          <!-- Profile showing firstName + lastName -->
           <router-link
             :to="{ name: 'Profile' }"
             class="nav-link fw-semibold text-white"
             v-if="user.email"
           >
-            <i class="bi bi-person-circle me-1"></i> Profile
+            <i class="bi bi-person-circle me-1"></i>
+            {{ loading ? "Loading..." : `${user.firstName} ${user.lastName}` }}
           </router-link>
 
+          <!-- Register & Login -->
           <router-link
             :to="{ name: 'Register' }"
             class="nav-link fw-semibold text-white"
@@ -89,6 +124,7 @@ const { user } = useGlobalStore();
             <i class="bi bi-box-arrow-in-right me-1"></i> Login
           </router-link>
 
+          <!-- Logout -->
           <router-link
             :to="{ name: 'Logout' }"
             class="nav-link fw-semibold text-white"
@@ -96,6 +132,7 @@ const { user } = useGlobalStore();
           >
             <i class="bi bi-box-arrow-right me-1"></i> Logout
           </router-link>
+
         </div>
       </div>
     </div>
