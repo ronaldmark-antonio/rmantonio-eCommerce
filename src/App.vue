@@ -42,8 +42,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .apple-shadow {
   box-shadow:
-    0 10px 15px rgba(0, 0, 0, 0.08),
-    0 4px 6px rgba(0, 0, 0, 0.06);
+    0 10px 10px rgba(0, 0, 0, 0.15),
+    0 4px 10px rgba(0, 0, 0, 0.15);
   border-radius: 16px;
   background-color: #ffffff;
 }
