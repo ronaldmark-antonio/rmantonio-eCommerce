@@ -2,7 +2,7 @@
   <div class="row my-5">
     <h1 class="text-center mb-5">Why Shop with Us?</h1>
 
-    <div class="col-md-4">
+    <div class="col-md-4 mb-3">
       <div class="card p-4 min-height-100 apple-shadow apple-hover">
         <div class="card-body text-center">
           <h1 class="display-1 text-success">
@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-4 mb-3">
       <div class="card p-4 min-height-100 apple-shadow apple-hover">
         <div class="card-body text-center">
           <h1 class="display-1 text-success">
@@ -30,7 +30,7 @@
       </div>
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-4 mb-3">
       <div class="card p-4 min-height-100 apple-shadow apple-hover">
         <div class="card-body text-center">
           <h1 class="display-1 text-success">
@@ -49,8 +49,8 @@
 <style scoped>
 .apple-shadow {
   box-shadow:
-    0 10px 15px rgba(0, 0, 0, 0.08),
-    0 4px 6px rgba(0, 0, 0, 0.06);
+    0 10px 10px rgba(0, 0, 0, 0.15),
+    0 4px 10px rgba(0, 0, 0, 0.15);
   border-radius: 16px;
   border: none;
   background: linear-gradient(145deg, #ffffff, #f8f9fa);

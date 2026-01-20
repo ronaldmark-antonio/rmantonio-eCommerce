@@ -59,7 +59,7 @@ onMounted(() => {
       </button>
 
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav ms-auto align-items-lg-center gap-3">
+        <div class="navbar-nav ms-auto align-items-lg-center gap-lg-3 text-center">
 
           <!-- Highlighted Welcome badge for mobile only -->
           <div 
@@ -187,4 +187,24 @@ onMounted(() => {
   color: #145c32;
   text-decoration: none;
 }
+
+@media (max-width: 991.98px) {
+  .login-highlight {
+    background-color: transparent !important;
+    color: white !important;
+    padding: 0;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .navbar-nav {
+    gap: 0 !important;
+  }
+
+  .nav-link {
+    padding: 0.35rem 0;
+  }
+}
+
+
 </style>
