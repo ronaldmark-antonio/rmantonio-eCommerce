@@ -103,8 +103,7 @@ onMounted(() => {
             class="nav-link fw-semibold text-white"
             v-if="user.email"
           >
-            <i class="bi bi-person-circle me-1"></i>
-            {{ loading ? "Loading..." : `${user.firstName} ${user.lastName}` }}
+            <i class="bi bi-person-circle me-1"></i> Profile
           </router-link>
 
           <!-- Register & Login -->
@@ -132,6 +131,13 @@ onMounted(() => {
           >
             <i class="bi bi-box-arrow-right me-1"></i> Logout
           </router-link>
+
+          <!-- Highlighted Welcome badge for regular user -->
+          <div v-if="user.email || user.isAdmin" class="d-flex align-items-center gap-2">
+            <span class="login-highlight fw-bold">
+              {{ loading ? "Loading..." : `Welcome, ${user.firstName} ${user.lastName}` }}
+            </span>
+          </div>
 
         </div>
       </div>
