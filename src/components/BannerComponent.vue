@@ -23,16 +23,24 @@ export default {
 
 <style scoped>
 #banner {
-   background: linear-gradient(to right, rgb(255, 255, 255) 20%, rgba(126, 209, 247, 0.5)),
-               url('/images/banner-background.png') no-repeat center;
-   background-size: cover; 
-   background-position: center;
-   height: 550px;
-   display: flex;
-   align-items: center;
-   justify-content: flex-start;
-   padding: 1rem;
+  background:
+    linear-gradient(to right, rgb(255, 255, 255) 20%, rgba(126, 209, 247, 0.5)),
+    url('/images/banner-background.png') no-repeat center;
+  background-size: cover;
+  height: 550px;
 }
+
+/* Mobile */
+@media (max-width: 767px) {
+  #banner {
+    background-size: contain;
+    background-position: center top;
+    height: auto;
+    min-height: 320px;
+    padding: 2rem 1rem;
+  }
+}
+
 
 
 h1 {
