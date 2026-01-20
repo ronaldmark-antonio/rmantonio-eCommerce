@@ -90,7 +90,7 @@ async function handleSubmit(e) {
 <template>
   <div class="container-fluid">
     <div class="row d-flex justify-content-center p-5">
-      <div class="col-md-5 register-card apple-shadow p-5">
+      <div class="col-md-5 register-card apple-shadow p-4">
         <h1 class="my-3 text-center">
           <i class="fas fa-user-plus text-success me-1"></i> Register
         </h1>

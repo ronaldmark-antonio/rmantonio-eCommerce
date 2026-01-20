@@ -80,7 +80,7 @@ onBeforeMount(async () => {
 <template>
   <div class="container-fluid">
     <div class="row d-flex justify-content-center p-5">
-      <div class="col-md-5 register-card apple-shadow p-5">
+      <div class="col-md-5 register-card apple-shadow p-4">
         <h1 class="text-center">
           <i class="fas fa-user-circle text-success me-1"></i> Profile Details
         </h1>
