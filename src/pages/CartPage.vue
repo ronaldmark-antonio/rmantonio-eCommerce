@@ -35,8 +35,10 @@ async function loadProducts(cartItems) {
     })
   );
 
-  productData.value = results;
+  // Newest items first
+  productData.value = results.reverse();
 }
+
 
 // compute total dynamically
 const getTotal = () => {
