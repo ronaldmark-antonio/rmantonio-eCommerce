@@ -214,21 +214,21 @@ onBeforeMount(async () => {
             </td>
             <td>&#8369;{{ (product.price * product.quantity).toLocaleString() }}</td>
             <td>
-              <button class="btn btn-sm btn-danger w-100" @click="removeProduct(product._id)">Remove</button>
+              <button class="btn btn-sm bi-trash btn-danger w-100" @click="removeProduct(product._id)"> Remove</button>
             </td>
           </tr>
 
-                    <tr class="total-row border-0">
+          <tr class="total-row border-0">
             <td colspan="3" class="border-0">
               <div class="d-flex gap-2">
+                <button class="btn bi-check-circle btn-sm btn-success" @click="checkoutCart">
+                  Checkout
+                </button>
                 <button 
-                  class="btn btn-sm btn-danger" 
+                  class="btn bi-x-circle btn-sm btn-danger" 
                   v-if="!loading && productData.length > 0" 
                   @click="clearCart">
                   Clear Cart
-                </button>
-                <button class="btn btn-sm btn-success" @click="checkoutCart">
-                  Checkout
                 </button>
               </div>
             </td>
@@ -237,7 +237,7 @@ onBeforeMount(async () => {
               <h5>Total: &#8369;{{ getTotal().toLocaleString() }}</h5>
             </td>
           </tr>
-          
+
         </tbody>
       </table>
 
@@ -274,7 +274,7 @@ onBeforeMount(async () => {
 
             <p>Subtotal: ₱{{ (product.price * product.quantity).toLocaleString() }}</p>
 
-            <button class="btn btn-danger btn-sm w-100" @click="removeProduct(product._id)">Remove</button>
+            <button class="btn bi-trash btn-danger btn-sm w-100" @click="removeProduct(product._id)"> Remove</button>
           </div>
         </div>
       </div>
@@ -282,8 +282,8 @@ onBeforeMount(async () => {
       <!-- MOBILE TOTAL AND ACTIONS -->
       <div class="d-md-none mt-3" v-if="productData.length">
         <h5 class="text-center mb-3">Total: ₱{{ getTotal().toLocaleString() }}</h5>
-        <button class="btn btn-success w-100 mb-2" @click="checkoutCart">Checkout</button>
-        <button class="btn btn-danger w-100" @click="clearCart">Clear Cart</button>
+        <button class="btn bi-check-circle btn-success w-100 mb-2" @click="checkoutCart"> Checkout</button>
+        <button class="btn bi-x-circle btn-danger w-100" @click="clearCart"> Clear Cart</button>
       </div>
     </div>
   </div>
