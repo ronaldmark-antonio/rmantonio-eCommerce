@@ -25,20 +25,24 @@ const isSubmitDisabled = computed(() => {
   return !newPassword.value || !confirmPassword.value
 })
 
+const loading = ref(false)
+
 const handleReset = async () => {
   if (newPassword.value !== confirmPassword.value) {
     notyf.error("Passwords do not match")
     return
   }
 
-  try {
-    const token = user.token || localStorage.getItem('token')
-    if (!token) {
-      notyf.error('You are not authorized')
-      return
-    }
+  const token = user.token || localStorage.getItem('token')
+  if (!token) {
+    notyf.error('You are not authorized')
+    return
+  }
 
-    const response = await api.patch('https://rmantonio-ecommerceapi.onrender.com/users/update-password',
+  loading.value = true
+  try {
+    const response = await api.patch(
+      'https://rmantonio-ecommerceapi.onrender.com/users/update-password',
       { newPassword: newPassword.value },
       { headers: { Authorization: `Bearer ${token}` } }
     )
@@ -48,12 +52,14 @@ const handleReset = async () => {
     newPassword.value = ''
     confirmPassword.value = ''
     router.push('/products')
-    
   } catch (err) {
     const msg = err.response?.data?.message || 'Password must be at least 8 characters'
     notyf.error(msg)
+  } finally {
+    loading.value = false
   }
 }
+
 
 onBeforeMount(async () => {
   if (!user.token) {
@@ -179,9 +185,15 @@ onBeforeMount(async () => {
             <button
               type="submit"
               class="btn btn-success w-100"
-              :disabled="isSubmitDisabled"
+              :disabled="isSubmitDisabled || loading"
             >
-              <i class="fas fa-check-circle me-2"></i> Submit
+              <span v-if="!loading">
+                <i class="fas fa-check-circle me-2"></i> Submit
+              </span>
+              <span v-else class="d-flex align-items-center justify-content-center gap-2">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Submitting...
+              </span>
             </button>
 
           </form>
