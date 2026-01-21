@@ -1,88 +1,94 @@
 <script setup>
-import { onBeforeMount, reactive, ref, watch } from 'vue';
+import { onBeforeMount, reactive, ref } from 'vue';
 import { useGlobalStore } from '../stores/global';
 import api from '@/api';
 import { Notyf } from 'notyf';
 import { useRouter } from 'vue-router';
 
-const loading = ref(true);
+const loading = ref(true); // initial fetch loading
 const { user } = useGlobalStore();
 const router = useRouter();
 
-const notyf = new Notyf
+const notyf = new Notyf();
+
 const cart = reactive({
   userId: "",
   cartItems: [],
   totalPrice: 0
 });
-const productData = ref([]);
-const noCart = ref(false)
 
+const productData = ref([]);
+const noCart = ref(false);
+
+// load product details from API
 async function loadProducts(cartItems) {
   const results = await Promise.all(
-      cartItems.map(async (product) => {
-        let res = await api.get(`https://rmantonio-ecommerceapi.onrender.com/products/${product.productId}`);
-        return {
-          _id: product.productId,
-          name: res.data.name,
-          price: res.data.price,
-          quantity: product.quantity,
-          subtotal: product.subtotal,
-        }
-      })
-    );
+    cartItems.map(async (product) => {
+      const res = await api.get(`https://rmantonio-ecommerceapi.onrender.com/products/${product.productId}`);
+      return {
+        _id: product.productId,
+        name: res.data.name,
+        price: res.data.price,
+        quantity: product.quantity,
+        subtotal: product.subtotal,
+      };
+    })
+  );
 
   productData.value = results;
 }
 
+// compute total dynamically
 const getTotal = () => {
   return productData.value.reduce((total, product) => {
     total += product.quantity * product.price;
     return total;
-  }, 0)
+  }, 0);
 }
 
+// update quantity without disabling buttons
 async function updateCart(productId, newQuantity) {
-  loading.value = true;
+  const product = productData.value.find(p => p._id === productId);
+  if (product) {
+    product.quantity = newQuantity; // immediate update in UI
+  }
+
   try {
     await api.patch("https://rmantonio-ecommerceapi.onrender.com/cart/update-cart-quantity", {
-        productId: productId,
-        newQuantity: newQuantity
-      });
+      productId,
+      newQuantity
+    });
   } catch (error) {
-    notyf.error("Server error")
-    console.error(error)
+    notyf.error("Server error");
+    console.error(error);
+  }
+}
+
+// remove product
+async function removeProduct(productId) {
+  if (!confirm("Do you really want to remove this product?")) return;
+
+  loading.value = true;
+  try {
+    await api.patch(`https://rmantonio-ecommerceapi.onrender.com/cart/${productId}/remove-from-cart`);
+    productData.value = productData.value.filter(product => product._id !== productId);
+    notyf.success("Product(s) removed from cart");
+  } catch (error) {
+    console.error("Failed to remove product:", error);
+    notyf.error("Failed to remove product");
   } finally {
     loading.value = false;
   }
 }
 
-async function removeProduct(productId) {
-  if (confirm("Do you really want to remove this product?")) {
-    loading.value = true;
-    try {
-      await api.patch(`https://rmantonio-ecommerceapi.onrender.com/cart/${productId}/remove-from-cart`);
-
-      productData.value = productData.value.filter(product => product._id !== productId);
-
-      notyf.success("Product(s) removed from cart");
-    } catch (error) {
-      console.error("Failed to remove product:", error);
-      notyf.error("Failed to remove product");
-    } finally {
-      loading.value = false;
-    }
-  }
-}
-
+// clear cart
 async function clearCart() {
-if (confirm("Do you really want to clear your cart?")) {
+  if (!confirm("Do you really want to clear your cart?")) return;
+
   loading.value = true;
   try {
     await api.put('https://rmantonio-ecommerceapi.onrender.com/cart/clear-cart');
-
     productData.value = [];
-
     notyf.success("Cart cleared successfully");
   } catch (error) {
     console.error("Failed to clear cart:", error);
@@ -91,28 +97,28 @@ if (confirm("Do you really want to clear your cart?")) {
     loading.value = false;
   }
 }
-}
 
+// checkout
 async function checkoutCart() {
-  if (confirm("Do you want to checkout your cart?")) {
-    loading.value = true
-    try {
-      let res = await api.post("https://rmantonio-ecommerceapi.onrender.com/orders/checkout");
-      if (res.status === 201) {
-        await api.put('https://rmantonio-ecommerceapi.onrender.com/cart/clear-cart');
-        productData.value = [];
+  if (!confirm("Do you want to checkout your cart?")) return;
 
-        notyf.success("Cart checked out successfully");
-        router.push("/");
-      }
-    } catch (error) {
-      notyf.error("Error in checking out.");
-    } finally {
-      loading.value = false;
+  loading.value = true;
+  try {
+    const res = await api.post("https://rmantonio-ecommerceapi.onrender.com/orders/checkout");
+    if (res.status === 201) {
+      await api.put('https://rmantonio-ecommerceapi.onrender.com/cart/clear-cart');
+      productData.value = [];
+      notyf.success("Cart checked out successfully");
+      router.push("/");
     }
+  } catch (error) {
+    notyf.error("Error in checking out.");
+  } finally {
+    loading.value = false;
   }
 }
 
+// fetch cart on mount
 onBeforeMount(async () => {
   if (!user.token || !user.email) {
     return router.replace("/login");
@@ -135,8 +141,8 @@ onBeforeMount(async () => {
     loading.value = false;
   }
 });
-
 </script>
+
 
 <template>
   <div v-if="!user.isAdmin" class="container my-5">
@@ -147,71 +153,56 @@ onBeforeMount(async () => {
       <p class="text-center mb-3 pb-1">
         You’re almost there! Checkout now for exclusive deals.
       </p>
+
+      <!-- Loading spinner for initial fetch only -->
       <div class="text-center my-5" v-if="loading">
         <div class="spinner-grow"></div>
       </div>
+
+      <!-- Empty cart message -->
       <p class="text-center text-muted" v-else-if="productData.length === 0 || noCart">
         Your cart is empty. Products you add to your cart will appear here.
       </p>
 
-     <!-- DESKTOP TABLE -->
-    <table class="table table-bordered d-none d-md-table" v-if="productData.length">
-
-      <thead class="table-primary">
-        <tr>
-          <th class="bg-dark text-white">Name</th>
-          <th class="bg-dark text-white">Price</th>
-          <th class="bg-dark text-white">Quantity</th>
-          <th class="bg-dark text-white">Subtotal</th>
-          <th class="bg-dark text-white">Action</th>
-        </tr>
-      </thead>
-
+      <!-- DESKTOP TABLE -->
+      <table class="table table-bordered d-none d-md-table" v-if="productData.length">
+        <thead class="table-primary">
+          <tr>
+            <th class="bg-dark text-white">Name</th>
+            <th class="bg-dark text-white">Price</th>
+            <th class="bg-dark text-white">Quantity</th>
+            <th class="bg-dark text-white">Subtotal</th>
+            <th class="bg-dark text-white">Action</th>
+          </tr>
+        </thead>
         <tbody>
           <tr v-for="product in productData" :key="product._id">
-            <td data-label="Name">
-              <router-link class="routerLink" :to="`/products/${product._id}`">
-                {{ product.name }}
-              </router-link>
+            <td>
+              <router-link class="routerLink" :to="`/products/${product._id}`">{{ product.name }}</router-link>
             </td>
-
-            <td data-label="Price">
-              &#8369;{{ product.price.toLocaleString() }}
-            </td>
-
-            <td data-label="Quantity">
+            <td>&#8369;{{ product.price.toLocaleString() }}</td>
+            <td>
               <div class="input-group input-group-sm" style="width: 110px;">
-                <button
-                  class="btn btn-success"
-                  type="button"
-                  @click="product.quantity--; updateCart(product._id, product.quantity)"
-                  :disabled="product.quantity <= 1"
-                >-</button>
-
+              <button class="btn btn-success"
+                      @click="product.quantity--; updateCart(product._id, product.quantity)"
+                      :disabled="product.quantity <= 1">-</button>
                 <input
                   type="number"
                   class="form-control text-center"
                   v-model.number="product.quantity"
                   min="1"
                   style="max-width: 50px;"
+                  @keydown.prevent
+                  @paste.prevent
                 />
 
-                <button
-                  class="btn btn-success"
-                  type="button"
-                  @click="product.quantity++; updateCart(product._id, product.quantity)"
-                >+</button>
+                <button class="btn btn-success"
+                        @click="product.quantity++; updateCart(product._id, product.quantity)">+</button>
               </div>
             </td>
-
-            <td data-label="Subtotal">
-              &#8369;{{ (product.price * product.quantity).toLocaleString() }}
-            </td>
-
-            <td data-label="Action">
-              <button class="btn btn-sm btn-danger w-100" @click="removeProduct(product._id)">
-                Remove
-              </button>
+            <td>&#8369;{{ (product.price * product.quantity).toLocaleString() }}</td>
+            <td>
+              <button class="btn btn-sm btn-danger w-100" @click="removeProduct(product._id)">Remove</button>
             </td>
           </tr>
 
@@ -226,33 +217,21 @@ onBeforeMount(async () => {
         </tbody>
       </table>
 
-      <div v-if="!loading && productData.length > 0" class="d-none d-md-block">
-        <button class="btn btn-sm btn-danger" @click="clearCart">
-          Clear Cart
-        </button>
-      </div>
-
-      <!-- MOBILE CARD VIEW -->
+      <!-- MOBILE VIEW -->
       <div class="d-md-none" v-for="product in productData" :key="product._id">
         <div class="card mb-3 apple-shadow">
           <div class="card-body">
             <h6 class="fw-bold">
-              <router-link :to="`/products/${product._id}`">
-                {{ product.name }}
-              </router-link>
+              <router-link :to="`/products/${product._id}`">{{ product.name }}</router-link>
             </h6>
-
             <p class="mb-1">Price: ₱{{ product.price.toLocaleString() }}</p>
 
             <div class="d-flex align-items-center mb-2">
               <p class="me-2 mb-0">Quantity:</p>
               <div class="input-group input-group-sm" style="width: 80px;">
-                <button
-                  class="btn btn-success p-1"
-                  style="font-size: 0.8rem;"
-                  @click="product.quantity--; updateCart(product._id, product.quantity)"
-                  :disabled="product.quantity <= 1"
-                >−</button>
+              <button class="btn btn-success p-1"
+                      @click="product.quantity--; updateCart(product._id, product.quantity)"
+                      :disabled="product.quantity <= 1">−</button>
 
                 <input
                   type="number"
@@ -260,40 +239,32 @@ onBeforeMount(async () => {
                   v-model.number="product.quantity"
                   min="1"
                   style="font-size: 0.8rem; max-width: 35px;"
+                  @keydown.prevent
+                  @paste.prevent
                 />
 
-                <button
-                  class="btn btn-success p-1"
-                  style="font-size: 0.8rem;"
-                  @click="product.quantity++; updateCart(product._id, product.quantity)"
-                >+</button>
+                <button class="btn btn-success p-1"
+                       @click="product.quantity++; updateCart(product._id, product.quantity)">+</button>
               </div>
             </div>
 
-
             <p>Subtotal: ₱{{ (product.price * product.quantity).toLocaleString() }}</p>
 
-            <button class="btn btn-danger btn-sm w-100"
-                    @click="removeProduct(product._id)">
-              Remove
-            </button>
+            <button class="btn btn-danger btn-sm w-100" @click="removeProduct(product._id)">Remove</button>
           </div>
         </div>
       </div>
 
+      <!-- MOBILE TOTAL AND ACTIONS -->
       <div class="d-md-none mt-3" v-if="productData.length">
         <h5 class="text-center mb-3">Total: ₱{{ getTotal().toLocaleString() }}</h5>
-        <button class="btn btn-success w-100 mb-2" @click="checkoutCart">
-          Checkout
-        </button>
-        <button class="btn btn-danger w-100" @click="clearCart">
-          Clear Cart
-        </button>
+        <button class="btn btn-success w-100 mb-2" @click="checkoutCart">Checkout</button>
+        <button class="btn btn-danger w-100" @click="clearCart">Clear Cart</button>
       </div>
-
     </div>
   </div>
 </template>
+
 
 
 <style>
