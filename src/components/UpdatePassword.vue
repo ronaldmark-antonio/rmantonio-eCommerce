@@ -49,9 +49,20 @@ const handleReset = async () => {
 
     notyf.success(response.data.message || 'Password reset successfully')
 
+    // Clear sensitive data and logout
     newPassword.value = ''
     confirmPassword.value = ''
-    router.push('/products')
+
+    // Remove token and reset store
+    localStorage.removeItem('token')
+    user.token = null
+    user.email = null
+    user.firstName = null
+    user.lastName = null
+
+    // Redirect to login
+    router.push('/login')
+
   } catch (err) {
     const msg = err.response?.data?.message || 'Password must be at least 8 characters'
     notyf.error(msg)
@@ -59,7 +70,6 @@ const handleReset = async () => {
     loading.value = false
   }
 }
-
 
 onBeforeMount(async () => {
   if (!user.token) {
