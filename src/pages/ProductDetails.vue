@@ -132,6 +132,8 @@ async function addToCart() {
               min="1"
               @input="validateQuantity"
               style="max-width: 50px;"
+              @keydown.prevent
+              @paste.prevent
             />
 
             <button
