@@ -165,53 +165,68 @@ onBeforeMount(async () => {
       </p>
 
       <!-- DESKTOP TABLE -->
-      <table class="table table-bordered d-none d-md-table" v-if="productData.length">
-        <thead class="table-primary">
-          <tr>
-            <th class="bg-dark text-white">Name</th>
-            <th class="bg-dark text-white">Price</th>
-            <th class="bg-dark text-white">Quantity</th>
-            <th class="bg-dark text-white">Subtotal</th>
-            <th class="bg-dark text-white">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="product in productData" :key="product._id">
-            <td>
-              <router-link class="routerLink" :to="`/products/${product._id}`">{{ product.name }}</router-link>
-            </td>
-            <td>&#8369;{{ product.price.toLocaleString() }}</td>
-            <td>
-              <div class="input-group input-group-sm" style="width: 110px;">
-              <button class="btn btn-success"
-                      @click="product.quantity--; updateCart(product._id, product.quantity)"
-                      :disabled="product.quantity <= 1">-</button>
-                <input
-                  type="number"
-                  class="form-control text-center"
-                  v-model.number="product.quantity"
-                  min="1"
-                  style="max-width: 50px;"
-                  @keydown.prevent
-                  @paste.prevent
-                />
+<table class="table table-bordered d-none d-md-table">
+  <thead class="table-primary">
+    <tr>
+      <th class="bg-dark text-white" style="width: 40%;">Name</th>
+      <th class="bg-dark text-white" style="width: 15%;">Price</th>
+      <th class="bg-dark text-white" style="width: 15%;">Quantity</th>
+      <th class="bg-dark text-white" style="width: 15%;">Subtotal</th>
+      <th class="bg-dark text-white" style="width: 15%;">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr v-for="product in productData" :key="product._id">
+      <td>
+        <router-link class="routerLink" :to="`/products/${product._id}`">{{ product.name }}</router-link>
+      </td>
+      <td>&#8369;{{ product.price.toLocaleString() }}</td>
+      <td>
+        <div class="input-group input-group-sm" style="width: 110px;">
+          <button
+            class="btn btn-success"
+            @click="product.quantity--; updateCart(product._id, product.quantity)"
+            :disabled="product.quantity <= 1"
+          >-</button>
 
-                <button class="btn btn-success"
-                        @click="product.quantity++; updateCart(product._id, product.quantity)">+</button>
+          <input
+            type="number"
+            class="form-control text-center"
+            v-model.number="product.quantity"
+            min="1"
+            @keydown.prevent
+            @paste.prevent
+          />
+
+          <button
+            class="btn btn-success"
+            @click="product.quantity++; updateCart(product._id, product.quantity)"
+          >+</button>
+        </div>
+      </td>
+      <td>&#8369;{{ (product.price * product.quantity).toLocaleString() }}</td>
+      <td>
+        <button class="btn btn-sm btn-danger w-100" @click="removeProduct(product._id)">Remove</button>
+      </td>
+    </tr>
+
+          <tr class="total-row border-0">
+            <td colspan="3" class="border-0">
+              <div class="d-flex gap-2">
+                <button 
+                  class="btn btn-sm btn-danger" 
+                  v-if="!loading && productData.length > 0" 
+                  @click="clearCart">
+                  Clear Cart
+                </button>
+                <button class="btn btn-sm btn-success" @click="checkoutCart">
+                  Checkout
+                </button>
               </div>
             </td>
-            <td>&#8369;{{ (product.price * product.quantity).toLocaleString() }}</td>
-            <td>
-              <button class="btn btn-sm btn-danger w-100" @click="removeProduct(product._id)">Remove</button>
-            </td>
-          </tr>
 
-          <tr class="total-row">
-            <td colspan="3">
-              <button class="btn btn-sm btn-success" @click="checkoutCart">Checkout</button>
-            </td>
-            <td colspan="2">
-              <h4>Total: &#8369;{{ getTotal().toLocaleString() }}</h4>
+            <td colspan="2" class="border-0">
+              <h5>Total: &#8369;{{ getTotal().toLocaleString() }}</h5>
             </td>
           </tr>
         </tbody>
@@ -277,6 +292,24 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
+}
+
+@media (min-width: 768px) {
+  table.table td:nth-child(1),
+  table.table th:nth-child(1) {
+    width: 40%; /* Name column wider */
+  }
+
+  table.table td:nth-child(2),
+  table.table td:nth-child(3),
+  table.table td:nth-child(4),
+  table.table td:nth-child(5),
+  table.table th:nth-child(2),
+  table.table th:nth-child(3),
+  table.table th:nth-child(4),
+  table.table th:nth-child(5) {
+    width: 15%; /* other columns narrower */
+  }
 }
 
 /* MOBILE RESPONSIVE TABLE */
