@@ -37,17 +37,20 @@ watch([firstName, lastName, email, mobileNum, password, confirmPass],
 }
 );
 
+const submitting = ref(false);
+
 async function handleSubmit(e) {
-  e.preventDefault()
-  
+  e.preventDefault();
+
   if (password.value !== confirmPass.value) {
     notyf.error("Passwords do not match");
     submitEnabled.value = false;
     return;
   }
 
+  submitting.value = true; // start loading
+
   try {
-    
     let res = await api.post("https://rmantonio-ecommerceapi.onrender.com/users/register", {
       firstName: firstName.value,
       lastName: lastName.value,
@@ -61,30 +64,28 @@ async function handleSubmit(e) {
 
       firstName.value = "";
       lastName.value = "";
-      mobileNum.value = ""
+      mobileNum.value = "";
       email.value = "";
       password.value = "";
       confirmPass.value = "";
 
-      router.push("/login")
+      router.push("/login");
 
     } else {
-        notyf.error("Registration failed. Please contact administrator");
+      notyf.error("Registration failed. Please contact administrator");
     }
 
   } catch(err) {
-    
-    if (err.response.status === 400) {
-      notyf.error(err.response.data.error);
-    } 
-
-    else if (err.response.status === 409) {
+    if (err.response?.status === 400 || err.response?.status === 409) {
       notyf.error(err.response.data.error);
     } else {
       notyf.error("Registration failed. Please contact administrator");
     }
+  } finally {
+    submitting.value = false; // stop loading
   }
 }
+
 </script>
 
 <template>
@@ -204,19 +205,17 @@ async function handleSubmit(e) {
           </div>
 
           <div class="d-grid mt-3">
-          <button 
-            type="submit" 
-            class="btn btn-success btn-block" 
-            v-if="submitEnabled">
-            <i class="fas fa-check-circle me-2"></i> Submit
-          </button>
-          <button 
-            type="submit" 
-            class="btn btn-success btn-block" 
-            disabled v-else>
-            <i class="fas fa-check-circle me-2"></i> Submit
-          </button>
-        </div>
+            <button 
+              type="submit" 
+              class="btn btn-success btn-block" 
+              :disabled="!submitEnabled || submitting"
+            >
+              <i v-if="!submitting" class="fas fa-check-circle me-2"></i>
+              <span v-else class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              
+              {{ submitting ? 'Submitting...' : 'Submit' }}
+            </button>
+          </div>
 
         </form>
         <p class="text-center p-3 mb-1">

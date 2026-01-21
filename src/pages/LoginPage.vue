@@ -32,36 +32,39 @@ watch([email,password], (currentValue, oldValue) => {
 
 });
  
+const submitting = ref(false);
+
 async function handleSubmit(){
-	try {
-		let res = await api.post('https://rmantonio-ecommerceapi.onrender.com/users/login', {
-			email: email.value,
-			password: password.value
-		})
+  if (!isEnabled.value) return;
 
-		if(res.data){
+  submitting.value = true; // start submitting
+  try {
+    let res = await api.post('https://rmantonio-ecommerceapi.onrender.com/users/login', {
+      email: email.value,
+      password: password.value
+    })
 
-			notyf.success("Login successfully");
-			localStorage.setItem("token", res.data.access);   
+    if(res.data){
+      notyf.success("Login successfully");
+      localStorage.setItem("token", res.data.access);   
+      getUserDetails(res.data.access);
 
-			getUserDetails(res.data.access);
+      email.value = "";
+      password.value = "";
 
-			email.value = "";
-			password.value = "";
-
-			router.push({ path: '/products' });
-
-		}
-	}
-
-	catch(err){              
-		if(err.response.status === 404 || err.response.status === 401 || err.response.status === 400){
-			notyf.error(err.response.data.error);
-		} else {
-			notyf.error("Login Failed. Please contact administrator");
-		}
-	}
+      router.push({ path: '/products' });
+    }
+  } catch(err){              
+    if(err.response?.status === 404 || err.response?.status === 401 || err.response?.status === 400){
+      notyf.error(err.response.data.error);
+    } else {
+      notyf.error("Login Failed. Please contact administrator");
+    }
+  } finally {
+    submitting.value = false; // stop submitting
+  }
 }
+
 </script>
 
 <template>
@@ -121,17 +124,17 @@ async function handleSubmit(){
             <button 
               type="submit" 
               class="btn btn-success btn-block"  
-              v-if="isEnabled">
-              <i class="fas fa-check-circle me-2"></i> Submit
-            </button>
+              :disabled="!isEnabled || submitting"
+            >
+              <!-- Icon changes based on submitting -->
+              <i v-if="!submitting" class="fas fa-check-circle me-2"></i>
+              <span v-else class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
 
-            <button 
-              type="submit" 
-              class="btn btn-success btn-block" 
-              disabled v-else>
-              <i class="fas fa-check-circle me-2"></i> Submit
+              <!-- Label changes dynamically -->
+              {{ submitting ? 'Submitting...' : 'Submit' }}
             </button>
           </div>
+
         </form>
         <p class="text-center mt-3">
           Don't have an account yet? 
