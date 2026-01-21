@@ -68,16 +68,21 @@ async function updateCart(productId, newQuantity) {
 async function removeProduct(productId) {
   if (!confirm("Do you really want to remove this product?")) return;
 
-  loading.value = true;
   try {
     await api.patch(`https://rmantonio-ecommerceapi.onrender.com/cart/${productId}/remove-from-cart`);
+
+    // Remove product from UI
     productData.value = productData.value.filter(product => product._id !== productId);
+
+    // Show empty cart message if no products left
+    if (productData.value.length === 0) {
+      noCart.value = true;
+    }
+
     notyf.success("Product(s) removed from cart");
   } catch (error) {
     console.error("Failed to remove product:", error);
     notyf.error("Failed to remove product");
-  } finally {
-    loading.value = false;
   }
 }
 
@@ -85,18 +90,17 @@ async function removeProduct(productId) {
 async function clearCart() {
   if (!confirm("Do you really want to clear your cart?")) return;
 
-  loading.value = true;
   try {
     await api.put('https://rmantonio-ecommerceapi.onrender.com/cart/clear-cart');
     productData.value = [];
+    noCart.value = true; // ensure empty cart message shows
     notyf.success("Cart cleared successfully");
   } catch (error) {
     console.error("Failed to clear cart:", error);
     notyf.error("Failed to clear cart");
-  } finally {
-    loading.value = false;
   }
 }
+
 
 // checkout
 async function checkoutCart() {
@@ -165,52 +169,56 @@ onBeforeMount(async () => {
       </p>
 
       <!-- DESKTOP TABLE -->
-<table class="table table-bordered d-none d-md-table">
-  <thead class="table-primary">
-    <tr>
-      <th class="bg-dark text-white" style="width: 40%;">Name</th>
-      <th class="bg-dark text-white" style="width: 15%;">Price</th>
-      <th class="bg-dark text-white" style="width: 15%;">Quantity</th>
-      <th class="bg-dark text-white" style="width: 15%;">Subtotal</th>
-      <th class="bg-dark text-white" style="width: 15%;">Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr v-for="product in productData" :key="product._id">
-      <td>
-        <router-link class="routerLink" :to="`/products/${product._id}`">{{ product.name }}</router-link>
-      </td>
-      <td>&#8369;{{ product.price.toLocaleString() }}</td>
-      <td>
-        <div class="input-group input-group-sm" style="width: 110px;">
-          <button
-            class="btn btn-success"
-            @click="product.quantity--; updateCart(product._id, product.quantity)"
-            :disabled="product.quantity <= 1"
-          >-</button>
+       <table 
+        class="table table-bordered d-none d-md-table" 
+        v-if="productData.length > 0"
+      >
+        <thead class="table-primary">
+          <tr>
+            <th class="bg-dark text-white" style="width: 40%;">Name</th>
+            <th class="bg-dark text-white" style="width: 15%;">Price</th>
+            <th class="bg-dark text-white" style="width: 15%;">Quantity</th>
+            <th class="bg-dark text-white" style="width: 15%;">Subtotal</th>
+            <th class="bg-dark text-white" style="width: 15%;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="product in productData" :key="product._id">
+            <td>
+              <router-link class="routerLink" :to="`/products/${product._id}`">{{ product.name }}</router-link>
+            </td>
+            <td>&#8369;{{ product.price.toLocaleString() }}</td>
+            <td>
+              <div class="input-group input-group-sm" style="width: 110px;">
+                <button
+                  class="btn btn-success"
+                  @click="product.quantity--; updateCart(product._id, product.quantity)"
+                  :disabled="product.quantity <= 1"
+                >-</button>
 
-          <input
-            type="number"
-            class="form-control text-center"
-            v-model.number="product.quantity"
-            min="1"
-            @keydown.prevent
-            @paste.prevent
-          />
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  v-model.number="product.quantity"
+                  min="1"
+                  style="max-width: 50px;"
+                  @keydown.prevent
+                  @paste.prevent
+                />
 
-          <button
-            class="btn btn-success"
-            @click="product.quantity++; updateCart(product._id, product.quantity)"
-          >+</button>
-        </div>
-      </td>
-      <td>&#8369;{{ (product.price * product.quantity).toLocaleString() }}</td>
-      <td>
-        <button class="btn btn-sm btn-danger w-100" @click="removeProduct(product._id)">Remove</button>
-      </td>
-    </tr>
+                <button
+                  class="btn btn-success"
+                  @click="product.quantity++; updateCart(product._id, product.quantity)"
+                >+</button>
+              </div>
+            </td>
+            <td>&#8369;{{ (product.price * product.quantity).toLocaleString() }}</td>
+            <td>
+              <button class="btn btn-sm btn-danger w-100" @click="removeProduct(product._id)">Remove</button>
+            </td>
+          </tr>
 
-          <tr class="total-row border-0">
+                    <tr class="total-row border-0">
             <td colspan="3" class="border-0">
               <div class="d-flex gap-2">
                 <button 
@@ -229,6 +237,7 @@ onBeforeMount(async () => {
               <h5>Total: &#8369;{{ getTotal().toLocaleString() }}</h5>
             </td>
           </tr>
+          
         </tbody>
       </table>
 
