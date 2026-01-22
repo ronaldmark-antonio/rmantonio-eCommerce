@@ -66,17 +66,23 @@ async function updateCart(productId, newQuantity) {
   }
 }
 
+const removingId = ref(null);
+
 // remove product
 async function removeProduct(productId) {
   if (!confirm("Do you really want to remove this product?")) return;
 
+  removingId.value = productId;
+
   try {
-    await api.patch(`https://rmantonio-ecommerceapi.onrender.com/cart/${productId}/remove-from-cart`);
+    await api.patch(
+      `https://rmantonio-ecommerceapi.onrender.com/cart/${productId}/remove-from-cart`
+    );
 
-    // Remove product from UI
-    productData.value = productData.value.filter(product => product._id !== productId);
+    productData.value = productData.value.filter(
+      product => product._id !== productId
+    );
 
-    // Show empty cart message if no products left
     if (productData.value.length === 0) {
       noCart.value = true;
     }
@@ -85,8 +91,11 @@ async function removeProduct(productId) {
   } catch (error) {
     console.error("Failed to remove product:", error);
     notyf.error("Failed to remove product");
+  } finally {
+    removingId.value = null;
   }
 }
+
 
 // clear cart
 async function clearCart() {
@@ -148,7 +157,6 @@ onBeforeMount(async () => {
   }
 });
 </script>
-
 
 <template>
   <div v-if="!user.isAdmin" class="container my-5">
@@ -216,7 +224,24 @@ onBeforeMount(async () => {
             </td>
             <td>&#8369;{{ (product.price * product.quantity).toLocaleString() }}</td>
             <td>
-              <button class="btn btn-sm bi-trash btn-danger w-100" @click="removeProduct(product._id)"> Remove</button>
+              <button
+                class="btn btn-sm btn-danger w-100 d-flex align-items-center justify-content-center gap-2"
+                @click="removeProduct(product._id)"
+                :disabled="removingId === product._id"
+              >
+                <span
+                  v-if="removingId === product._id"
+                  class="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+
+                <i v-else class="bi bi-trash"></i>
+
+                <span>
+                  {{ removingId === product._id ? "Removing..." : "Remove" }}
+                </span>
+              </button>
             </td>
           </tr>
 
@@ -275,8 +300,22 @@ onBeforeMount(async () => {
             </div>
 
             <p>Subtotal: ₱{{ (product.price * product.quantity).toLocaleString() }}</p>
+            <button
+              class="btn btn-danger btn-sm w-100 d-flex align-items-center justify-content-center gap-2"
+              @click="removeProduct(product._id)"
+              :disabled="removingId === product._id"
+            >
+              <span
+                v-if="removingId === product._id"
+                class="spinner-border spinner-border-sm"
+              ></span>
 
-            <button class="btn bi-trash btn-danger btn-sm w-100" @click="removeProduct(product._id)"> Remove</button>
+              <i v-else class="bi bi-trash"></i>
+
+              <span>
+                {{ removingId === product._id ? "Removing..." : "Remove" }}
+              </span>
+            </button>
           </div>
         </div>
       </div>
