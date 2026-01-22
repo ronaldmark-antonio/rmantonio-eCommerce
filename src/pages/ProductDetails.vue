@@ -85,11 +85,7 @@ async function addToCart() {
       </ol>
     </nav>
 
-    <div class="text-center my-5" v-if="loading">
-      <div class="spinner-grow"></div>
-    </div>
-
-    <div class="row mx-auto my-3 gap-4 gap-md-0" v-else-if="product.data">
+    <div class="row mx-auto my-3 gap-4 gap-md-0" v-if="product.data">
       <div class="col-12 col-md-6">
         <img
           class="img-fluid rounded apple-shadow apple-hover"
@@ -156,13 +152,27 @@ async function addToCart() {
           </router-link>
 
           <button
-            class="btn btn-sm btn-success my-3 d-inline-flex align-items-center gap-1"
+            class="btn btn-sm btn-success my-3 d-inline-flex align-items-center gap-2"
             v-else
             @click="addToCart"
+            :disabled="loading"
           >
-            <i class="bi bi-cart-plus"></i>
-            <span>Add to cart</span>
+            <!-- Spinner while loading -->
+            <span
+              v-if="loading"
+              class="spinner-border spinner-border-sm"
+              role="status"
+              aria-hidden="true"
+            ></span>
+
+            <!-- Normal icon when not loading -->
+            <i v-else class="bi bi-cart-plus"></i>
+
+            <span>
+              {{ loading ? "Adding..." : "Add to cart" }}
+            </span>
           </button>
+
         </div>
       </div>
     </div>
