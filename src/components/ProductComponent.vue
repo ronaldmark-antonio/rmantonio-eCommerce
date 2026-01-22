@@ -27,83 +27,123 @@
           Price: &#8369;{{ productData.price.toLocaleString() }}
         </p>
 
-        <div class="d-grid d-md-block mt-md-auto">
-          <router-link
-            class="btn btn-success d-block"
-            :to="{ path: `/products/${productData._id}` }"
+        <!-- Buttons -->
+        <div class="d-grid d-md-block mt-md-auto gap-2">
+          <!-- Add to Cart -->
+          <button
+            class="btn btn-outline-success d-block w-100 mb-1"
+            :disabled="addingToCart"
+            @click="addToCart"
           >
-            <i class="bi bi-info-circle me-1"></i> Details
-          </router-link>
+            <template v-if="!addingToCart">
+              <i class="bi bi-cart-plus me-1"></i> Add to cart
+            </template>
+            <template v-else>
+              <span
+                class="spinner-border spinner-border-sm me-1"
+                role="status"
+                aria-hidden="true"
+              ></span>
+            </template>
+          </button>
+
+          <!-- Details -->
+          <button
+            class="btn btn-success d-block w-100 d-flex align-items-center justify-content-center"
+            :disabled="isLoading"
+            @click="goToDetails"
+          >
+            <template v-if="!isLoading">
+              <i class="bi bi-info-circle me-1"></i> Details
+            </template>
+            <template v-else>
+              <span
+                class="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+            </template>
+          </button>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-
-<script>
+<script setup>
+import { ref, nextTick } from "vue";
 import { useGlobalStore } from "../stores/global";
 import { Notyf } from "notyf";
+import { useRouter } from "vue-router";
+import api from "../api";
 
+const props = defineProps({
+  productData: Object
+});
+
+const globalStore = useGlobalStore();
+const router = useRouter();
 const notyf = new Notyf();
 
-export default {
-  props: {
-    productData: Object,
-  },
+// Reactive states
+const isLoading = ref(false);      // Details button
+const addingToCart = ref(false);   // Add to cart
+const quantity = ref(1);
+const subtotal = ref(props.productData.price);
+
+// Navigate to product details
+const goToDetails = async () => {
+  if (isLoading.value) return;
+  isLoading.value = true;
+
+  await nextTick();
+  await new Promise(resolve => setTimeout(resolve, 100)); // spinner visible
+
+  router.push(`/products/${props.productData._id}`);
+};
+
+// Add to cart with spinner + Notyf + login check
+const addToCart = async () => {
+  if (addingToCart.value) return;
+
+  // Start spinner immediately
+  addingToCart.value = true;
+  await nextTick(); // ensure spinner renders
+
+  // Check login
+  if (!globalStore.user.token) {
+    notyf.error("Please login first");
+    // Give a tiny delay so spinner is visible before redirect
+    await new Promise(resolve => setTimeout(resolve, 200));
+    addingToCart.value = false; // stop spinner after redirect
+    return router.push("/login");
+  }
+
+  // User is logged in → proceed to add to cart
+  const payload = {
+    productId: props.productData._id,
+    quantity: quantity.value,
+    subtotal: subtotal.value
+  };
+
+  try {
+    await api.post(
+      "https://rmantonio-ecommerceapi.onrender.com/cart/add-to-cart",
+      payload
+    );
+    notyf.success("Added to cart");
+  } catch (err) {
+    console.error("Add to cart failed:", err);
+    notyf.error("Server error: Failed to add to cart");
+  } finally {
+    addingToCart.value = false;
+  }
 };
 </script>
 
 <style scoped>
-@media (max-width: 767px) {
-  #ProductCard {
-    padding: 0.25rem;
-  }
-
-  #ProductCard img {
-    height: 140px;
-    object-fit: cover;
-  }
-
-  #ProductCard .card-body {
-    padding: 0.5rem;
-  }
-
-  #ProductCard .card-title {
-    font-size: 0.9rem;
-  }
-
-  #ProductCard .card-text,
-  #ProductCard p {
-    font-size: 0.8rem;
-    line-height: 1.3;
-  }
-
-  #ProductCard .btn {
-    font-size: 0.75rem;
-    padding: 0.35rem;
-  }
-}
-
-/* Mobile-specific Apple shadow */
-@media (max-width: 767px) {
-  .apple-shadow {
-    box-shadow:
-      0 12px 18px rgba(0, 0, 0, 0.18),
-      0 6px 12px rgba(0, 0, 0, 0.16);
-    border-radius: 16px;
-    background-color: #ffffff;
-  }
-
-  /* Disable hover effects on mobile */
-  .apple-shadow:hover {
-    box-shadow:
-      0 12px 18px rgba(0, 0, 0, 0.18),
-      0 6px 12px rgba(0, 0, 0, 0.16);
-    transform: none;
-  }
+.d-grid button {
+  min-height: 38px;
 }
 
 </style>
-
-
