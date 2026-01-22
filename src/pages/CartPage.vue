@@ -96,42 +96,63 @@ async function removeProduct(productId) {
   }
 }
 
+const clearingCart = ref(false);
 
 // clear cart
 async function clearCart() {
   if (!confirm("Do you really want to clear your cart?")) return;
 
+  clearingCart.value = true;
+
   try {
-    await api.put('https://rmantonio-ecommerceapi.onrender.com/cart/clear-cart');
+    await api.put(
+      "https://rmantonio-ecommerceapi.onrender.com/cart/clear-cart"
+    );
+
     productData.value = [];
-    noCart.value = true; // ensure empty cart message shows
+    noCart.value = true;
+
     notyf.success("Cart cleared successfully");
   } catch (error) {
     console.error("Failed to clear cart:", error);
     notyf.error("Failed to clear cart");
+  } finally {
+    clearingCart.value = false;
   }
 }
 
+
+const checkingOut = ref(false);
 
 // checkout
 async function checkoutCart() {
   if (!confirm("Do you want to checkout your cart?")) return;
 
-  loading.value = true;
+  checkingOut.value = true;
+
   try {
-    const res = await api.post("https://rmantonio-ecommerceapi.onrender.com/orders/checkout");
+    const res = await api.post(
+      "https://rmantonio-ecommerceapi.onrender.com/orders/checkout"
+    );
+
     if (res.status === 201) {
-      await api.put('https://rmantonio-ecommerceapi.onrender.com/cart/clear-cart');
+      await api.put(
+        "https://rmantonio-ecommerceapi.onrender.com/cart/clear-cart"
+      );
+
       productData.value = [];
+      noCart.value = true;
+
       notyf.success("Cart checked out successfully");
       router.push("/");
     }
   } catch (error) {
     notyf.error("Error in checking out.");
   } finally {
-    loading.value = false;
+    checkingOut.value = false;
   }
 }
+
 
 // fetch cart on mount
 onBeforeMount(async () => {
@@ -248,14 +269,30 @@ onBeforeMount(async () => {
           <tr class="total-row border-0">
             <td colspan="3" class="border-0">
               <div class="d-flex gap-2">
-                <button class="btn bi-check-circle btn-sm btn-success" @click="checkoutCart">
-                  Checkout
+                <button
+                  class="btn btn-sm btn-success d-flex align-items-center gap-2"
+                  @click="checkoutCart"
+                  :disabled="checkingOut"
+                >
+                  <span
+                    v-if="checkingOut"
+                    class="spinner-border spinner-border-sm"
+                  ></span>
+                  <i v-else class="bi bi-check-circle"></i>
+                  {{ checkingOut ? "Processing..." : "Checkout" }}
                 </button>
-                <button 
-                  class="btn bi-x-circle btn-sm btn-danger" 
-                  v-if="!loading && productData.length > 0" 
-                  @click="clearCart">
-                  Clear Cart
+
+                <button
+                  class="btn btn-sm btn-danger d-flex align-items-center gap-2"
+                  @click="clearCart"
+                  :disabled="clearingCart"
+                >
+                  <span
+                    v-if="clearingCart"
+                    class="spinner-border spinner-border-sm"
+                  ></span>
+                  <i v-else class="bi bi-x-circle"></i>
+                  {{ clearingCart ? "Clearing..." : "Clear Cart" }}
                 </button>
               </div>
             </td>
@@ -323,8 +360,31 @@ onBeforeMount(async () => {
       <!-- MOBILE TOTAL AND ACTIONS -->
       <div class="d-md-none mt-3" v-if="productData.length">
         <h5 class="text-center mb-3">Total: ₱{{ getTotal().toLocaleString() }}</h5>
-        <button class="btn bi-check-circle btn-success w-100 mb-2" @click="checkoutCart"> Checkout</button>
-        <button class="btn bi-x-circle btn-danger w-100" @click="clearCart"> Clear Cart</button>
+        <button
+          class="btn btn-success w-100 mb-2 d-flex align-items-center justify-content-center gap-2"
+          @click="checkoutCart"
+          :disabled="checkingOut"
+        >
+          <span
+            v-if="checkingOut"
+            class="spinner-border spinner-border-sm"
+          ></span>
+          <i v-else class="bi bi-check-circle"></i>
+          {{ checkingOut ? "Processing..." : "Checkout" }}
+        </button>
+
+        <button
+          class="btn btn-danger w-100 d-flex align-items-center justify-content-center gap-2"
+          @click="clearCart"
+          :disabled="clearingCart"
+        >
+          <span
+            v-if="clearingCart"
+            class="spinner-border spinner-border-sm"
+          ></span>
+          <i v-else class="bi bi-x-circle"></i>
+          {{ clearingCart ? "Clearing..." : "Clear Cart" }}
+        </button>
       </div>
     </div>
   </div>
