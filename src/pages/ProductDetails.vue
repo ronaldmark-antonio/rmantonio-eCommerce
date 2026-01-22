@@ -68,16 +68,18 @@ async function addToCart() {
   <div class="container">
     <nav class="my-3" aria-label="breadcrumb">
       <ol class="breadcrumb bg-light p-2 rounded small">
-        <li class="breadcrumb-item">
+        <li class="breadcrumb-item" v-if="!user.email">
           <router-link to="/" class="text-decoration-none text-success">
-            <i class="bi bi-house-door"></i> Home
-          </router-link>
+           <i class="bi bi-house-door"></i> Home
+           </router-link>
         </li>
+
         <li class="breadcrumb-item">
           <router-link to="/products" class="text-decoration-none text-success">
             <i class="bi bi-phone"></i> Mobile Phones
           </router-link>
         </li>
+
         <li class="breadcrumb-item active text-dark" aria-current="page">
           <i class="bi bi-tag"></i>
           {{ product.data ? product.data.name : "Loading..." }}
