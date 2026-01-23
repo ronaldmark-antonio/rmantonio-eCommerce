@@ -15,30 +15,28 @@ const description = ref('');
 const price = ref(0);
 const formattedPrice = ref('');
 const updateEnabled = ref(false);
+const isUpdating = ref(false);   // Spinner state for Update
+const isCanceling = ref(false);  // Spinner state for Cancel
 
-// Original product data to compare changes
-let originalProduct = {
-  name: '',
-  description: '',
-  price: 0
-};
+let originalProduct = { name: '', description: '', price: 0 };
 
 function formatPrice() {
   let digits = formattedPrice.value.replace(/[^\d]/g, '');
-  let withCommas = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  formattedPrice.value = withCommas;
+  formattedPrice.value = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   price.value = parseInt(digits) || 0;
 }
 
-// Enable button only if something changed
 watch([name, description, price], () => {
-  updateEnabled.value = 
+  updateEnabled.value =
     name.value.trim() !== originalProduct.name ||
     description.value.trim() !== originalProduct.description ||
     price.value !== originalProduct.price;
 });
 
 async function handleUpdate() {
+  if (!updateEnabled.value || isUpdating.value) return;
+  isUpdating.value = true;
+
   try {
     const res = await api.patch(
       `https://rmantonio-ecommerceapi.onrender.com/products/${route.params.productId}/update`,
@@ -61,7 +59,15 @@ async function handleUpdate() {
     } else {
       notyf.error(`Error in product update: ${err.response?.data?.error || err.message}`);
     }
+  } finally {
+    isUpdating.value = false;
   }
+}
+
+function cancelUpdate() {
+  if (isCanceling.value) return;
+  isCanceling.value = true;
+  setTimeout(() => router.push('/products'), 500); // short delay to show spinner
 }
 
 onBeforeMount(async () => {
@@ -80,12 +86,7 @@ onBeforeMount(async () => {
     price.value = data.price;
     formattedPrice.value = data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-    // Save original values for comparison
-    originalProduct.name = data.name;
-    originalProduct.description = data.description;
-    originalProduct.price = data.price;
-
-    // Button should be disabled initially
+    originalProduct = { ...data };
     updateEnabled.value = false;
   } catch (err) {
     notyf.error('Failed to load product. Please go back and try again.');
@@ -93,7 +94,6 @@ onBeforeMount(async () => {
   }
 });
 </script>
-
 
 <template>
   <div class="container-fluid my-5">
@@ -106,6 +106,7 @@ onBeforeMount(async () => {
             </h3>
 
             <form @submit.prevent="handleUpdate">
+              <!-- Name -->
               <div class="form-group mb-3">
                 <label for="name" class="form-label">Name:</label>
                 <div class="input-group">
@@ -123,6 +124,7 @@ onBeforeMount(async () => {
                 </div>
               </div>
 
+              <!-- Description -->
               <div class="form-group mb-3">
                 <label for="description" class="form-label">Description:</label>
                 <div class="input-group">
@@ -140,6 +142,7 @@ onBeforeMount(async () => {
                 </div>
               </div>
 
+              <!-- Price -->
               <div class="form-group mb-4">
                 <label for="price" class="form-label">Price:</label>
                 <div class="input-group">
@@ -156,18 +159,40 @@ onBeforeMount(async () => {
                 </div>
               </div>
 
+              <!-- Buttons -->
               <div class="d-flex gap-3 mt-3">
+                <!-- Update -->
                 <button
                   type="submit"
-                  class="btn btn-success px-4"
-                  :disabled="!updateEnabled"
+                  class="btn btn-success px-4 d-flex align-items-center gap-2"
+                  :disabled="!updateEnabled || isUpdating"
                 >
-                  <i class="bi bi-pencil-square me-1"></i> Update
+                  <template v-if="!isUpdating">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>Submit</span>
+                  </template>
+                  <template v-else>
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <span>Submitting...</span>
+                  </template>
                 </button>
 
-                <RouterLink to="/products" class="btn btn-outline-success px-4">
-                  <i class="bi bi-x-circle me-1"></i> Cancel
-                </RouterLink>
+                <!-- Cancel -->
+                <button
+                  type="button"
+                  class="btn btn-outline-success px-4 d-flex align-items-center gap-2"
+                  :disabled="isCanceling"
+                  @click="cancelUpdate"
+                >
+                  <template v-if="!isCanceling">
+                    <i class="bi bi-x-circle"></i>
+                    <span>Cancel</span>
+                  </template>
+                  <template v-else>
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <span>Canceling...</span>
+                  </template>
+                </button>
               </div>
             </form>
           </div>
@@ -176,17 +201,3 @@ onBeforeMount(async () => {
     </div>
   </div>
 </template>
-
-
-<style scoped>
-/* Remove default number input arrows if type changes */
-input[type=number]::-webkit-outer-spin-button,
-input[type=number]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-input[type=number] {
-  -moz-appearance: textfield;
-  appearance: textfield;
-}
-</style>
