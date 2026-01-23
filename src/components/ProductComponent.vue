@@ -31,39 +31,50 @@
         <div class="d-grid d-md-block mt-md-auto gap-2">
           <!-- Add to Cart -->
           <button
-            class="btn btn-outline-success d-block w-100 mb-1"
+            class="btn btn-outline-success w-100 mb-1 d-flex align-items-center justify-content-center gap-2"
             :disabled="addingToCart"
             @click="addToCart"
           >
+            <span
+              v-if="addingToCart"
+              class="spinner-border spinner-border-sm"
+              role="status"
+              aria-hidden="true"
+            ></span>
+
             <template v-if="!addingToCart">
-              <i class="bi bi-cart-plus me-1"></i> Add to cart
+              <i class="bi bi-cart-plus"></i>
+              <span>Add to cart</span>
             </template>
+
             <template v-else>
-              <span
-                class="spinner-border spinner-border-sm me-1"
-                role="status"
-                aria-hidden="true"
-              ></span>
+              <span>Adding...</span>
             </template>
           </button>
 
           <!-- Details -->
           <button
-            class="btn btn-success d-block w-100 d-flex align-items-center justify-content-center"
+            class="btn btn-success w-100 d-flex align-items-center justify-content-center gap-2"
             :disabled="isLoading"
             @click="goToDetails"
           >
+            <span
+              v-if="isLoading"
+              class="spinner-border spinner-border-sm"
+              role="status"
+              aria-hidden="true"
+            ></span>
+
             <template v-if="!isLoading">
-              <i class="bi bi-info-circle me-1"></i> Details
+              <i class="bi bi-info-circle"></i>
+              <span>Details</span>
             </template>
+
             <template v-else>
-              <span
-                class="spinner-border spinner-border-sm"
-                role="status"
-                aria-hidden="true"
-              ></span>
+              <span>Loading...</span>
             </template>
           </button>
+
         </div>
       </div>
     </div>
