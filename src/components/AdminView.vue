@@ -222,14 +222,18 @@ const sortedProducts = computed(() => {
             <p class="mb-1">
               Availability:
               <span :class="product.isActive ? 'badge bg-success' : 'badge bg-danger'">
-                <i :class="product.isActive ? 'bi bi-check-circle-fill' : 'bi bi-x-circle-fill'" class="me-1"></i>
+                <i
+                  :class="product.isActive ? 'bi bi-check-circle-fill' : 'bi bi-x-circle-fill'"
+                  class="me-1"
+                ></i>
                 {{ product.isActive ? 'Available' : 'Unavailable' }}
               </span>
             </p>
+
             <div class="d-flex gap-1 mt-1">
-              <!-- Update -->
+              <!-- Update Button -->
               <button
-                class="btn btn-sm btn-outline-dark flex-fill p-1"
+                class="btn btn-sm btn-outline-dark flex-fill d-flex align-items-center justify-content-center gap-1 p-1"
                 :disabled="ensureProductLoading(product).update"
                 @click="updateProduct(product)"
               >
@@ -238,25 +242,30 @@ const sortedProducts = computed(() => {
                   class="spinner-border spinner-border-sm me-1"
                 ></i>
                 <i v-else class="bi bi-pencil-square me-1"></i>
-                Update
+                <span>{{ ensureProductLoading(product).update ? 'Updating...' : 'Update' }}</span>
               </button>
-              <!-- Activate / Disable -->
+
+              <!-- Activate / Disable Button -->
               <button
-                class="btn btn-sm flex-fill p-1"
+                class="btn btn-sm flex-fill d-flex align-items-center justify-content-center gap-1 p-1"
                 :class="product.isActive ? 'btn-outline-danger' : 'btn-outline-success'"
                 :disabled="ensureProductLoading(product).action"
                 @click="product.isActive ? archiveProduct(product) : activateProduct(product)"
               >
-                <i
+                <span
                   v-if="ensureProductLoading(product).action"
-                  class="spinner-border spinner-border-sm me-1"
-                ></i>
-                <i
-                  v-else
-                  :class="product.isActive ? 'bi bi-x-circle' : 'bi bi-check-circle'"
-                  class="me-1"
-                ></i>
-                {{ product.isActive ? "Disable" : "Activate" }}
+                  class="spinner-border spinner-border-sm"
+                ></span>
+                <template v-if="!ensureProductLoading(product).action">
+                  <i
+                    :class="product.isActive ? 'bi bi-x-circle' : 'bi bi-check-circle'"
+                    class="me-1"
+                  ></i>
+                  <span>{{ product.isActive ? 'Disable' : 'Activate' }}</span>
+                </template>
+                <template v-else>
+                  <span>{{ product.isActive ? 'Disabling...' : 'Activating...' }}</span>
+                </template>
               </button>
             </div>
           </div>
