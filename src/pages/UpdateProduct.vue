@@ -15,61 +15,38 @@ const description = ref('');
 const price = ref(0);
 const formattedPrice = ref('');
 const updateEnabled = ref(false);
-const isUpdating = ref(false);   // Spinner state for Update
-const isCanceling = ref(false);  // Spinner state for Cancel
+const isSubmitting = ref(false);   // Spinner for Update
+const isCanceling = ref(false);    // Spinner for Cancel
 
-let originalProduct = { name: '', description: '', price: 0 };
+// Original product data to compare changes
+let originalProduct = {
+  name: '',
+  description: '',
+  price: 0
+};
 
+// Normalize name for duplicate check
+function normalizeName(value) {
+  return value.toLowerCase().replace(/[\s\-_]+/g, '').trim();
+}
+
+// Format price input with commas
 function formatPrice() {
   let digits = formattedPrice.value.replace(/[^\d]/g, '');
-  formattedPrice.value = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  let withCommas = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  formattedPrice.value = withCommas;
   price.value = parseInt(digits) || 0;
 }
 
+// Enable button only if something changed
 watch([name, description, price], () => {
-  updateEnabled.value =
+  updateEnabled.value = 
     name.value.trim() !== originalProduct.name ||
     description.value.trim() !== originalProduct.description ||
     price.value !== originalProduct.price;
 });
 
-async function handleUpdate() {
-  if (!updateEnabled.value || isUpdating.value) return;
-  isUpdating.value = true;
-
-  try {
-    const res = await api.patch(
-      `https://rmantonio-ecommerceapi.onrender.com/products/${route.params.productId}/update`,
-      {
-        name: name.value.trim(),
-        description: description.value,
-        price: price.value,
-      }
-    );
-
-    if (res.status === 200) {
-      notyf.success('Product updated successfully');
-      router.push('/products');
-    }
-  } catch (err) {
-    if (err.response?.status === 409) {
-      notyf.error('Another product with this name already exists');
-    } else if (err.response?.status === 404) {
-      notyf.error('Product not found. Please refresh the page.');
-    } else {
-      notyf.error(`Error in product update: ${err.response?.data?.error || err.message}`);
-    }
-  } finally {
-    isUpdating.value = false;
-  }
-}
-
-function cancelUpdate() {
-  if (isCanceling.value) return;
-  isCanceling.value = true;
-  setTimeout(() => router.push('/products'), 500); // short delay to show spinner
-}
-
+// Load product on mount
 onBeforeMount(async () => {
   if (!user.token) {
     router.push('/login');
@@ -86,14 +63,76 @@ onBeforeMount(async () => {
     price.value = data.price;
     formattedPrice.value = data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-    originalProduct = { ...data };
+    // Save original values for comparison
+    originalProduct.name = data.name;
+    originalProduct.description = data.description;
+    originalProduct.price = data.price;
+
     updateEnabled.value = false;
   } catch (err) {
     notyf.error('Failed to load product. Please go back and try again.');
     router.push('/products');
   }
 });
+
+// Update product with duplicate name check
+async function handleUpdate() {
+  if (!updateEnabled.value || isSubmitting.value) return;
+  isSubmitting.value = true;
+
+  try {
+    // Fetch all products to check for duplicate names
+    const { data: allProducts } = await api.get(
+      'https://rmantonio-ecommerceapi.onrender.com/products'
+    );
+
+    const newNameNormalized = normalizeName(name.value);
+    const duplicate = allProducts.some(
+      p => normalizeName(p.name) === newNameNormalized && p.id !== route.params.productId
+    );
+
+    if (duplicate) {
+      notyf.error('Another product with this name already exists');
+      isSubmitting.value = false;
+      return;
+    }
+
+    // Proceed to update
+    const res = await api.patch(
+      `https://rmantonio-ecommerceapi.onrender.com/products/${route.params.productId}/update`,
+      {
+        name: name.value.trim(),
+        description: description.value,
+        price: price.value,
+      }
+    );
+
+    if (res.status === 200) {
+      notyf.success('Product updated successfully');
+      router.push('/products');
+    }
+  } catch (err) {
+    if (err.response?.status === 404) {
+      notyf.error('Product already exists');
+    } else {
+      notyf.error(`Error in product update: ${err.response?.data?.error || err.message}`);
+    }
+  } finally {
+    isSubmitting.value = false;
+  }
+}
+
+// Cancel update
+function cancelUpdate() {
+  if (isCanceling.value) return;
+  isCanceling.value = true;
+
+  setTimeout(() => {
+    router.push('/products');
+  }, 500);
+}
 </script>
+
 
 <template>
   <div class="container-fluid my-5">
@@ -110,9 +149,7 @@ onBeforeMount(async () => {
               <div class="form-group mb-3">
                 <label for="name" class="form-label">Name:</label>
                 <div class="input-group">
-                  <span class="input-group-text">
-                    <i class="bi bi-tag-fill"></i>
-                  </span>
+                  <span class="input-group-text"><i class="bi bi-tag-fill"></i></span>
                   <input
                     type="text"
                     id="name"
@@ -161,13 +198,13 @@ onBeforeMount(async () => {
 
               <!-- Buttons -->
               <div class="d-flex gap-3 mt-3">
-                <!-- Update -->
+                <!-- Submit -->
                 <button
                   type="submit"
-                  class="btn btn-success px-4 d-flex align-items-center gap-2"
-                  :disabled="!updateEnabled || isUpdating"
+                  class="btn btn-success d-flex align-items-center justify-content-center gap-2 px-4"
+                  :disabled="!updateEnabled || isSubmitting"
                 >
-                  <template v-if="!isUpdating">
+                  <template v-if="!isSubmitting">
                     <i class="bi bi-check-circle-fill"></i>
                     <span>Submit</span>
                   </template>
@@ -180,12 +217,12 @@ onBeforeMount(async () => {
                 <!-- Cancel -->
                 <button
                   type="button"
-                  class="btn btn-outline-success px-4 d-flex align-items-center gap-2"
+                  class="btn btn-outline-success d-flex align-items-center justify-content-center gap-2 px-4"
                   :disabled="isCanceling"
                   @click="cancelUpdate"
                 >
                   <template v-if="!isCanceling">
-                    <i class="bi bi-x-circle"></i>
+                    <i class="bi bi-x-circle-fill me-1"></i>
                     <span>Cancel</span>
                   </template>
                   <template v-else>
@@ -201,3 +238,15 @@ onBeforeMount(async () => {
     </div>
   </div>
 </template>
+
+<style scoped>
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+</style>
