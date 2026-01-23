@@ -12,19 +12,17 @@ const router = useRouter();
 const name = ref("");
 const description = ref("");
 const price = ref("");
+const formattedPrice = ref("");
 const isEnabled = ref(false);
+const isSubmitting = ref(false);   // For Submit button spinner
+const isCanceling = ref(false);    // For Cancel button spinner
 
-const formattedPrice = ref('');
-
-
-watch([name, description, price], (currentValue, oldValue) => {
-  if (currentValue.every(input => input)) {
-    isEnabled.value = true;
-  } else {
-    isEnabled.value = false;
-  }
+// Enable submit only when all fields are filled
+watch([name, description, price], (currentValue) => {
+  isEnabled.value = currentValue.every(input => input);
 });
 
+// Redirect non-admin users
 onBeforeMount(() => {
   if (!user.email || !user.isAdmin) {
     if (!localStorage.getItem('redirected')) {
@@ -34,71 +32,68 @@ onBeforeMount(() => {
   }
 });
 
+// Normalize name for duplicate check
 function normalizeName(value) {
-  return value
-    .toLowerCase()
-    .replace(/[\s\-_]+/g, "")
-    .trim();
+  return value.toLowerCase().replace(/[\s\-_]+/g, "").trim();
 }
 
-async function addProduct(e) {
-  e.preventDefault();
+// Format price with commas
+function formatPrice() {
+  let digits = formattedPrice.value.replace(/[^\d]/g, '');
+  let withCommas = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  formattedPrice.value = withCommas;
+  price.value = parseInt(digits) || 0;
+}
 
+// Add product
+async function addProduct() {
+  if (!isEnabled.value || isSubmitting.value) return;
+
+  isSubmitting.value = true;
   let token = localStorage.getItem("token");
+
   if (!token) {
     notyf.error("You must be logged in as admin");
+    isSubmitting.value = false;
     return;
   }
 
-  if (typeof products !== "undefined" && Array.isArray(products)) {
-    let normalizedNewName = normalizeName(name.value);
-    let isDuplicate = products.some(
-      p => normalizeName(p.name) === normalizedNewName
-    );
-
-    if (isDuplicate) {
-      notyf.error("Product already exists");
-      return;
-    }
-  }
-
   try {
-    let response = await api.post(
+    const response = await api.post(
       "https://rmantonio-ecommerceapi.onrender.com/products",
       {
         name: name.value.trim(),
         description: description.value,
         price: Number(price.value),
       },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+      { headers: { Authorization: `Bearer ${token}` } }
     );
 
     if (response.status === 201) {
       notyf.success("Product added successfully");
       router.push("/products");
     }
-
   } catch (error) {
     if (error.response?.status === 409) {
       notyf.error("Product already exists");
-    } else if (error.response?.status === 401 || error.response?.status === 403) {
+    } else if ([401, 403].includes(error.response?.status)) {
       notyf.error("Unauthorized: Admin access required");
     } else {
       notyf.error(error.response?.data?.message || "Server error");
     }
+  } finally {
+    isSubmitting.value = false;
   }
 }
 
-function formatPrice() {
-  let digits = formattedPrice.value.replace(/[^\d]/g, '');
-  let withCommas = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+// Cancel product addition
+function cancelProduct() {
+  if (isCanceling.value) return;
+  isCanceling.value = true;
 
-  formattedPrice.value = withCommas;
-  price.value = parseInt(digits) || 0;
+  setTimeout(() => {
+    router.push("/products");
+  }, 500); // short delay to show spinner
 }
 </script>
 
@@ -112,12 +107,11 @@ function formatPrice() {
           </h3>
 
           <form @submit.prevent="addProduct">
+            <!-- Name -->
             <div class="form-group mb-3">
               <label for="nameInput" class="form-label">Name:</label>
               <div class="input-group">
-                <span class="input-group-text">
-                  <i class="bi bi-tag-fill"></i>
-                </span>
+                <span class="input-group-text"><i class="bi bi-tag-fill"></i></span>
                 <input
                   type="text"
                   id="nameInput"
@@ -129,12 +123,11 @@ function formatPrice() {
               </div>
             </div>
 
+            <!-- Description -->
             <div class="form-group mb-3">
               <label for="descriptionInput" class="form-label">Description:</label>
               <div class="input-group">
-                <span class="input-group-text">
-                  <i class="bi bi-card-text"></i>
-                </span>
+                <span class="input-group-text"><i class="bi bi-card-text"></i></span>
                 <textarea
                   id="descriptionInput"
                   class="form-control"
@@ -146,6 +139,7 @@ function formatPrice() {
               </div>
             </div>
 
+            <!-- Price -->
             <div class="form-group mb-4">
               <label for="priceInput" class="form-label">Price:</label>
               <div class="input-group">
@@ -162,20 +156,40 @@ function formatPrice() {
               </div>
             </div>
 
-            <div class="d-flex">
+            <!-- Buttons -->
+            <div class="d-flex gap-2">
+              <!-- Submit -->
               <button
                 type="submit"
-                class="btn btn-success"
-                :disabled="!isEnabled"
+                class="btn btn-success d-flex align-items-center justify-content-center gap-2"
+                :disabled="!isEnabled || isSubmitting"
               >
-                <i class="bi bi-check-circle-fill me-1"></i> Submit
+                <template v-if="!isSubmitting">
+                  <i class="bi bi-check-circle-fill"></i>
+                  <span>Submit</span>
+                </template>
+                <template v-else>
+                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  <span>Submitting...</span>
+                </template>
               </button>
-              <RouterLink
-                to="/products"
-                class="btn btn-outline-success ms-2"
+
+              <!-- Cancel -->
+              <button
+                type="button"
+                class="btn btn-outline-success d-flex align-items-center justify-content-center gap-2"
+                :disabled="isCanceling"
+                @click="cancelProduct"
               >
-                <i class="bi bi-x-circle-fill me-1"></i> Cancel
-              </RouterLink>
+                <template v-if="!isCanceling">
+                  <i class="bi bi-x-circle-fill"></i>
+                  <span>Cancel</span>
+                </template>
+                <template v-else>
+                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  <span>Canceling...</span>
+                </template>
+              </button>
             </div>
           </form>
         </div>
