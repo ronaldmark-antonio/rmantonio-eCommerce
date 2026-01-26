@@ -140,10 +140,10 @@ const sortedProducts = computed(() => {
         <table class="table table-bordered table-hover align-middle text-center">
           <thead class="table-light">
             <tr>
-              <th class="text-start" style="width: 120px;">Name</th>
-              <th class="text-start" style="width: 300px;">Description</th>
-              <th style="width: 100px;">Price</th>
-              <th style="width: 130px;">Availability</th>
+              <th class="text-start" style="width: 350px;">Name</th>
+              <th class="text-start" style="width: 400px;">Description</th>
+              <th style="width: 80px;">Price</th>
+              <th style="width: 80px;">Availability</th>
               <th colspan="2" style="width: 90px;">Actions</th>
             </tr>
           </thead>
@@ -160,7 +160,7 @@ const sortedProducts = computed(() => {
               </td>
 
               <!-- Update Button -->
-              <td>
+              <td style="width: 100px">
                 <button
                   class="btn btn-sm btn-outline-dark d-flex align-items-center justify-content-center gap-1"
                   style="width: 100px;"
@@ -278,7 +278,7 @@ const sortedProducts = computed(() => {
 
 <style scoped>
 .dashboard-container {
-  max-width: 900px;
+  max-width: 1000px;
   margin: auto;
 }
 

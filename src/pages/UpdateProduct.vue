@@ -1,55 +1,59 @@
 <script setup>
-import { onBeforeMount, ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { Notyf } from 'notyf';
-import api from '../api';
-import { useGlobalStore } from '../stores/global';
+import { onBeforeMount, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { Notyf } from "notyf";
+import api from "../api";
+import { useGlobalStore } from "../stores/global";
 
 const route = useRoute();
 const router = useRouter();
 const notyf = new Notyf();
 const { user } = useGlobalStore();
 
-const name = ref('');
-const description = ref('');
+const name = ref("");
+const description = ref("");
 const price = ref(0);
-const formattedPrice = ref('');
+const formattedPrice = ref("");
 const updateEnabled = ref(false);
-const isSubmitting = ref(false);   // Spinner for Update
-const isCanceling = ref(false);    // Spinner for Cancel
+const isSubmitting = ref(false);
+const isCanceling = ref(false);
 
 // Original product data to compare changes
 let originalProduct = {
-  name: '',
-  description: '',
-  price: 0
+  name: "",
+  description: "",
+  price: 0,
 };
 
 // Normalize name for duplicate check
 function normalizeName(value) {
-  return value.toLowerCase().replace(/[\s\-_]+/g, '').trim();
+  return value.toLowerCase().replace(/[\s\-_]+/g, "").trim();
 }
 
-// Format price input with commas
+// Format price with commas
 function formatPrice() {
-  let digits = formattedPrice.value.replace(/[^\d]/g, '');
-  let withCommas = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const digits = formattedPrice.value.replace(/[^\d]/g, "");
+  const withCommas = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   formattedPrice.value = withCommas;
   price.value = parseInt(digits) || 0;
 }
 
-// Enable button only if something changed
-watch([name, description, price], () => {
-  updateEnabled.value = 
-    name.value.trim() !== originalProduct.name ||
-    description.value.trim() !== originalProduct.description ||
-    price.value !== originalProduct.price;
+// Enable button only if something changed AND all fields are filled
+watch([name, description, price], ([n, d, p]) => {
+  const somethingChanged =
+    normalizeName(n) !== normalizeName(originalProduct.name) ||
+    d.trim() !== originalProduct.description ||
+    p !== originalProduct.price;
+
+  const allFilled = n.trim() !== "" && d.trim() !== "" && p > 0;
+
+  updateEnabled.value = somethingChanged && allFilled;
 });
 
-// Load product on mount
+// Load product
 onBeforeMount(async () => {
   if (!user.token) {
-    router.push('/login');
+    router.push("/login");
     return;
   }
 
@@ -61,43 +65,24 @@ onBeforeMount(async () => {
     name.value = data.name;
     description.value = data.description;
     price.value = data.price;
-    formattedPrice.value = data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    formattedPrice.value = data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-    // Save original values for comparison
-    originalProduct.name = data.name;
-    originalProduct.description = data.description;
-    originalProduct.price = data.price;
+    originalProduct = { ...data };
 
     updateEnabled.value = false;
   } catch (err) {
-    notyf.error('Failed to load product. Please go back and try again.');
-    router.push('/products');
+    notyf.error("Failed to load product. Please go back and try again.");
+    router.push("/products");
   }
 });
 
-// Update product with duplicate name check
+// Update product
 async function handleUpdate() {
   if (!updateEnabled.value || isSubmitting.value) return;
+
   isSubmitting.value = true;
 
   try {
-    // Fetch all products to check for duplicate names
-    const { data: allProducts } = await api.get(
-      'https://rmantonio-ecommerceapi.onrender.com/products'
-    );
-
-    const newNameNormalized = normalizeName(name.value);
-    const duplicate = allProducts.some(
-      p => normalizeName(p.name) === newNameNormalized && p.id !== route.params.productId
-    );
-
-    if (duplicate) {
-      notyf.error('Another product with this name already exists');
-      isSubmitting.value = false;
-      return;
-    }
-
-    // Proceed to update
     const res = await api.patch(
       `https://rmantonio-ecommerceapi.onrender.com/products/${route.params.productId}/update`,
       {
@@ -108,14 +93,16 @@ async function handleUpdate() {
     );
 
     if (res.status === 200) {
-      notyf.success('Product updated successfully');
-      router.push('/products');
+      notyf.success("Product updated successfully");
+      router.push("/products");
     }
   } catch (err) {
-    if (err.response?.status === 404) {
-      notyf.error('Product already exists');
+    if (err.response?.status === 409) {
+      notyf.error("Another product with this name already exist");
+    } else if (err.response?.status === 404) {
+      notyf.error("Product not found. Please refresh the page.");
     } else {
-      notyf.error(`Error in product update: ${err.response?.data?.error || err.message}`);
+      notyf.error(`Error updating product: ${err.response?.data?.error || err.message}`);
     }
   } finally {
     isSubmitting.value = false;
@@ -128,7 +115,7 @@ function cancelUpdate() {
   isCanceling.value = true;
 
   setTimeout(() => {
-    router.push('/products');
+    router.push("/products");
   }, 500);
 }
 </script>
@@ -250,3 +237,4 @@ input[type=number] {
   appearance: textfield;
 }
 </style>
+
