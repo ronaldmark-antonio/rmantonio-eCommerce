@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, computed, reactive } from "vue";
+import { defineProps, computed, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { Notyf } from "notyf";
 import "notyf/notyf.min.css";
@@ -15,14 +15,12 @@ const props = defineProps({
   },
 });
 
-// 🔥 Independent loading states per action
 const loading = reactive({
   add: false,
   orders: false,
-  // productId: { update: false, activate: false, disable: false }
 });
 
-// Helper: ensure product has loading object
+// Product-specific loading helper
 function ensureProductLoading(product) {
   if (!loading[product._id]) {
     loading[product._id] = { update: false, action: false };
@@ -34,7 +32,6 @@ function ensureProductLoading(product) {
 function updateProduct(product) {
   const prodLoad = ensureProductLoading(product);
   prodLoad.update = true;
-
   setTimeout(() => {
     router.push(`/products/edit/${product._id}`);
     prodLoad.update = false;
@@ -45,7 +42,6 @@ function updateProduct(product) {
 async function archiveProduct(product) {
   const prodLoad = ensureProductLoading(product);
   prodLoad.action = true;
-
   try {
     const res = await api.patch(
       `https://rmantonio-ecommerceapi.onrender.com/products/${product._id}/archive`
@@ -65,7 +61,6 @@ async function archiveProduct(product) {
 async function activateProduct(product) {
   const prodLoad = ensureProductLoading(product);
   prodLoad.action = true;
-
   try {
     const res = await api.patch(
       `https://rmantonio-ecommerceapi.onrender.com/products/${product._id}/activate`
@@ -84,12 +79,46 @@ async function activateProduct(product) {
 // Sorted products by date or ID
 const sortedProducts = computed(() => {
   return [...props.productsData].sort((a, b) => {
-    if (a.createdAt && b.createdAt) {
-      return new Date(b.createdAt) - new Date(a.createdAt);
-    }
+    if (a.createdAt && b.createdAt) return new Date(b.createdAt) - new Date(a.createdAt);
     return b._id.localeCompare(a._id);
   });
 });
+
+const searchInput = ref("");            
+const filteredProducts = ref([...sortedProducts.value]); 
+const searchLoading = ref(false);      
+
+function performSearch() {
+  searchLoading.value = true;
+
+  setTimeout(() => {
+    const query = searchInput.value.trim().toLowerCase();
+    if (!query) {
+      filteredProducts.value = [...sortedProducts.value];
+    } else {
+      filteredProducts.value = sortedProducts.value.filter(
+        (product) =>
+          product.name.toLowerCase().includes(query) ||
+          product.description.toLowerCase().includes(query)
+      );
+    }
+    searchLoading.value = false;
+  }, 300);
+}
+
+const resetLoading = ref(false);
+
+function resetSearch() {
+  resetLoading.value = true;
+
+  setTimeout(() => {
+    searchInput.value = "";
+    filteredProducts.value = [...sortedProducts.value];
+    resetLoading.value = false;
+  }, 300);
+}
+
+
 </script>
 
 <template>
@@ -137,6 +166,51 @@ const sortedProducts = computed(() => {
     <div v-else>
       <!-- DESKTOP TABLE -->
       <div class="table-responsive d-none d-md-block">
+        <!-- SEARCH INPUT -->
+        <div class="mb-3 text-center d-flex justify-content-center gap-2">
+          <input
+            type="text"
+            class="form-control w-50"
+            placeholder="Search products by name or description..."
+            v-model="searchInput"
+            @keyup.enter="performSearch"
+            :disabled="searchLoading || resetLoading"
+          />
+          
+          <!-- Search Button -->
+          <button
+            class="btn btn-success d-flex align-items-center gap-1"
+            @click="performSearch"
+            :disabled="searchLoading || resetLoading"
+          >
+            <template v-if="searchLoading">
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              <span>Searching...</span>
+            </template>
+            <template v-else>
+              <i class="bi bi-search me-1"></i>
+              Search
+            </template>
+          </button>
+
+          <!-- Reset Button -->
+          <button
+            class="btn btn-outline-success d-flex align-items-center gap-1"
+            @click="resetSearch"
+            :disabled="resetLoading || searchInput === '' || searchLoading"
+          >
+            <template v-if="resetLoading">
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              <span>Resetting...</span>
+            </template>
+            <template v-else>
+              <i class="bi bi-x-circle me-1"></i>
+              Reset
+            </template>
+          </button>
+        </div>
+
+
         <table class="table table-bordered table-hover align-middle text-center">
           <thead class="table-light">
             <tr>
@@ -148,7 +222,7 @@ const sortedProducts = computed(() => {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="product in sortedProducts" :key="product._id">
+            <tr v-for="product in filteredProducts" :key="product._id">
               <td class="text-start" style="width: 90px;">{{ product.name }}</td>
               <td class="text-start" style="width: 150px;">{{ product.description }}</td>
               <td style="width: 100px;">₱{{ product.price?.toLocaleString() }}</td>
