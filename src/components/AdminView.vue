@@ -210,7 +210,6 @@ function resetSearch() {
           </button>
         </div>
 
-
         <table class="table table-bordered table-hover align-middle text-center">
           <thead class="table-light">
             <tr>
@@ -288,7 +287,53 @@ function resetSearch() {
 
       <!-- MOBILE CARDS -->
       <div class="d-md-none">
-        <div v-for="product in sortedProducts" :key="product._id" class="card mb-2">
+        <!-- MOBILE SEARCH -->
+        <div class="d-md-none mb-3">
+          <input
+            type="text"
+            class="form-control mb-2"
+            placeholder="Search products by name or description..."
+            v-model="searchInput"
+            @keyup.enter="performSearch"
+            :disabled="searchLoading || resetLoading"
+          />
+
+          <div class="d-flex gap-2">
+            <!-- Search Button -->
+            <button
+              class="btn btn-success flex-fill d-flex align-items-center justify-content-center gap-1"
+              @click="performSearch"
+              :disabled="searchLoading || resetLoading"
+            >
+              <template v-if="searchLoading">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <span>Searching...</span>
+              </template>
+              <template v-else>
+                <i class="bi bi-search me-1"></i>
+                Search
+              </template>
+            </button>
+
+            <!-- Reset Button -->
+            <button
+              class="btn btn-outline-success flex-fill d-flex align-items-center justify-content-center gap-1"
+              @click="resetSearch"
+              :disabled="resetLoading || searchInput === '' || searchLoading"
+            >
+              <template v-if="resetLoading">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <span>Resetting...</span>
+              </template>
+              <template v-else>
+                <i class="bi bi-x-circle me-1"></i>
+                Reset
+              </template>
+            </button>
+          </div>
+        </div>
+
+        <div v-for="product in filteredProducts" :key="product._id" class="card mb-2">
           <div class="card-body p-2">
             <h5 class="mb-1">{{ product.name }}</h5>
             <p class="mb-1 text-truncate">Description: {{ product.description }}</p>
