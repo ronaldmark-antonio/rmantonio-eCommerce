@@ -8,7 +8,7 @@
         Upgrade your life! Find your perfect phone today.
       </p>
 
-      <!-- 🔍 DESKTOP-ONLY SEARCH -->
+      <!-- ================= DESKTOP SEARCH ================= -->
       <div class="d-none d-md-block mt-3">
         <div class="d-flex justify-content-center gap-2">
           <input
@@ -20,7 +20,6 @@
             :disabled="searchLoading || resetLoading"
           />
 
-          <!-- Search Button -->
           <button
             class="btn btn-success d-flex align-items-center gap-1"
             @click="performSearch"
@@ -36,9 +35,52 @@
             </template>
           </button>
 
-          <!-- Reset Button -->
           <button
             class="btn btn-outline-success d-flex align-items-center gap-1"
+            @click="resetSearch"
+            :disabled="resetLoading || searchInput === '' || searchLoading"
+          >
+            <template v-if="resetLoading">
+              <span class="spinner-border spinner-border-sm"></span>
+              Resetting...
+            </template>
+            <template v-else>
+              <i class="bi bi-x-circle"></i>
+              Reset
+            </template>
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= MOBILE SEARCH ================= -->
+      <div class="d-md-none mt-3">
+        <input
+          type="text"
+          class="form-control mb-2"
+          placeholder="Search products by name or description..."
+          v-model="searchInput"
+          @keyup.enter="performSearch"
+          :disabled="searchLoading || resetLoading"
+        />
+
+        <div class="d-flex gap-2">
+          <button
+            class="btn btn-success flex-fill d-flex align-items-center justify-content-center gap-1"
+            @click="performSearch"
+            :disabled="searchLoading || resetLoading"
+          >
+            <template v-if="searchLoading">
+              <span class="spinner-border spinner-border-sm"></span>
+              Searching...
+            </template>
+            <template v-else>
+              <i class="bi bi-search"></i>
+              Search
+            </template>
+          </button>
+
+          <button
+            class="btn btn-outline-success flex-fill d-flex align-items-center justify-content-center gap-1"
             @click="resetSearch"
             :disabled="resetLoading || searchInput === '' || searchLoading"
           >
@@ -56,13 +98,11 @@
     </div>
   </div>
 
-  <!-- EMPTY STATE -->
   <div v-if="filteredProducts.length === 0" class="text-center my-5">
     <i class="bi bi-exclamation-circle fs-1 d-block mb-2"></i>
     <p>No products found.</p>
   </div>
 
-  <!-- PRODUCTS -->
   <div v-else class="row g-4">
     <ProductComponent
       v-for="product in filteredProducts"
@@ -83,7 +123,6 @@ const props = defineProps({
   },
 });
 
-/* 🔥 SORT: NEWEST FIRST */
 const sortedProducts = computed(() => {
   return [...props.productsData].sort((a, b) => {
     if (a.createdAt && b.createdAt) {
@@ -93,13 +132,11 @@ const sortedProducts = computed(() => {
   });
 });
 
-/* 🔍 SEARCH STATE (same as admin) */
 const searchInput = ref("");
 const filteredProducts = ref([...sortedProducts.value]);
 const searchLoading = ref(false);
 const resetLoading = ref(false);
 
-/* 🔍 SEARCH */
 function performSearch() {
   searchLoading.value = true;
 
@@ -121,7 +158,6 @@ function performSearch() {
   }, 300);
 }
 
-/* 🔄 RESET */
 function resetSearch() {
   resetLoading.value = true;
 
@@ -132,5 +168,6 @@ function resetSearch() {
   }, 300);
 }
 </script>
+
 
 
