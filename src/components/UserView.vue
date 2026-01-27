@@ -10,21 +10,41 @@
     </div>
   </div>
 
-  <div v-if="productsData.length === 0" class="text-center my-5">
+  <div v-if="sortedProducts.length === 0" class="text-center my-5">
     <i class="bi bi-exclamation-circle fs-1 d-block mb-2"></i>
     <p>No products available at the moment.</p>
   </div>
 
   <div v-else class="row g-4">
-    <ProductComponent v-for="product in productsData" :key="product._id" :productData="product"/>
+    <ProductComponent
+      v-for="product in sortedProducts"
+      :key="product._id"
+      :productData="product"
+    />
   </div>
 </template>
 
 <script setup>
-import ProductComponent from '../components/ProductComponent.vue';
-import { defineProps } from 'vue';
+import { defineProps, computed } from "vue";
+import ProductComponent from "../components/ProductComponent.vue";
 
 const props = defineProps({
-    productsData: Array
+  productsData: {
+    type: Array,
+    default: () => []
+  }
+});
+
+/* 🔥 NEWEST FIRST */
+const sortedProducts = computed(() => {
+  return [...props.productsData].sort((a, b) => {
+    // Prefer createdAt if available
+    if (a.createdAt && b.createdAt) {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    }
+    // Fallback to MongoDB ObjectId
+    return b._id.localeCompare(a._id);
+  });
 });
 </script>
+
