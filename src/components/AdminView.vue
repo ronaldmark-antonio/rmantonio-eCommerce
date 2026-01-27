@@ -84,6 +84,22 @@ const sortedProducts = computed(() => {
   });
 });
 
+function goToAddProduct() {
+  if (loading.add) return;
+  loading.add = true;
+  setTimeout(() => {
+    router.push("/addProduct");
+  }, 200);
+}
+
+function goToOrders() {
+  if (loading.orders) return;
+  loading.orders = true;
+  setTimeout(() => {
+    router.push("/orders");
+  }, 200);
+}
+
 const searchInput = ref("");            
 const filteredProducts = ref([...sortedProducts.value]); 
 const searchLoading = ref(false);      
@@ -135,25 +151,33 @@ function resetSearch() {
 
     <!-- HEADER BUTTONS -->
     <div class="text-center mb-4">
-      <RouterLink
+      <!-- Add Product Button -->
+      <button
         class="btn btn-success mx-2"
-        to="/addProduct"
-        @click="loading.add = true"
+        :disabled="loading.add"
+        @click="goToAddProduct"
       >
-        <i v-if="loading.add" class="spinner-border spinner-border-sm me-1"></i>
-        <i v-else class="bi bi-plus-circle me-1"></i>
-        Add Product
-      </RouterLink>
+        <span v-if="loading.add" class="spinner-border spinner-border-sm me-1"></span>
+        <span v-if="loading.add">Loading...</span>
+        <template v-else>
+          <i class="bi bi-plus-circle me-1"></i>
+          Add Product
+        </template>
+      </button>
 
-      <RouterLink
+      <!-- Orders Button -->
+      <button
         class="btn btn-outline-success mx-2"
-        to="/orders"
-        @click="loading.orders = true"
+        :disabled="loading.orders"
+        @click="goToOrders"
       >
-        <i v-if="loading.orders" class="spinner-border spinner-border-sm me-1"></i>
-        <i v-else class="bi bi-cart-check me-1"></i>
-        Orders
-      </RouterLink>
+        <span v-if="loading.orders" class="spinner-border spinner-border-sm me-1"></span>
+        <span v-if="loading.orders">Loading Orders...</span>
+        <template v-else>
+          <i class="bi bi-cart-check me-1"></i>
+          Orders
+        </template>
+      </button>
     </div>
 
     <!-- EMPTY STATE -->
