@@ -85,7 +85,7 @@ onBeforeMount(async () => {
             :data-bs-target="`#product-${orderNum + 1}`" 
             aria-expanded="true"
           >
-            Order #{{ orderNum + 1 }} - Purchased on: {{ formatDate(order.orderedOn) }} (click for details)
+            Order #{{ orderNum + 1 }} - Purchased on {{ formatDate(order.orderedOn) }} (click for details)
           </button>
         </h2>
         <div
