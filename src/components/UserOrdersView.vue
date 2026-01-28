@@ -11,13 +11,11 @@ const ordersData = ref([])
 const loading = ref(false)
 const productTable = ref({})
 
+// Updated date format: "Month Day, Year"
 const formatDate = (dateStr) => {
   if (!dateStr) return '';
   const date = new Date(dateStr);
-  const mm = String(date.getMonth() + 1).padStart(2, '0');
-  const dd = String(date.getDate()).padStart(2, '0');
-  const yy = String(date.getFullYear()).slice(-2);
-  return `${mm}-${dd}-${yy}`;
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 };
 
 async function getProductName(productId) {
@@ -59,7 +57,6 @@ onBeforeMount(async () => {
   }
 })
 </script>
-
 
 <template>
 <div class="container my-5">
