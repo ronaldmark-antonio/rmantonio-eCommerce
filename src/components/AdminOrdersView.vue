@@ -15,12 +15,11 @@ const groupBy = ref("user")
 const router = useRouter()
 const {user} = useGlobalStore();
 
+// Updated formatDate: Month Day, Year
 function formatDate(dateString) {
+  if (!dateString) return ''
   const date = new Date(dateString)
-  const mm = String(date.getMonth() + 1).padStart(2, '0')
-  const dd = String(date.getDate()).padStart(2, '0')
-  const yy = String(date.getFullYear()).slice(-2)
-  return `${mm}-${dd}-${yy}`
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 }
 
 async function getProductName(productId) {
@@ -39,7 +38,7 @@ async function getProductName(productId) {
 
 function groupOrders() {
   rawData.value.forEach((order) => {
-    const orderDate = formatDate(order.orderedOn)
+    const orderDate = formatDate(order.orderedOn) // <-- use new format
     const orderContents = {
       productsOrdered: order.productsOrdered,
       totalPrice: order.totalPrice,
@@ -128,7 +127,6 @@ watch(groupBy, () => {
     <div class="row" v-else>
     <div class="col">
 
-
       <div class="accordion accordion-item my-3" id="outer-accordion">
         <div class="accordion-item" v-for="(subgroups, group) in ordersData" :key="group">
           <h2 class="accordion-header" :id="`heading-${group}`">
@@ -144,7 +142,7 @@ watch(groupBy, () => {
               <div class="accordion-item">
                 <h2 class="accordion-header" :id="`heading-${group}-${subgroup}`">
                   <button class="accordion-button bg-white text-dark" type="button" data-bs-toggle="collapse" :data-bs-target="`#${group}-${subgroup}`" :data-bs-parent="`#accordion-${group}-${subgroup}`" aria-expanded="true">
-                    {{ subgroup }} (click for details)
+                    {{ subgroup }} (click for details) <!-- subgroup is the formatted date now -->
                   </button>
                 </h2>
                 <div
