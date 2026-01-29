@@ -144,7 +144,7 @@ async function checkoutCart() {
       noCart.value = true;
 
       notyf.success("Cart checked out successfully");
-      router.push("/");
+      router.push("/orders");
     }
   } catch (error) {
     notyf.error("Error in checking out.");
