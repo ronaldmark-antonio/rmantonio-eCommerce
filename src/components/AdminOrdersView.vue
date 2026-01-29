@@ -15,11 +15,18 @@ const groupBy = ref("user")
 const router = useRouter()
 const {user} = useGlobalStore();
 
-// Updated formatDate: Month Day, Year
 function formatDate(dateString) {
-  if (!dateString) return ''
   const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+
+  return date.toLocaleDateString('en-US', {
+    month: 'long',
+    day: '2-digit',
+    year: 'numeric'
+  })
+}
+
+function safeId(value) {
+  return value.replace(/\s|,/g, '-')
 }
 
 async function getProductName(productId) {
@@ -38,7 +45,7 @@ async function getProductName(productId) {
 
 function groupOrders() {
   rawData.value.forEach((order) => {
-    const orderDate = formatDate(order.orderedOn) // <-- use new format
+    const orderDate = formatDate(order.orderedOn)
     const orderContents = {
       productsOrdered: order.productsOrdered,
       totalPrice: order.totalPrice,
@@ -126,29 +133,54 @@ watch(groupBy, () => {
 
     <div class="row" v-else>
     <div class="col">
+     <div class="accordion accordion-item my-3" id="outer-accordion">
+      <div
+        class="accordion-item"
+        v-for="(subgroups, group) in ordersData"
+        :key="group"
+      >
+        <h2 class="accordion-header" :id="`heading-${safeId(group)}`">
+          <button
+            class="accordion-button bg-white text-dark collapsed fw-bold"
+            type="button"
+            data-bs-toggle="collapse"
+            :data-bs-target="`#group-${safeId(group)}`"
+            data-bs-parent="#outer-accordion"
+          >
+            {{ group }} (click for details)
+          </button>
+        </h2>
 
-      <div class="accordion accordion-item my-3" id="outer-accordion">
-        <div class="accordion-item" v-for="(subgroups, group) in ordersData" :key="group">
-          <h2 class="accordion-header" :id="`heading-${group}`">
-            <button class="accordion-button bg-white text-dark collapsed fw-bold" type="button" data-bs-toggle="collapse" :data-bs-target="`#group-${group}`" data-bs-parent="#outer-accordion" aria-expanded="false">
-              {{ group }} (click for details)
-            </button>
-          </h2>
-
-          <div :id="`group-${group}`" class="accordion-collapse collapse">
+        <div
+          :id="`group-${safeId(group)}`"
+          class="accordion-collapse collapse"
+        >
 
             <!-- INNER ACCORDION -->
-            <div class="accordion" v-for="(orders, subgroup) in subgroups" :key="subgroup" :id="`accordion-${group}-${subgroup}`">
+            <div
+              class="accordion"
+              v-for="(orders, subgroup) in subgroups"
+              :key="subgroup"
+              :id="`accordion-${safeId(group)}-${safeId(subgroup)}`"
+            >
               <div class="accordion-item">
-                <h2 class="accordion-header" :id="`heading-${group}-${subgroup}`">
-                  <button class="accordion-button bg-white text-dark" type="button" data-bs-toggle="collapse" :data-bs-target="`#${group}-${subgroup}`" :data-bs-parent="`#accordion-${group}-${subgroup}`" aria-expanded="true">
-                    {{ subgroup }} (click for details) <!-- subgroup is the formatted date now -->
+                <h2 class="accordion-header" :id="`heading-${safeId(group)}-${safeId(subgroup)}`">
+                  <button
+                    class="accordion-button bg-white text-dark"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    :data-bs-target="`#${safeId(group)}-${safeId(subgroup)}`"
+                    :data-bs-parent="`#accordion-${safeId(group)}-${safeId(subgroup)}`"
+                  >
+                    {{ subgroup }} (click for details)
                   </button>
                 </h2>
+
                 <div
-                  :id="`${group}-${subgroup}`"
+                  :id="`${safeId(group)}-${safeId(subgroup)}`"
                   class="accordion-collapse collapse"
                 >
+
                   <div class="accordion-body ">
                     <ol>
                       <li v-for="order in orders">
