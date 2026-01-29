@@ -43,6 +43,22 @@ async function getProductName(productId) {
   }
 }
 
+const usersMap = ref({})
+
+async function fetchUsers() {
+  try {
+    const res = await api.get('https://rmantonio-ecommerceapi.onrender.com/users')
+    if (res.status === 200) {
+      // Build a map of userId → "First Last"
+      res.data.forEach(user => {
+        usersMap.value[user._id] = `${user.firstName} ${user.lastName}`
+      })
+    }
+  } catch (error) {
+    console.error('Error fetching users', error)
+  }
+}
+
 function groupOrders() {
   rawData.value.forEach((order) => {
     const orderDate = formatDate(order.orderedOn)
@@ -52,24 +68,31 @@ function groupOrders() {
       status: order.status
     }
 
-    groupedByUser.value[order.userId] ??= {}
-    groupedByUser.value[order.userId][orderDate] ??= []
-    groupedByUser.value[order.userId][orderDate].push(orderContents)
+    // Use the users map to get name, fallback to userId if missing
+    const userName = usersMap.value[order.userId] || order.userId
+    const userKey = `${userName} (${order.userId})`
 
+    // Group by user
+    groupedByUser.value[userKey] ??= {}
+    groupedByUser.value[userKey][orderDate] ??= []
+    groupedByUser.value[userKey][orderDate].push(orderContents)
+
+    // Group by date
     groupedByDate.value[orderDate] ??= {}
-    groupedByDate.value[orderDate][order.userId] ??= []
-    groupedByDate.value[orderDate][order.userId].push(orderContents)
+    groupedByDate.value[orderDate][userKey] ??= []
+    groupedByDate.value[orderDate][userKey].push(orderContents)
   })
 }
 
 onBeforeMount(async () => {
-
-  if (!user.email) {
-    return router.replace("/login");
-  }
+  if (!user.email) return router.replace("/login");
 
   loading.value = true
   try {
+    // Fetch all users first
+    await fetchUsers()
+
+    // Fetch orders
     const res = await api.get("https://rmantonio-ecommerceapi.onrender.com/orders/all-orders")
     if (res.status === 200) {
       rawData.value = res.data
@@ -85,15 +108,13 @@ onBeforeMount(async () => {
       ordersData.value = groupedByUser.value
     }
   } catch (error) {
-    if (error.response?.status === 401) {
-      router.push('/login')
-    } else {
-      console.error(error)
-    }
+    if (error.response?.status === 401) router.push('/login')
+    else console.error(error)
   } finally {
     loading.value = false
   }
 })
+
 
 watch(groupBy, () => {
   ordersData.value =
