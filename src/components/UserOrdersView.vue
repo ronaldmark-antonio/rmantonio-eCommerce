@@ -11,7 +11,6 @@ const ordersData = ref([])
 const loading = ref(false)
 const productTable = ref({})
 
-// Updated date format: "Month Day, Year"
 const formatDate = (dateStr) => {
   if (!dateStr) return '';
   const date = new Date(dateStr);
@@ -33,12 +32,12 @@ async function getProductName(productId) {
 }
 
 onBeforeMount(async () => {
-
   if (!user.email) {
     return router.replace("/login");
   }
 
   loading.value = true
+  
   try {
     let res = await api.get("https://rmantonio-ecommerceapi.onrender.com/orders/my-orders")
     if (res.status === 200) {

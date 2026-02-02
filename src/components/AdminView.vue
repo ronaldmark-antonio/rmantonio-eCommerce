@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, computed, reactive, ref } from "vue";
+import { defineProps, computed, reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Notyf } from "notyf";
 import "notyf/notyf.min.css";
@@ -20,7 +20,6 @@ const loading = reactive({
   orders: false,
 });
 
-// Product-specific loading helper
 function ensureProductLoading(product) {
   if (!loading[product._id]) {
     loading[product._id] = { update: false, action: false };
@@ -28,7 +27,6 @@ function ensureProductLoading(product) {
   return loading[product._id];
 }
 
-// Update product
 function updateProduct(product) {
   const prodLoad = ensureProductLoading(product);
   prodLoad.update = true;
@@ -38,7 +36,6 @@ function updateProduct(product) {
   }, 300);
 }
 
-// Archive / Disable product
 async function archiveProduct(product) {
   const prodLoad = ensureProductLoading(product);
   prodLoad.action = true;
@@ -51,13 +48,12 @@ async function archiveProduct(product) {
       notyf.success("Product archived successfully");
     }
   } catch {
-    notyf.error("Server error: Could not archive product");
+      notyf.error("Server error: Could not archive product");
   } finally {
-    prodLoad.action = false;
+      prodLoad.action = false;
   }
 }
 
-// Activate product
 async function activateProduct(product) {
   const prodLoad = ensureProductLoading(product);
   prodLoad.action = true;
@@ -70,13 +66,12 @@ async function activateProduct(product) {
       notyf.success("Product activated successfully");
     }
   } catch {
-    notyf.error("Server error: Could not activate product");
+      notyf.error("Server error: Could not activate product");
   } finally {
-    prodLoad.action = false;
+      prodLoad.action = false;
   }
 }
 
-// Sorted products by date or ID
 const sortedProducts = computed(() => {
   return [...props.productsData].sort((a, b) => {
     if (a.createdAt && b.createdAt) return new Date(b.createdAt) - new Date(a.createdAt);
@@ -89,6 +84,7 @@ function goToAddProduct() {
   loading.add = true;
   setTimeout(() => {
     router.push("/addProduct");
+    loading.add = false;
   }, 200);
 }
 
@@ -97,12 +93,21 @@ function goToOrders() {
   loading.orders = true;
   setTimeout(() => {
     router.push("/orders");
+    loading.orders = false;
   }, 200);
 }
 
-const searchInput = ref("");            
-const filteredProducts = ref([...sortedProducts.value]); 
-const searchLoading = ref(false);      
+const searchInput = ref("");
+const filteredProducts = ref([]);
+const searchLoading = ref(false);
+
+watch(
+  sortedProducts,
+  (newProducts) => {
+    filteredProducts.value = [...newProducts];
+  },
+  { immediate: true }
+);
 
 function performSearch() {
   searchLoading.value = true;
@@ -133,8 +138,6 @@ function resetSearch() {
     resetLoading.value = false;
   }, 300);
 }
-
-
 </script>
 
 <template>
@@ -149,7 +152,6 @@ function resetSearch() {
       Welcome back Admin! Manage your store with ease.
     </p>
 
-    <!-- HEADER BUTTONS -->
     <div class="text-center mb-4">
       <!-- Add Product Button -->
       <button
@@ -180,7 +182,6 @@ function resetSearch() {
       </button>
     </div>
 
-    <!-- EMPTY STATE -->
     <div v-if="sortedProducts.length === 0" class="text-center my-5">
       <h3>Your Product Catalog is Empty</h3>
       <p>Click "Add Product" to begin building your store!</p>
@@ -264,16 +265,13 @@ function resetSearch() {
                   :disabled="ensureProductLoading(product).update"
                   @click="updateProduct(product)"
                 >
-                  <!-- Spinner when loading -->
                   <span v-if="ensureProductLoading(product).update" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
 
-                  <!-- Icon + text when NOT loading -->
                   <template v-if="!ensureProductLoading(product).update">
                     <i class="bi bi-pencil-square"></i>
                     <span>Update</span>
                   </template>
 
-                  <!-- Text while loading -->
                   <template v-else>
                     <span>Loading...</span>
                   </template>
@@ -289,16 +287,13 @@ function resetSearch() {
                   :disabled="ensureProductLoading(product).action"
                   @click="product.isActive ? archiveProduct(product) : activateProduct(product)"
                 >
-                  <!-- Spinner while loading -->
                   <span v-if="ensureProductLoading(product).action" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
 
-                  <!-- Icon + text when NOT loading -->
                   <template v-if="!ensureProductLoading(product).action">
                     <i :class="product.isActive ? 'bi bi-x-circle' : 'bi bi-check-circle'"></i>
                     <span>{{ product.isActive ? 'Disable' : 'Activate' }}</span>
                   </template>
 
-                  <!-- Text while loading -->
                   <template v-else>
                     <span>{{ product.isActive ? 'Disabling...' : 'Activating...' }}</span>
                   </template>
