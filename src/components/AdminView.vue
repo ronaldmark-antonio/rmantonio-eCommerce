@@ -48,9 +48,9 @@ async function archiveProduct(product) {
       notyf.success("Product archived successfully");
     }
   } catch {
-      notyf.error("Server error: Could not archive product");
+    notyf.error("Server error: Could not archive product");
   } finally {
-      prodLoad.action = false;
+    prodLoad.action = false;
   }
 }
 
@@ -66,9 +66,9 @@ async function activateProduct(product) {
       notyf.success("Product activated successfully");
     }
   } catch {
-      notyf.error("Server error: Could not activate product");
+    notyf.error("Server error: Could not activate product");
   } finally {
-      prodLoad.action = false;
+    prodLoad.action = false;
   }
 }
 
@@ -98,6 +98,7 @@ function goToOrders() {
 }
 
 const searchInput = ref("");
+const availabilityFilter = ref("all");
 const filteredProducts = ref([]);
 const searchLoading = ref(false);
 
@@ -109,22 +110,27 @@ watch(
   { immediate: true }
 );
 
-function performSearch() {
-  searchLoading.value = true;
+function performSearch(isFilterChange = false) {
+  if (!isFilterChange) searchLoading.value = true;
 
   setTimeout(() => {
     const query = searchInput.value.trim().toLowerCase();
-    if (!query) {
-      filteredProducts.value = [...sortedProducts.value];
-    } else {
-      filteredProducts.value = sortedProducts.value.filter(
-        (product) =>
-          product.name.toLowerCase().includes(query) ||
-          product.description.toLowerCase().includes(query)
-      );
-    }
-    searchLoading.value = false;
-  }, 300);
+    filteredProducts.value = sortedProducts.value.filter((product) => {
+      const matchesSearch =
+        !query ||
+        product.name.toLowerCase().includes(query) ||
+        product.description.toLowerCase().includes(query);
+
+      const matchesAvailability =
+        availabilityFilter.value === "all" ||
+        (availabilityFilter.value === "available" && product.isActive) ||
+        (availabilityFilter.value === "unavailable" && !product.isActive);
+
+      return matchesSearch && matchesAvailability;
+    });
+
+    if (!isFilterChange) searchLoading.value = false;
+  }, isFilterChange ? 0 : 300);
 }
 
 const resetLoading = ref(false);
@@ -134,6 +140,7 @@ function resetSearch() {
 
   setTimeout(() => {
     searchInput.value = "";
+    availabilityFilter.value = "all";
     filteredProducts.value = [...sortedProducts.value];
     resetLoading.value = false;
   }, 300);
@@ -233,7 +240,26 @@ function resetSearch() {
               Reset
             </template>
           </button>
+
+          <!-- Availability Filter -->
+          <div class="d-flex align-items-center gap-1">
+            <label for="availabilityFilter" class="mb-0">Availability:</label>
+            <select
+              id="availabilityFilter"
+              class="form-select"
+              style="width: 150px;"
+              v-model="availabilityFilter"
+              @change="performSearch"
+              :disabled="searchLoading || resetLoading"
+            >
+              <option value="all">All</option>
+              <option value="available">Available</option>
+              <option value="unavailable">Unavailable</option>
+            </select>
+          </div>
         </div>
+
+
 
         <table class="table table-bordered table-hover align-middle text-center">
           <thead class="table-light">
