@@ -42,9 +42,11 @@ onBeforeMount(async () => {
   try {
     let res = await api.get("https://rmantonio-ecommerceapi.onrender.com/orders/my-orders")
     if (res.status === 200) {
-      ordersData.value = res.data.orders
+      ordersData.value = res.data.orders.sort(
+        (a, b) => new Date(b.orderedOn) - new Date(a.orderedOn)
+      )
 
-      res.data.orders.forEach((order) => {
+      ordersData.value.forEach((order) => {
         order.productsOrdered.forEach((product) =>
           getProductName(product.productId)
         )
@@ -79,28 +81,26 @@ onBeforeMount(async () => {
       <div class="accordion-item">
         <h2 class="accordion-header" :id="`product-heading-${orderNum + 1}`">
           <button 
-            class="accordion-button bg-white text-dark fw-bold" 
+            class="accordion-button collapsed bg-white text-dark fw-bold" 
             type="button" 
             data-bs-toggle="collapse" 
-            :data-bs-target="`#product-${orderNum + 1}`" 
-            aria-expanded="true"
+            :data-bs-target="`#product-${orderNum + 1}`"
           >
-            Order #{{ orderNum + 1 }} - Purchased on {{ formatDate(order.orderedOn) }} (click for details)
+            Order #{{ ordersData.length - orderNum }}
+            — Purchased on {{ formatDate(order.orderedOn) }}
           </button>
         </h2>
+
         <div
           :id="`product-${orderNum + 1}`"
-          :class="{
-            'accordion-collapse': true,
-            'collapse': true,
-            'show': orderNum + 1 === ordersData.length
-          }"
+          class="accordion-collapse collapse"
         >
           <div class="accordion-body">
             <p>Items:</p>
             <ul>
               <li v-for="product in order.productsOrdered" :key="product.productId">
-                {{ productTable[product.productId] || "Loading..." }} | Quantity: {{ product.quantity }}
+                {{ productTable[product.productId] || "Loading..." }}
+                | Quantity: {{ product.quantity }}
                 | Subtotal: &#8369;{{ (product.subtotal / product.quantity).toLocaleString() }}
               </li>
             </ul>
@@ -109,6 +109,7 @@ onBeforeMount(async () => {
         </div>
       </div>
     </div>
+
   </div>
 </div>
 </template>
