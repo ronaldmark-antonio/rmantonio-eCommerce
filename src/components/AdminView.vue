@@ -259,8 +259,6 @@ function resetSearch() {
           </div>
         </div>
 
-
-
         <table class="table table-bordered table-hover align-middle text-center">
           <thead class="table-light">
             <tr>
@@ -334,6 +332,7 @@ function resetSearch() {
       <div class="d-md-none">
         <!-- MOBILE SEARCH -->
         <div class="d-md-none mb-3">
+          <!-- Search Input -->
           <input
             type="text"
             class="form-control mb-2"
@@ -343,7 +342,7 @@ function resetSearch() {
             :disabled="searchLoading || resetLoading"
           />
 
-          <div class="d-flex gap-2">
+          <div class="d-flex gap-2 mb-2">
             <!-- Search Button -->
             <button
               class="btn btn-success flex-fill d-flex align-items-center justify-content-center gap-1"
@@ -376,7 +375,27 @@ function resetSearch() {
               </template>
             </button>
           </div>
+
+          <!-- Filter + Buttons -->
+          <div class="d-flex gap-2 mb-2">
+            <!-- Availability Filter -->
+            <div class="flex-fill d-flex align-items-center gap-1">
+              <label for="mobileAvailabilityFilter" class="mb-0">Availability:</label>
+              <select
+                id="mobileAvailabilityFilter"
+                class="form-select"
+                v-model="availabilityFilter"
+                @change="performSearch(true)"
+                :disabled="searchLoading || resetLoading"
+              >
+                <option value="all">All</option>
+                <option value="available">Available</option>
+                <option value="unavailable">Unavailable</option>
+              </select>
+            </div>
+          </div>
         </div>
+
 
         <div v-for="product in filteredProducts" :key="product._id" class="card mb-2">
           <div class="card-body p-2">
