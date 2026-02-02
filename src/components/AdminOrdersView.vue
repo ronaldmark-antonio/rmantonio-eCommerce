@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeMount, ref, watch } from 'vue'
+import { onBeforeMount, ref, watch, computed } from 'vue'
 import { useGlobalStore } from '../stores/global.js';
 import { useRouter } from 'vue-router'
 import api from '../api'
@@ -10,6 +10,7 @@ const groupedByUser = ref({})
 const groupedByDate = ref({})
 const loading = ref(false)
 const productTable = ref({})
+const userTable = ref({}) // store userId -> "FirstName LastName"
 const groupBy = ref("user")
 
 const router = useRouter()
@@ -17,7 +18,6 @@ const {user} = useGlobalStore();
 
 function formatDate(dateString) {
   const date = new Date(dateString)
-
   return date.toLocaleDateString('en-US', {
     month: 'long',
     day: '2-digit',
@@ -29,6 +29,7 @@ function safeId(value) {
   return value.replace(/\s|,/g, '-')
 }
 
+// Fetch product name
 async function getProductName(productId) {
   if (!productTable.value[productId]) {
     try {
@@ -39,6 +40,22 @@ async function getProductName(productId) {
     } catch (error) {
       console.error(`Error fetching product ${productId}`, error)
       productTable.value[productId] = 'Unknown Product'
+    }
+  }
+}
+
+// Fetch user full name
+async function getUserName(userId) {
+  if (!userTable.value[userId]) {
+    try {
+      const res = await api.get(`https://rmantonio-ecommerceapi.onrender.com/users/${userId}`)
+      if (res.status === 200) {
+        const { firstName, lastName } = res.data
+        userTable.value[userId] = `${firstName} ${lastName}`
+      }
+    } catch (error) {
+      console.error(`Error fetching user ${userId}`, error)
+      userTable.value[userId] = 'Unknown User'
     }
   }
 }
@@ -62,6 +79,21 @@ function groupOrders() {
   })
 }
 
+// Computed property to return ordersData with descending dates when grouped by date
+const sortedOrdersData = computed(() => {
+  if (groupBy.value === 'date') {
+    const sorted = {}
+    Object.keys(groupedByDate.value)
+      .sort((a, b) => new Date(b) - new Date(a)) // descending
+      .forEach(date => {
+        sorted[date] = groupedByDate.value[date]
+      })
+    return sorted
+  } else {
+    return groupedByUser.value
+  }
+})
+
 onBeforeMount(async () => {
 
   if (!user.email) {
@@ -74,15 +106,16 @@ onBeforeMount(async () => {
     if (res.status === 200) {
       rawData.value = res.data
 
-      // Preload product names
-      res.data.forEach((order) => {
-        order.productsOrdered.forEach((product) =>
+      // Preload product names & user names
+      for (const order of res.data) {
+        for (const product of order.productsOrdered) {
           getProductName(product.productId)
-        )
-      })
+        }
+        await getUserName(order.userId)
+      }
 
       groupOrders()
-      ordersData.value = groupedByUser.value
+      ordersData.value = sortedOrdersData.value
     }
   } catch (error) {
     if (error.response?.status === 401) {
@@ -95,9 +128,8 @@ onBeforeMount(async () => {
   }
 })
 
-watch(groupBy, () => {
-  ordersData.value =
-    groupBy.value === "user" ? groupedByUser.value : groupedByDate.value
+watch([groupBy, sortedOrdersData], () => {
+  ordersData.value = sortedOrdersData.value
 })
 </script>
 
