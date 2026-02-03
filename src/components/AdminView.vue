@@ -259,7 +259,38 @@ function resetSearch() {
           </div>
         </div>
 
-        <table class="table table-bordered table-hover align-middle text-center">
+        <!-- EMPTY FILTER RESULT -->
+        <div
+          v-if="filteredProducts.length === 0 && sortedProducts.length > 0"
+          class="text-center my-5 text-muted"
+        >
+        <i
+        :class="availabilityFilter === 'available'
+        ? 'bi bi-check-circle'
+        : availabilityFilter === 'unavailable'
+        ? 'bi bi-x-circle'
+        : 'bi bi-search'"
+        class="display-4 mb-3 d-block"
+        ></i>
+
+          <h5 class="fw-semibold">
+            No
+            {{
+              availabilityFilter === 'available'
+                ? 'Available'
+                : availabilityFilter === 'unavailable'
+                ? 'Unavailable'
+                : ''
+            }}
+            Products Found
+          </h5>
+
+          <p class="mb-0">
+            Try changing the availability filter or clearing your search.
+          </p>
+        </div>
+
+        <table v-if="filteredProducts.length > 0" class="table table-bordered table-hover align-middle text-center">
           <thead class="table-light">
             <tr>
               <th class="text-start text-center" style="width: 350px;">Name</th>
