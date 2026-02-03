@@ -427,7 +427,37 @@ function resetSearch() {
           </div>
         </div>
 
+        <!-- EMPTY FILTER RESULT -->
+        <div
+          v-if="filteredProducts.length === 0 && sortedProducts.length > 0"
+          class="text-center my-5 text-muted"
+        >
+        <i
+        :class="availabilityFilter === 'available'
+        ? 'bi bi-check-circle'
+        : availabilityFilter === 'unavailable'
+        ? 'bi bi-x-circle'
+        : 'bi bi-search'"
+        class="display-4 mb-3 d-block"
+        ></i>
 
+          <h5 class="fw-semibold">
+            No
+            {{
+              availabilityFilter === 'available'
+                ? 'Available'
+                : availabilityFilter === 'unavailable'
+                ? 'Unavailable'
+                : ''
+            }}
+            Products Found
+          </h5>
+
+          <p class="mb-0">
+            Try changing the availability filter or clearing your search.
+          </p>
+        </div>
+        
         <div v-for="product in filteredProducts" :key="product._id" class="card mb-2">
           <div class="card-body p-2">
             <h5 class="mb-1">{{ product.name }}</h5>
