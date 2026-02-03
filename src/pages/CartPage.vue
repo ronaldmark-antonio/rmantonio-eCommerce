@@ -194,10 +194,12 @@ onBeforeMount(async () => {
         <div class="spinner-grow"></div>
       </div>
 
-      <!-- Empty cart message -->
-      <p class="text-center text-muted" v-else-if="productData.length === 0 || noCart">
-        Your cart is empty. Products you add to your cart will appear here.
-      </p>
+      <!-- Empty cart message with icon -->
+      <div v-else-if="productData.length === 0 || noCart" class="text-center my-5 text-muted">
+        <i class="bi bi-cart-x display-4 mb-3"></i>
+        <h5>Your cart is empty</h5>
+        <p>Products you add to your cart will appear here. Start shopping now!</p>
+      </div>
 
       <!-- DESKTOP TABLE -->
        <table 

@@ -110,6 +110,11 @@ watch(
   { immediate: true }
 );
 
+const priceFilter = reactive({
+  min: null,
+  max: null,
+});
+
 function performSearch(isFilterChange = false) {
   if (!isFilterChange) searchLoading.value = true;
 
@@ -126,12 +131,17 @@ function performSearch(isFilterChange = false) {
         (availabilityFilter.value === "available" && product.isActive) ||
         (availabilityFilter.value === "unavailable" && !product.isActive);
 
-      return matchesSearch && matchesAvailability;
+      const matchesPrice =
+        (priceFilter.min === null || product.price >= priceFilter.min) &&
+        (priceFilter.max === null || product.price <= priceFilter.max);
+
+      return matchesSearch && matchesAvailability && matchesPrice;
     });
 
     if (!isFilterChange) searchLoading.value = false;
   }, isFilterChange ? 0 : 300);
 }
+
 
 const resetLoading = ref(false);
 
@@ -457,7 +467,7 @@ function resetSearch() {
             Try changing the availability filter or clearing your search.
           </p>
         </div>
-        
+
         <div v-for="product in filteredProducts" :key="product._id" class="card mb-2">
           <div class="card-body p-2">
             <h5 class="mb-1">{{ product.name }}</h5>
