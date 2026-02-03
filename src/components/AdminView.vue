@@ -262,10 +262,10 @@ function resetSearch() {
         <table class="table table-bordered table-hover align-middle text-center">
           <thead class="table-light">
             <tr>
-              <th class="text-start" style="width: 350px;">Name</th>
-              <th class="text-start" style="width: 400px;">Description</th>
-              <th style="width: 80px;">Price</th>
-              <th style="width: 80px;">Availability</th>
+              <th class="text-start text-center" style="width: 350px;">Name</th>
+              <th class="text-start text-center" style="width: 400px;">Description</th>
+              <th class="text-start text-center" style="width: 80px;">Price</th>
+              <th class="text-start text-center" style="width: 80px;">Availability</th>
               <th colspan="2" style="width: 90px;">Actions</th>
             </tr>
           </thead>
