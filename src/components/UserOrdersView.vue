@@ -72,9 +72,14 @@ onBeforeMount(async () => {
     <p class="text-center mb-3 pb-1">
         Stay connected! Thank you for shopping with us.
     </p>
-    <p class="text-center text-muted" v-if="ordersData.length === 0">
-      You have not placed any orders yet.
-    </p>
+    
+    <!-- Empty orders message -->
+    <div v-if="ordersData.length === 0" class="text-center my-5 text-muted">
+      <i class="bi bi-receipt-cutoff display-4 mb-3"></i>
+      <h5>No orders yet</h5>
+      <p>You haven’t placed any orders. Start shopping now to see your order history here!</p>
+    </div>
+
 
     <div class="accordion" v-for="(order, orderNum) in ordersData" :key="order._id">
       <div class="accordion-item">
