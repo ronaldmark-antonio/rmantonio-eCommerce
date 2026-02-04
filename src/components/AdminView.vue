@@ -115,6 +115,7 @@ const priceFilter = reactive({
   max: null,
 });
 
+
 function performSearch(isFilterChange = false) {
   if (!isFilterChange) searchLoading.value = true;
 
