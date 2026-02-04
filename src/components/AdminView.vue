@@ -20,6 +20,12 @@ const loading = reactive({
   orders: false,
 });
 
+const priceFilter = reactive({
+  min: null,
+  max: null,
+});
+
+
 function ensureProductLoading(product) {
   if (!loading[product._id]) {
     loading[product._id] = { update: false, action: false };
@@ -109,12 +115,6 @@ watch(
   },
   { immediate: true }
 );
-
-const priceFilter = reactive({
-  min: null,
-  max: null,
-});
-
 
 function performSearch(isFilterChange = false) {
   if (!isFilterChange) searchLoading.value = true;
