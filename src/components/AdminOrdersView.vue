@@ -10,9 +10,7 @@ const groupedByUser = ref({})
 const groupedByDate = ref({})
 const loading = ref(false)
 const productTable = ref({})
-const userTable = ref({}) // store userId -> "FirstName LastName"
 const groupBy = ref("user")
-
 const router = useRouter()
 const {user} = useGlobalStore();
 
@@ -29,7 +27,6 @@ function safeId(value) {
   return value.replace(/\s|,/g, '-')
 }
 
-// Fetch product name
 async function getProductName(productId) {
   if (!productTable.value[productId]) {
     try {
@@ -44,29 +41,14 @@ async function getProductName(productId) {
   }
 }
 
-// Fetch user full name
-async function getUserName(userId) {
-  if (!userTable.value[userId]) {
-    try {
-      const res = await api.get(`https://rmantonio-ecommerceapi.onrender.com/users/${userId}`)
-      if (res.status === 200) {
-        const { firstName, lastName } = res.data
-        userTable.value[userId] = `${firstName} ${lastName}`
-      }
-    } catch (error) {
-      console.error(`Error fetching user ${userId}`, error)
-      userTable.value[userId] = 'Unknown User'
-    }
-  }
-}
-
 function groupOrders() {
   rawData.value.forEach((order) => {
     const orderDate = formatDate(order.orderedOn)
     const orderContents = {
       productsOrdered: order.productsOrdered,
       totalPrice: order.totalPrice,
-      status: order.status
+      status: order.status,
+      orderedOn: order.orderedOn
     }
 
     groupedByUser.value[order.userId] ??= {}
@@ -77,14 +59,25 @@ function groupOrders() {
     groupedByDate.value[orderDate][order.userId] ??= []
     groupedByDate.value[orderDate][order.userId].push(orderContents)
   })
+
+  Object.values(groupedByUser.value).forEach(userGroups => {
+    Object.values(userGroups).forEach(ordersArray => {
+      ordersArray.sort((a, b) => new Date(b.orderedOn) - new Date(a.orderedOn))
+    })
+  })
+
+  Object.values(groupedByDate.value).forEach(dateGroups => {
+    Object.values(dateGroups).forEach(ordersArray => {
+      ordersArray.sort((a, b) => new Date(b.orderedOn) - new Date(a.orderedOn))
+    })
+  })
 }
 
-// Computed property to return ordersData with descending dates when grouped by date
 const sortedOrdersData = computed(() => {
   if (groupBy.value === 'date') {
     const sorted = {}
     Object.keys(groupedByDate.value)
-      .sort((a, b) => new Date(b) - new Date(a)) // descending
+      .sort((a, b) => new Date(b) - new Date(a))
       .forEach(date => {
         sorted[date] = groupedByDate.value[date]
       })
@@ -95,7 +88,6 @@ const sortedOrdersData = computed(() => {
 })
 
 onBeforeMount(async () => {
-
   if (!user.email) {
     return router.replace("/login");
   }
@@ -104,14 +96,12 @@ onBeforeMount(async () => {
   try {
     const res = await api.get("https://rmantonio-ecommerceapi.onrender.com/orders/all-orders")
     if (res.status === 200) {
-      rawData.value = res.data
+      rawData.value = res.data.sort((a, b) => new Date(b.orderedOn) - new Date(a.orderedOn))
 
-      // Preload product names & user names
-      for (const order of res.data) {
+      for (const order of rawData.value) {
         for (const product of order.productsOrdered) {
           getProductName(product.productId)
         }
-        await getUserName(order.userId)
       }
 
       groupOrders()
@@ -132,6 +122,7 @@ watch([groupBy, sortedOrdersData], () => {
   ordersData.value = sortedOrdersData.value
 })
 </script>
+
 
 <template>
 <div class="container my-5">
