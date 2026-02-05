@@ -50,6 +50,41 @@
         </div>
       </div>
 
+      <!-- Quick Price Filters -->
+      <div class="d-flex justify-content-center gap-2 mt-3 flex-wrap">
+        <button
+          class="btn btn-sm"
+          :class="priceFilter.max === 29999 ? 'btn-success' : 'btn-outline-success'"
+          @click="applyQuickPriceFilter(null, 29999)"
+        >
+          Under ₱30,000
+        </button>
+
+        <button
+          class="btn btn-sm"
+          :class="priceFilter.min === 30000 && priceFilter.max === 50000 ? 'btn-success' : 'btn-outline-success'"
+          @click="applyQuickPriceFilter(30000, 50000)"
+        >
+          ₱30,000 – ₱50,000
+        </button>
+
+        <button
+          class="btn btn-sm"
+          :class="priceFilter.min === 51000 && priceFilter.max === 100000 ? 'btn-success' : 'btn-outline-success'"
+          @click="applyQuickPriceFilter(51000, 100000)"
+        >
+          ₱51,000 – ₱100,000
+        </button>
+
+        <button
+          class="btn btn-sm btn-outline-secondary"
+          @click="applyQuickPriceFilter(null, null)"
+        >
+          Clear Price
+        </button>
+      </div>
+
+
       <!-- MOBILE SEARCH -->
       <div class="d-md-none mt-3">
         <input
@@ -215,30 +250,63 @@ const sortedProducts = computed(() => {
 });
 
 const filteredProducts = ref([...sortedProducts.value]);
+const priceFilter = ref({ min: null, max: null });
+const priceSort = ref(null);
 
 function performSearch() {
   searchLoading.value = true;
+
   setTimeout(() => {
     const query = searchInput.value.trim().toLowerCase();
-    if (!query) filteredProducts.value = [...sortedProducts.value];
-    else
-      filteredProducts.value = sortedProducts.value.filter(
-        (p) =>
-          p.name.toLowerCase().includes(query) ||
-          (p.description && p.description.toLowerCase().includes(query))
-      );
+
+    let results = sortedProducts.value.filter((p) => {
+      const matchesSearch =
+        !query ||
+        p.name.toLowerCase().includes(query) ||
+        (p.description && p.description.toLowerCase().includes(query));
+
+      const matchesPrice =
+        (priceFilter.value.min === null || p.price >= priceFilter.value.min) &&
+        (priceFilter.value.max === null || p.price <= priceFilter.value.max);
+
+      return matchesSearch && matchesPrice;
+    });
+
+    if (priceFilter.value.min !== null || priceFilter.value.max !== null) {
+      priceSort.value = "asc";
+    } else {
+      priceSort.value = null;
+    }
+
+    if (priceSort.value === "asc") {
+      results.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
+    }
+
+    filteredProducts.value = results;
     searchLoading.value = false;
   }, 300);
 }
 
+function applyQuickPriceFilter(min, max) {
+  priceFilter.value.min = min;
+  priceFilter.value.max = max;
+  priceSort.value = "asc";
+  performSearch();
+}
+
 function resetSearch() {
   resetLoading.value = true;
+
   setTimeout(() => {
     searchInput.value = "";
+    priceFilter.value.min = null;
+    priceFilter.value.max = null;
+    priceSort.value = null;
     filteredProducts.value = [...sortedProducts.value];
     resetLoading.value = false;
   }, 300);
 }
+
 
 // MOBILE BUTTON LOADING STATES
 const addingToCart = ref(false);
