@@ -502,16 +502,16 @@ function resetSearch() {
         <div class="d-flex justify-content-center gap-2 mb-3 flex-wrap">
           <button
             class="btn btn-sm"
-            :class="priceFilter.max === 30000 ? 'btn-success' : 'btn-outline-success'"
-            @click="applyQuickPriceFilter(null, 29,999)"
+            :class="priceFilter.max === 29999 ? 'btn-success' : 'btn-outline-success'"
+            @click="applyQuickPriceFilter(null, 29999)"
           >
             Under ₱30,000
           </button>
 
           <button
             class="btn btn-sm"
-            :class="priceFilter.min === 30000 && priceFilter.max === 50999 ? 'btn-success' : 'btn-outline-success'"
-            @click="applyQuickPriceFilter(30000, 50999)"
+            :class="priceFilter.min === 30000 && priceFilter.max === 50000 ? 'btn-success' : 'btn-outline-success'"
+            @click="applyQuickPriceFilter(30000, 50000)"
           >
             ₱30,000 – ₱50,000
           </button>
@@ -519,7 +519,7 @@ function resetSearch() {
           <button
             class="btn btn-sm"
             :class="priceFilter.min === 51000 && priceFilter.max === 100000 ? 'btn-success' : 'btn-outline-success'"
-            @click="applyQuickPriceFilter(51000, 100999)"
+            @click="applyQuickPriceFilter(51000, 100000)"
           >
             ₱51,000 – ₱100,000
           </button>
