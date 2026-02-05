@@ -143,6 +143,11 @@ function performSearch(isFilterChange = false) {
   }, isFilterChange ? 0 : 300);
 }
 
+function applyQuickPriceFilter(min, max) {
+  priceFilter.min = min;
+  priceFilter.max = max;
+  performSearch(true);
+}
 
 const resetLoading = ref(false);
 
@@ -152,10 +157,13 @@ function resetSearch() {
   setTimeout(() => {
     searchInput.value = "";
     availabilityFilter.value = "all";
+    priceFilter.min = null;
+    priceFilter.max = null;
     filteredProducts.value = [...sortedProducts.value];
     resetLoading.value = false;
   }, 300);
 }
+
 </script>
 
 <template>
@@ -269,6 +277,41 @@ function resetSearch() {
             </select>
           </div>
         </div>
+
+        <!-- Quick Price Filters -->
+        <div class="d-flex justify-content-center gap-2 mb-3 flex-wrap">
+          <button
+            class="btn btn-sm"
+            :class="priceFilter.max === 30000 ? 'btn-success' : 'btn-outline-success'"
+            @click="applyQuickPriceFilter(null, 29,999)"
+          >
+            Under ₱30,000
+          </button>
+
+          <button
+            class="btn btn-sm"
+            :class="priceFilter.min === 30000 && priceFilter.max === 50999 ? 'btn-success' : 'btn-outline-success'"
+            @click="applyQuickPriceFilter(30000, 50999)"
+          >
+            ₱30,000 – ₱50,000
+          </button>
+
+          <button
+            class="btn btn-sm"
+            :class="priceFilter.min === 51000 && priceFilter.max === 100000 ? 'btn-success' : 'btn-outline-success'"
+            @click="applyQuickPriceFilter(51000, 100999)"
+          >
+            ₱51,000 – ₱100,000
+          </button>
+
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            @click="applyQuickPriceFilter(null, null)"
+          >
+            Clear Price
+          </button>
+        </div>
+
 
         <!-- EMPTY FILTER RESULT -->
         <div
