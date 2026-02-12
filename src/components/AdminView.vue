@@ -143,12 +143,6 @@ function performSearch(isFilterChange = false) {
     });
 
     if (priceFilter.min !== null || priceFilter.max !== null) {
-      priceSort.value = "asc";
-    } else {
-      priceSort.value = null;
-    }
-
-    if (priceSort.value === "asc") {
       results.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
     }
 
@@ -159,11 +153,22 @@ function performSearch(isFilterChange = false) {
 }
 
 function applyQuickPriceFilter(min, max) {
+  if (min === null && max === null) {
+    priceFilter.min = null;
+    priceFilter.max = null;
+    priceSort.value = null;
+
+    performSearch(true);
+    return;
+  }
+
   priceFilter.min = min;
   priceFilter.max = max;
   priceSort.value = "asc";
+
   performSearch(true);
 }
+
 
 const resetLoading = ref(false);
 
