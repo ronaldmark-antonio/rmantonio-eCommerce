@@ -79,7 +79,9 @@
         <button
           class="btn btn-sm btn-outline-secondary"
           @click="applyQuickPriceFilter(null, null)"
+          :disabled="!isPriceFilterActive"
         >
+          <i class="bi bi-x-circle"></i>
           Clear Price
         </button>
       </div>
@@ -155,11 +157,14 @@
           </button>
 
           <button
-            class="btn btn-sm btn-outline-secondary flex-fill"
+            class="btn btn-sm btn-outline-secondary flex-fill d-flex align-items-center justify-content-center gap-1"
             @click="applyQuickPriceFilter(null, null)"
+            :disabled="!isPriceFilterActive"
           >
+            <i class="bi bi-x-circle"></i>
             Clear
           </button>
+
         </div>
       </div>
     </div>
@@ -275,8 +280,10 @@ const filteredProducts = ref([...sortedProducts.value]);
 const priceFilter = ref({ min: null, max: null });
 const priceSort = ref(null);
 
-function performSearch() {
-  searchLoading.value = true;
+function performSearch(showLoader = true) {
+  if (showLoader) {
+    searchLoading.value = true;
+  }
 
   setTimeout(() => {
     const query = searchInput.value.trim().toLowerCase();
@@ -295,19 +302,17 @@ function performSearch() {
     });
 
     if (priceFilter.value.min !== null || priceFilter.value.max !== null) {
-      priceSort.value = "asc";
-    } else {
-      priceSort.value = null;
-    }
-
-    if (priceSort.value === "asc") {
       results.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
     }
 
     filteredProducts.value = results;
-    searchLoading.value = false;
-  }, 300);
+
+    if (showLoader) {
+      searchLoading.value = false;
+    }
+  }, showLoader ? 300 : 0);
 }
+
 
 function applyQuickPriceFilter(min, max) {
   if (min === null && max === null) {
@@ -315,8 +320,7 @@ function applyQuickPriceFilter(min, max) {
     priceFilter.value.max = null;
     priceSort.value = null;
 
-    filteredProducts.value = [...sortedProducts.value];
-
+    performSearch(false);
     return;
   }
 
@@ -324,8 +328,14 @@ function applyQuickPriceFilter(min, max) {
   priceFilter.value.max = max;
   priceSort.value = "asc";
 
-  performSearch();
+  performSearch(false);
 }
+
+
+
+const isPriceFilterActive = computed(() => {
+  return priceFilter.value.min !== null || priceFilter.value.max !== null;
+});
 
 
 function resetSearch() {
