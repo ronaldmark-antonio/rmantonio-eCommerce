@@ -201,21 +201,7 @@
             : "No description available." }}
         </p>
         <p class="mb-1">Price: ₱{{ product.price?.toLocaleString() }}</p>
-        <p class="mb-1">
-          Availability:
-          <span
-            :class="product.isActive ? 'badge bg-success' : 'badge bg-danger'"
-          >
-            <i
-              :class="product.isActive
-                ? 'bi bi-check-circle-fill'
-                : 'bi bi-x-circle-fill'"
-              class="me-1"
-            ></i>
-            {{ product.isActive ? 'Available' : 'Unavailable' }}
-          </span>
-        </p>
-
+        
         <div class="d-flex gap-1 mt-1">
           <!-- Add to Cart Button -->
           <button
