@@ -50,8 +50,8 @@
         </div>
       </div>
 
-      <!-- Quick Price Filters -->
-      <div class="d-flex justify-content-center gap-2 mt-3 flex-wrap">
+      <!-- DESKTOP Price Filters -->
+      <div class="d-none d-md-flex justify-content-center gap-2 mt-3 flex-wrap">
         <button
           class="btn btn-sm"
           :class="priceFilter.max === 29999 ? 'btn-success' : 'btn-outline-success'"
@@ -123,6 +123,42 @@
               <i class="bi bi-x-circle"></i>
               Reset
             </template>
+          </button>
+        </div>
+      </div>
+
+      <!-- Price Filters -->
+      <div class="d-md-none mt-3">
+        <div class="d-flex gap-2 flex-wrap">
+          <button
+            class="btn btn-sm flex-fill"
+            :class="priceFilter.max === 29999 ? 'btn-success' : 'btn-outline-success'"
+            @click="applyQuickPriceFilter(null, 29999)"
+          >
+            Under ₱30,000
+          </button>
+
+          <button
+            class="btn btn-sm flex-fill"
+            :class="priceFilter.min === 30000 && priceFilter.max === 50000 ? 'btn-success' : 'btn-outline-success'"
+            @click="applyQuickPriceFilter(30000, 50000)"
+          >
+            ₱30k – ₱50k
+          </button>
+
+          <button
+            class="btn btn-sm flex-fill"
+            :class="priceFilter.min === 51000 && priceFilter.max === 100000 ? 'btn-success' : 'btn-outline-success'"
+            @click="applyQuickPriceFilter(51000, 100000)"
+          >
+            ₱51k – ₱100k
+          </button>
+
+          <button
+            class="btn btn-sm btn-outline-secondary flex-fill"
+            @click="applyQuickPriceFilter(null, null)"
+          >
+            Clear
           </button>
         </div>
       </div>
