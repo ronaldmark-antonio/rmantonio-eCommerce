@@ -165,7 +165,6 @@ function applyQuickPriceFilter(min, max) {
   performSearch(true);
 }
 
-
 const resetLoading = ref(false);
 
 function resetSearch() {

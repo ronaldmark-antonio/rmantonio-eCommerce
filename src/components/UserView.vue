@@ -201,7 +201,7 @@
             : "No description available." }}
         </p>
         <p class="mb-1">Price: ₱{{ product.price?.toLocaleString() }}</p>
-        
+
         <div class="d-flex gap-1 mt-1">
           <!-- Add to Cart Button -->
           <button
@@ -310,11 +310,23 @@ function performSearch() {
 }
 
 function applyQuickPriceFilter(min, max) {
+  if (min === null && max === null) {
+    priceFilter.value.min = null;
+    priceFilter.value.max = null;
+    priceSort.value = null;
+
+    filteredProducts.value = [...sortedProducts.value];
+
+    return;
+  }
+
   priceFilter.value.min = min;
   priceFilter.value.max = max;
   priceSort.value = "asc";
+
   performSearch();
 }
+
 
 function resetSearch() {
   resetLoading.value = true;
