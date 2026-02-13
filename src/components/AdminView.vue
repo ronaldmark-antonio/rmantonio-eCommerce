@@ -330,6 +330,7 @@ function resetSearch() {
             class="btn btn-sm btn-outline-secondary"
             @click="applyQuickPriceFilter(null, null)"
           >
+          <i class="bi bi-x-circle"></i>
             Clear Price
           </button>
         </div>
