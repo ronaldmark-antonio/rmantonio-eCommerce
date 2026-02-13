@@ -169,6 +169,10 @@ function applyQuickPriceFilter(min, max) {
   performSearch(true);
 }
 
+const isPriceFilterActive = computed(() => {
+  return priceFilter.min !== null || priceFilter.max !== null;
+});
+
 
 const resetLoading = ref(false);
 
@@ -327,9 +331,11 @@ function resetSearch() {
           </button>
 
           <button
-            class="btn btn-sm btn-outline-secondary"
-            @click="applyQuickPriceFilter(null, null)"
+          class="btn btn-sm btn-outline-secondary"
+          @click="applyQuickPriceFilter(null, null)"
+          :disabled="!isPriceFilterActive"
           >
+
           <i class="bi bi-x-circle"></i>
             Clear Price
           </button>
