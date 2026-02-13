@@ -536,9 +536,11 @@ function resetSearch() {
           </button>
 
           <button
-            class="btn btn-sm btn-outline-secondary"
-            @click="applyQuickPriceFilter(null, null)"
+          class="btn btn-sm btn-outline-secondary"
+          @click="applyQuickPriceFilter(null, null)"
+          :disabled="!isPriceFilterActive"
           >
+          <i class="bi bi-x-circle"></i>
             Clear Price
           </button>
         </div>
