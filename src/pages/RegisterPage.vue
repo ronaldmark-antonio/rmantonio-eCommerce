@@ -133,12 +133,15 @@ async function handleSubmit(e) {
             <div class="input-group">
               <span class="input-group-text"><i class="fas fa-phone"></i></span>
               <input 
-                type="text" 
-                class="form-control" 
-                id="mobile" 
-                placeholder="Enter your mobile number" 
-                v-model="mobileNum" 
-                required />
+              type="tel" 
+              class="form-control" 
+              id="mobile" 
+              placeholder="Enter your mobile number" 
+              v-model="mobileNum" 
+              inputmode="numeric"
+              @input="mobileNum = mobileNum.replace(/\D/g,'')" 
+              required 
+              />
             </div>
           </div>
 

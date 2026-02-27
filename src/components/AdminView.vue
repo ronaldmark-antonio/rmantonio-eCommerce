@@ -281,7 +281,7 @@ function resetSearch() {
               <span>Resetting...</span>
             </template>
             <template v-else>
-              <i class="bi bi-x-circle me-1"></i>
+              <i class="bi bi-x-circle"></i>
               Reset
             </template>
           </button>
@@ -483,7 +483,7 @@ function resetSearch() {
                 <span>Resetting...</span>
               </template>
               <template v-else>
-                <i class="bi bi-x-circle me-1"></i>
+                <i class="bi bi-x-circle"></i>
                 Reset
               </template>
             </button>
